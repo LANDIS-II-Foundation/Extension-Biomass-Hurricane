@@ -155,3 +155,7 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+
+# LANDIS-II
+/src/lib/*.dll
+/src/.vs

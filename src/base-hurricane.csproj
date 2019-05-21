@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Landis.Extension.BaseHurricane</RootNamespace>
+    <AssemblyName>Landis.Extension.BaseHurricane-v3</AssemblyName>
+    <AssemblyTitle>Landis.Extension.BaseWind-v3</AssemblyTitle>
+    <AssemblyCompany>Portland State University</AssemblyCompany>
+    <AssemblyProduct>base_wind.Properties</AssemblyProduct>
+    <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
+    <AssemblyVersion>0.1</AssemblyVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-Base-Hurricane</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseUrl>https://github.com/LANDIS-II-Foundation/Extension-Base-Hurricane/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>http://www.landis-ii.org</PackageProjectUrl>
+    <NeutralLanguage>English</NeutralLanguage>
+    <Authors>Portland State University</Authors>
+    <Product>base_hurricane.Properties</Product>
+    <Copyright>Landis-II-Foundation</Copyright>
+    <Version>0.1</Version>
+    <PackageTags>LANDIS-II;Landis;Extension;Base hurricane</PackageTags>
+    <Description>Landis.Extension.BaseHurricane</Description>
+    <PackageReleaseNotes>Landis.Extension.BaseHurricane</PackageReleaseNotes>
+    <FileVersion>0.1.0.0</FileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>C:\Program Files\LANDIS-II-v7\extensions</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Landis.Core" Version="2.0.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="Landis.Library.AgeOnlyCohorts-v3">
+      <HintPath>lib\Landis.Library.AgeOnlyCohorts-v3.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Cohorts-v2">
+      <HintPath>lib\Landis.Library.Landis.Library.Cohorts-v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Landis.Library.Metadata-v2">
+      <HintPath>lib\Landis.Library.Metadata-v2.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Remove="Model.cs" />
+  </ItemGroup>
+</Project>
