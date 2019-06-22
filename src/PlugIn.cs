@@ -50,6 +50,8 @@ namespace Landis.Extension.BaseHurricane
         public override void LoadParameters(string dataFile, ICore mCore)
         {
             modelCore = mCore;
+            Console.WriteLine("vvvvvvvvvvvv   ^^^^^^^^^^^^^^^^   vvvvvvvvvvvvvvvvvvvvvvvvvvvvv Hit Enter.");
+            Console.ReadKey();
             InputParameterParser parser = new InputParameterParser();
             parameters = Landis.Data.Load<IInputParameters>(dataFile, parser);
         }
@@ -67,6 +69,7 @@ namespace Landis.Extension.BaseHurricane
         /// </param>
         public override void Initialize()
         {
+            Console.Write("Hello Debug Hurricane");
             List<string> colnames = new List<string>();
             foreach (IEcoregion ecoregion in modelCore.Ecoregions)
             {

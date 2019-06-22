@@ -1,0 +1,24 @@
+>> Example of a bad input file for Wind plug-in
+
+LandisData  Wind
+
+
+Timestep  7
+
+>>             ___ Event Size ___   Rotation
+>> Ecoregion    Max   Mean    Min   Period
+>> ---------   ----   ----   ----   --------
+    Eco3        400     24      4     100
+    Eco14       600     48     16      50
+    Eco10       400     24      4      75
+    Eco9        100     12      1     200
+
+
+WindSeverities
+
+ >>            Cohort Age       Mortality
+ >> Severity   % of longevity   Probability
+ >> --------   --------------   -----------
+       5          0% to  20%       0.05
+       4         20% to  50%       0.1
+       2 << Should be 3

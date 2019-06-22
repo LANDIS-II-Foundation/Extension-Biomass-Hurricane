@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>Landis.Extension.BaseHurricane</RootNamespace>
-    <AssemblyName>Landis.Extension.BaseHurricane-v3</AssemblyName>
+    <AssemblyName>Landis.Extension.BaseHurricane-v0</AssemblyName>
     <AssemblyTitle>Landis.Extension.BaseWind-v3</AssemblyTitle>
     <AssemblyCompany>Portland State University</AssemblyCompany>
     <AssemblyProduct>base_wind.Properties</AssemblyProduct>
@@ -25,6 +25,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>C:\Program Files\LANDIS-II-v7\extensions</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

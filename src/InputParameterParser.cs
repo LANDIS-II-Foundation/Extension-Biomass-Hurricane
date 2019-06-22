@@ -4,6 +4,7 @@ using Landis.Utilities;
 using Landis.Core;
 using System.Collections.Generic;
 using System.Text;
+using System;
 
 namespace Landis.Extension.BaseHurricane
 {
@@ -33,6 +34,30 @@ namespace Landis.Extension.BaseHurricane
 
         protected override IInputParameters Parse()
         {
+            string[] parseLine(string line)
+            {
+                return line.Replace("\t", " ")
+                    .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            var stormOccurProb = "StormOccurrenceProbabilities";
+            var lowBoundLandfallWindSpeed = "LowBoundLandfallWindSpeed";
+            var averageLandfallWindSpeed = "AverageLandfallWindSpeed";
+            var stdDevLandfallWindSpeed = "StdDevLandfallWindSpeed";
+            var highBoundLandfallWindSpeed = "HighBoundLandfallWindSpeed";
+            var centerPointLatitude = "CenterPointLatitude";
+            var centerPointDistanceInland = "CenterPointDistanceInland";
+            var windSeverities = "WindSeverities";
+            var fortBragg = "FortBragg";
+
+
+
+            var sectionNames = new HashSet<System.String> {stormOccurProb, 
+                windSeverities, fortBragg };
+
+            var singleLineNames = new HashSet<System.String> {lowBoundLandfallWindSpeed,
+                averageLandfallWindSpeed, stdDevLandfallWindSpeed, highBoundLandfallWindSpeed,
+                centerPointLatitude, centerPointDistanceInland,};
 
             ReadLandisDataVar();
 
@@ -41,6 +66,55 @@ namespace Landis.Extension.BaseHurricane
             InputVar<int> timestep = new InputVar<int>("Timestep");
             ReadVar(timestep);
             parameters.Timestep = timestep.Value;
+
+            // Read the Storm Occurrence Probabilities table
+            // The call to ReadVar advanced the cursor, so it contains the next line.
+            string lastOperation = this.CurrentName;
+            while(sectionNames.Contains(lastOperation) || singleLineNames.Contains(lastOperation))
+            {
+                string[] row;
+                if(sectionNames.Contains(lastOperation))
+                {
+                    sectionNames.Remove(lastOperation);
+                    GetNextLine();
+                    if(lastOperation == stormOccurProb)
+                    {
+                        parameters.StormOccurenceProbabilities = new List<double>();
+                        while(!(sectionNames.Contains(this.CurrentName) || 
+                            singleLineNames.Contains(this.CurrentName)))
+                        {
+                            row = parseLine(this.CurrentLine);
+                            parameters.StormOccurenceProbabilities.Add(Convert.ToDouble(row[1]));
+                            GetNextLine();
+                        }
+                    }
+                    lastOperation = this.CurrentName;
+                }
+
+                if(singleLineNames.Contains(lastOperation))
+                {
+                    row = parseLine(this.CurrentLine);
+                    var value = row[1];
+                    if(lastOperation == lowBoundLandfallWindSpeed)
+                        parameters.LowBoundLandfallWindSpeed = Convert.ToDouble(value);
+                    else if(lastOperation == averageLandfallWindSpeed)
+                        parameters.AverageLandfallWindSpeed = Convert.ToDouble(value);
+                    else if(lastOperation == stdDevLandfallWindSpeed)
+                        parameters.StdDevLandfallWindSpeed = Convert.ToDouble(value);
+                    else if(lastOperation == highBoundLandfallWindSpeed)
+                        parameters.HighBoundLandfallWindspeed = Convert.ToDouble(value);
+                    else if(lastOperation == centerPointLatitude)
+                        parameters.CenterPointLatitude = Convert.ToDouble(value);
+                    else if(lastOperation == centerPointDistanceInland)
+                        parameters.CenterPointDistanceInland = Convert.ToDouble(value);
+                    singleLineNames.Remove(lastOperation);
+                    GetNextLine();
+                    lastOperation = this.CurrentName;
+                }
+                if(lastOperation == windSeverities) break;
+                if(lastOperation == fortBragg) break;
+            }
+
 
             //  Read table of wind event parameters for ecoregions
             InputVar<string> ecoregionName = new InputVar<string>("Ecoregion");
