@@ -50,8 +50,8 @@ namespace Landis.Extension.BaseHurricane
         public override void LoadParameters(string dataFile, ICore mCore)
         {
             modelCore = mCore;
-            Console.WriteLine("vvvvvvvvvvvv   ^^^^^^^^^^^^^^^^   vvvvvvvvvvvvvvvvvvvvvvvvvvvvv Hit Enter.");
-            Console.ReadKey();
+            //Console.WriteLine("vvvvvvvvvvvv   ^^^^^^^^^^^^^^^^   vvvvvvvvvvvvvvvvvvvvvvvvvvvvv Hit Enter.");
+            //Console.ReadKey();
             InputParameterParser parser = new InputParameterParser();
             parameters = Landis.Data.Load<IInputParameters>(dataFile, parser);
         }
