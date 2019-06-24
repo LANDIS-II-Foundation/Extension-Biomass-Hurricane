@@ -253,14 +253,14 @@ namespace Landis.Extension.BaseHurricane
             get { return Math.Exp(this.mu - this.sigma * this.sigma); }
         }
 
-        internal WindSpeedGenerator(double minValue, double modeValue, double maxSpeed)
+        internal WindSpeedGenerator(double minSpeed, double modeSpeed, double maxSpeed)
         {
-            this.minSpeed = minValue;
-            this.modeSpeed = modeValue;
+            this.minSpeed = minSpeed;
+            this.modeSpeed = modeSpeed;
             this.maxSpeed = maxSpeed;
             this.sigma = 0.4;  // Hard-coded for now.
             this.mu = 0.0;     // Hard-coded for now.
-            this.adjustFactor = (this.modeSpeed - minValue) / this.mode;
+            this.adjustFactor = (this.modeSpeed - minSpeed) / this.mode;
         }
 
         public double getWindSpeed()
