@@ -6,6 +6,7 @@ using Landis.Library.Metadata;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using System.Linq;
 
 namespace Landis.Extension.BaseHurricane
 {
@@ -20,13 +21,14 @@ namespace Landis.Extension.BaseHurricane
         public static MetadataTable<EventsLog> eventLog;
         public static MetadataTable<SummaryLog> summaryLog;
         public static readonly string ExtensionName = "Base Hurricane";
-        
+
         private string mapNameTemplate;
         private IInputParameters parameters;
         private static ICore modelCore;
         private int summaryTotalSites;
         private int summaryEventCount;
         //private int[] summaryEcoregionEventCount;
+        private int actualYear { get; set; } = 2019;
 
 
         //---------------------------------------------------------------------
@@ -50,10 +52,10 @@ namespace Landis.Extension.BaseHurricane
         public override void LoadParameters(string dataFile, ICore mCore)
         {
             modelCore = mCore;
-            //Console.WriteLine("vvvvvvvvvvvv   ^^^^^^^^^^^^^^^^   vvvvvvvvvvvvvvvvvvvvvvvvvvvvv Hit Enter.");
-            //Console.ReadKey();
+            // Console.WriteLine("vvvvvvvvvvvv   ^^^^^^^^^^^^^^^^   vvvvvvvvvvvvvvvvvvvvvvvvvvvvv Hit Enter.");
+            // Console.ReadKey();
             InputParameterParser parser = new InputParameterParser();
-            parameters = Landis.Data.Load<IInputParameters>(dataFile, parser);
+            this.parameters = Landis.Data.Load<IInputParameters>(dataFile, parser);
         }
         //---------------------------------------------------------------------
 
@@ -96,6 +98,25 @@ namespace Landis.Extension.BaseHurricane
         {
             ModelCore.UI.WriteLine("Processing landscape for hurricane events ...");
 
+            foreach(var year in Enumerable.Range(0, this.parameters.Timestep))
+            {
+                int stormsThisYear = -1;
+                var randomNum = PlugIn.ModelCore.GenerateUniform();
+                var cummProb = 0.0;
+                foreach(var probability in this.parameters.StormOccurenceProbabilities)
+                {
+                    cummProb += probability;
+                    stormsThisYear++;
+                    if(randomNum < cummProb)
+                        break;
+                }
+                string message = stormsThisYear + " storms.";
+                if(stormsThisYear == 1) message = "1 storm.";
+                LogEvent(PlugIn.ModelCore.CurrentTime, null, message);
+                this.actualYear++;
+                var dbg = true;
+            }
+
             SiteVars.Event.SiteValues = null;
             SiteVars.Severity.ActiveSiteValues = 0;
 
@@ -103,7 +124,7 @@ namespace Landis.Extension.BaseHurricane
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape) {
                 Event hurricaneEvent = Event.Initiate(site, Timestep);
                 if (hurricaneEvent != null) {
-                    LogEvent(PlugIn.ModelCore.CurrentTime, hurricaneEvent);
+                    // LogEvent(PlugIn.ModelCore.CurrentTime, hurricaneEvent);
                     eventCount++;
                     summaryEventCount++;
 
@@ -141,21 +162,27 @@ namespace Landis.Extension.BaseHurricane
 
         //---------------------------------------------------------------------
 
-        private void LogEvent(int   currentTime,
-                              Event hurricaneEvent)
+        private void LogHurricaneEvent(int currentTime, string message)
+        {
+            eventLog.Clear();
+
+        }
+
+        private void LogEvent(int currentTime, Event hurricaneEvent=null, string msg="")
         {
 
             eventLog.Clear();
             EventsLog el = new EventsLog();
             el.Time = currentTime;
-            el.InitRow = hurricaneEvent.StartLocation.Row;
-            el.InitColumn = hurricaneEvent.StartLocation.Column;
-            el.TotalSites = hurricaneEvent.Size;
-            el.DamagedSites = hurricaneEvent.SitesDamaged;
-            el.CohortsKilled = hurricaneEvent.CohortsKilled;
-            el.MeanSeverity = hurricaneEvent.Severity;
+            el.message = msg;
+            //el.InitRow = hurricaneEvent.StartLocation.Row;
+            //el.InitColumn = hurricaneEvent.StartLocation.Column;
+            //el.TotalSites = hurricaneEvent.Size;
+            //el.DamagedSites = hurricaneEvent.SitesDamaged;
+            //el.CohortsKilled = hurricaneEvent.CohortsKilled;
+            //el.MeanSeverity = hurricaneEvent.Severity;
 
-            summaryTotalSites += hurricaneEvent.SitesDamaged;
+            //summaryTotalSites += hurricaneEvent.SitesDamaged;
             eventLog.AddObject(el);
             eventLog.WriteToFile();
 

@@ -13,23 +13,26 @@ namespace Landis.Extension.BaseHurricane
         [DataFieldAttribute(Unit = FieldUnits.Year, Desc = "...")]
         public int Time {set; get;}
 
-        [DataFieldAttribute(Desc = "Initiation Row")]
-        public int InitRow { set; get; }
+        [DataFieldAttribute(Desc = "Message")]
+        public String message { get; set; }
 
-        [DataFieldAttribute(Desc = "Initiation Column")]
-        public int InitColumn { set; get; }
+        //[DataFieldAttribute(Desc = "Initiation Row")]
+        //public int InitRow { set; get; }
 
-        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Total Number of Sites in Event")]
-        public int TotalSites { set; get; }
+        //[DataFieldAttribute(Desc = "Initiation Column")]
+        //public int InitColumn { set; get; }
 
-        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Damaged Sites in Event")]
-        public int DamagedSites { set; get; }
+        //[DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Total Number of Sites in Event")]
+        //public int TotalSites { set; get; }
 
-        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Cohorts Killed")]
-        public int CohortsKilled { set; get; }
+        //[DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Damaged Sites in Event")]
+        //public int DamagedSites { set; get; }
 
-        [DataFieldAttribute(Unit = FieldUnits.Severity_Rank, Desc = "Mean Severity (1-5)", Format="0.00")]
-        public double MeanSeverity { set; get; }
+        //[DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Cohorts Killed")]
+        //public int CohortsKilled { set; get; }
+
+        //[DataFieldAttribute(Unit = FieldUnits.Severity_Rank, Desc = "Mean Severity (1-5)", Format="0.00")]
+        //public double MeanSeverity { set; get; }
 
     }
 }
