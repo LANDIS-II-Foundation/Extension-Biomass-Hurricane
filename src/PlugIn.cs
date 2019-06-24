@@ -24,6 +24,7 @@ namespace Landis.Extension.BaseHurricane
 
         private string mapNameTemplate;
         private IInputParameters parameters;
+        private WindSpeedGenerator windSpeedGenerator = null;
         private static ICore modelCore;
         private int summaryTotalSites;
         private int summaryEventCount;
@@ -56,6 +57,8 @@ namespace Landis.Extension.BaseHurricane
             // Console.ReadKey();
             InputParameterParser parser = new InputParameterParser();
             this.parameters = Landis.Data.Load<IInputParameters>(dataFile, parser);
+            this.windSpeedGenerator = new WindSpeedGenerator(this.parameters.LowBoundLandfallWindSpeed,
+                this.parameters.ModeLandfallWindSpeed, this.parameters.HighBoundLandfallWindspeed);
         }
         //---------------------------------------------------------------------
 
@@ -73,7 +76,7 @@ namespace Landis.Extension.BaseHurricane
         {
             Console.Write("Hello Debug Hurricane");
             List<string> colnames = new List<string>();
-            foreach (IEcoregion ecoregion in modelCore.Ecoregions)
+            foreach(IEcoregion ecoregion in modelCore.Ecoregions)
             {
                 colnames.Add(ecoregion.Name);
             }
@@ -90,6 +93,29 @@ namespace Landis.Extension.BaseHurricane
         }
 
         //---------------------------------------------------------------------
+
+        /*      *   /
+        private void testWindGenerationDistribution()
+        {
+            var testThing = new List<double>();
+            foreach(var i in Enumerable.Range(0, 10000))
+                testThing.Add(this.windSpeedGenerator.getWindSpeed());
+            double av = testThing.Average();
+            Dictionary<double, int> bins = new Dictionary<double, int>();
+            foreach(var val in testThing)
+            {
+                if(bins.ContainsKey(val))
+                    bins[val]++;
+                else
+                    bins[val] = 1;
+            }
+            var keys = bins.Keys.ToList();
+            keys.Sort();
+            var sortedBins = new Dictionary<double, int>();
+            foreach(var val in keys)
+                sortedBins[val] = bins[val];
+            bins = null;
+        } /* */
 
         ///<summary>
         /// Run the plug-in at a particular timestep.
@@ -117,13 +143,15 @@ namespace Landis.Extension.BaseHurricane
                 var dbg = true;
             }
 
+            // testWindGenerationDistribution();
+
             SiteVars.Event.SiteValues = null;
             SiteVars.Severity.ActiveSiteValues = 0;
 
             int eventCount = 0;
-            foreach (ActiveSite site in PlugIn.ModelCore.Landscape) {
+            foreach(ActiveSite site in PlugIn.ModelCore.Landscape) {
                 Event hurricaneEvent = Event.Initiate(site, Timestep);
-                if (hurricaneEvent != null) {
+                if(hurricaneEvent != null) {
                     // LogEvent(PlugIn.ModelCore.CurrentTime, hurricaneEvent);
                     eventCount++;
                     summaryEventCount++;
@@ -137,13 +165,13 @@ namespace Landis.Extension.BaseHurricane
             //  Write hurricane wind severity map
             string path = MapNames.ReplaceTemplateVars(mapNameTemplate, PlugIn.modelCore.CurrentTime);
             Dimensions dimensions = new Dimensions(modelCore.Landscape.Rows, modelCore.Landscape.Columns);
-            using (IOutputRaster<BytePixel> outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
+            using(IOutputRaster<BytePixel> outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
             {
                 BytePixel pixel = outputRaster.BufferPixel;
-                foreach (Site site in PlugIn.ModelCore.Landscape.AllSites) {
-                    if (site.IsActive) {
-                        if (SiteVars.Disturbed[site])
-                            pixel.MapCode.Value = (byte) (SiteVars.Severity[site] + 1);
+                foreach(Site site in PlugIn.ModelCore.Landscape.AllSites) {
+                    if(site.IsActive) {
+                        if(SiteVars.Disturbed[site])
+                            pixel.MapCode.Value = (byte)(SiteVars.Severity[site] + 1);
                         else
                             pixel.MapCode.Value = 1;
                     }
@@ -168,7 +196,7 @@ namespace Landis.Extension.BaseHurricane
 
         }
 
-        private void LogEvent(int currentTime, Event hurricaneEvent=null, string msg="")
+        private void LogEvent(int currentTime, Event hurricaneEvent = null, string msg = "")
         {
 
             eventLog.Clear();
@@ -201,6 +229,53 @@ namespace Landis.Extension.BaseHurricane
 
             summaryLog.AddObject(sl);
             summaryLog.WriteToFile();
+        }
+    }
+
+    /// <summary>
+    /// Generate random wind speeds on a log-normal distribution, mu=0, sigma=0.4.
+    /// The consuming code instantiates with minimum value, which is projected to 0,
+    /// the requested mode value, and the maximum value.
+    /// Maximum value is enforced by getting another number if the generated one
+    /// is too high.
+    /// </summary>
+    class WindSpeedGenerator
+    {
+        private double minSpeed {get; set;}
+        private double modeSpeed { get; set; }
+        private double maxSpeed { get; set; }
+        private double sigma { get; set; }
+        private double mu { get; set; }
+        private double adjustFactor { get; set; }
+
+        private double mode
+        {
+            get { return Math.Exp(this.mu - this.sigma * this.sigma); }
+        }
+
+        internal WindSpeedGenerator(double minValue, double modeValue, double maxSpeed)
+        {
+            this.minSpeed = minValue;
+            this.modeSpeed = modeValue;
+            this.maxSpeed = maxSpeed;
+            this.sigma = 0.4;  // Hard-coded for now.
+            this.mu = 0.0;     // Hard-coded for now.
+            this.adjustFactor = (this.modeSpeed - minValue) / this.mode;
+        }
+
+        public double getWindSpeed()
+        {
+            PlugIn.ModelCore.LognormalDistribution.Mu = this.mu;
+            PlugIn.ModelCore.LognormalDistribution.Sigma = this.sigma;
+            bool keepComputing = true;
+            while(keepComputing)
+            {
+                double trialValue = PlugIn.ModelCore.LognormalDistribution.NextDouble();
+                trialValue = Math.Round((this.adjustFactor * trialValue)) +  this.minSpeed;
+                if(trialValue <= this.maxSpeed)
+                    return trialValue;
+            }
+            return -1.0;
         }
     }
 }

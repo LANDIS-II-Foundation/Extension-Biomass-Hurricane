@@ -62,7 +62,7 @@ namespace Landis.Extension.BaseHurricane
 
         List<double> StormOccurenceProbabilities { get; set; }
         double LowBoundLandfallWindSpeed { get; set; }
-        double AverageLandfallWindSpeed { get; set; }
+        double ModeLandfallWindSpeed { get; set; }
         double StdDevLandfallWindSpeed { get; set; }
         double HighBoundLandfallWindspeed { get; set; }
         double CenterPointLatitude { get; set; }

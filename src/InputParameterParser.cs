@@ -42,7 +42,7 @@ namespace Landis.Extension.BaseHurricane
 
             var stormOccurProb = "StormOccurrenceProbabilities";
             var lowBoundLandfallWindSpeed = "LowBoundLandfallWindSpeed";
-            var averageLandfallWindSpeed = "AverageLandfallWindSpeed";
+            var modeLandfallWindSpeed = "ModeLandfallWindSpeed";
             var stdDevLandfallWindSpeed = "StdDevLandfallWindSpeed";
             var highBoundLandfallWindSpeed = "HighBoundLandfallWindSpeed";
             var centerPointLatitude = "CenterPointLatitude";
@@ -56,7 +56,7 @@ namespace Landis.Extension.BaseHurricane
                 windSeverities, fortBragg };
 
             var singleLineNames = new HashSet<System.String> {lowBoundLandfallWindSpeed,
-                averageLandfallWindSpeed, stdDevLandfallWindSpeed, highBoundLandfallWindSpeed,
+                modeLandfallWindSpeed, stdDevLandfallWindSpeed, highBoundLandfallWindSpeed,
                 centerPointLatitude, centerPointDistanceInland,};
 
             ReadLandisDataVar();
@@ -97,8 +97,8 @@ namespace Landis.Extension.BaseHurricane
                     var value = row[1];
                     if(lastOperation == lowBoundLandfallWindSpeed)
                         parameters.LowBoundLandfallWindSpeed = Convert.ToDouble(value);
-                    else if(lastOperation == averageLandfallWindSpeed)
-                        parameters.AverageLandfallWindSpeed = Convert.ToDouble(value);
+                    else if(lastOperation == modeLandfallWindSpeed)
+                        parameters.ModeLandfallWindSpeed = Convert.ToDouble(value);
                     else if(lastOperation == stdDevLandfallWindSpeed)
                         parameters.StdDevLandfallWindSpeed = Convert.ToDouble(value);
                     else if(lastOperation == highBoundLandfallWindSpeed)
