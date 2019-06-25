@@ -13,8 +13,23 @@ namespace Landis.Extension.BaseHurricane
         [DataFieldAttribute(Unit = FieldUnits.Year, Desc = "...")]
         public int Time {set; get;}
 
-        [DataFieldAttribute(Desc = "Message")]
-        public String message { get; set; }
+        [DataFieldAttribute(Desc = "Hurricane Number")]
+        public int hurricaneNumber { get; set; }
+
+        [DataFieldAttribute(Desc = "Max Windspeed at Landfall")]
+        public double landfallMaxWindspeed { get; set; }
+
+        [DataFieldAttribute(Desc = "Latitude at Landfall")]
+        public double landfallLatitude { get; set; }
+
+        [DataFieldAttribute(Desc = "Storm Track Heading")]
+        public double stormTrackHeading { get; set; }
+
+        [DataFieldAttribute(Desc = "Effective Distance Inland")]
+        public double effectiveDistanceInland { get; set; }
+
+        //[DataFieldAttribute(Desc = "Latitude Offset")]
+        //public double latitudeOffset { get; set; }
 
         //[DataFieldAttribute(Desc = "Initiation Row")]
         //public int InitRow { set; get; }

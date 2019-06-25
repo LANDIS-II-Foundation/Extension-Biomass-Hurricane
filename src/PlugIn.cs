@@ -94,29 +94,6 @@ namespace Landis.Extension.BaseHurricane
 
         //---------------------------------------------------------------------
 
-        /*      *   /
-        private void testWindGenerationDistribution()
-        {
-            var testThing = new List<double>();
-            foreach(var i in Enumerable.Range(0, 10000))
-                testThing.Add(this.windSpeedGenerator.getWindSpeed());
-            double av = testThing.Average();
-            Dictionary<double, int> bins = new Dictionary<double, int>();
-            foreach(var val in testThing)
-            {
-                if(bins.ContainsKey(val))
-                    bins[val]++;
-                else
-                    bins[val] = 1;
-            }
-            var keys = bins.Keys.ToList();
-            keys.Sort();
-            var sortedBins = new Dictionary<double, int>();
-            foreach(var val in keys)
-                sortedBins[val] = bins[val];
-            bins = null;
-        } /* */
-
         ///<summary>
         /// Run the plug-in at a particular timestep.
         ///</summary>
@@ -138,12 +115,14 @@ namespace Landis.Extension.BaseHurricane
                 }
                 string message = stormsThisYear + " storms.";
                 if(stormsThisYear == 1) message = "1 storm.";
-                LogEvent(PlugIn.ModelCore.CurrentTime, null, message);
+                foreach(var stormCount in Enumerable.Range(0, stormsThisYear))
+                {
+                    var storm = new HurricaneEvent(stormCount+1, this.windSpeedGenerator, 
+                        this.parameters.CenterPointDistanceInland);
+                    LogEvent(PlugIn.ModelCore.CurrentTime, storm);
+                }
                 this.actualYear++;
-                var dbg = true;
             }
-
-            // testWindGenerationDistribution();
 
             SiteVars.Event.SiteValues = null;
             SiteVars.Severity.ActiveSiteValues = 0;
@@ -196,13 +175,19 @@ namespace Landis.Extension.BaseHurricane
 
         }
 
-        private void LogEvent(int currentTime, Event hurricaneEvent = null, string msg = "")
+        private void LogEvent(int currentTime, HurricaneEvent hurricaneEvent = null)
         {
 
             eventLog.Clear();
             EventsLog el = new EventsLog();
             el.Time = currentTime;
-            el.message = msg;
+            if(hurricaneEvent != null)
+            {
+                el.hurricaneNumber = hurricaneEvent.hurricaneNumber;
+                el.landfallMaxWindspeed = hurricaneEvent.landfallMaxWindSpeed;
+                el.stormTrackHeading = hurricaneEvent.stormTrackHeading;
+                el.effectiveDistanceInland = hurricaneEvent.stormTrackEffectiveDistanceToCenterPoint;
+            }
             //el.InitRow = hurricaneEvent.StartLocation.Row;
             //el.InitColumn = hurricaneEvent.StartLocation.Column;
             //el.TotalSites = hurricaneEvent.Size;
@@ -232,50 +217,4 @@ namespace Landis.Extension.BaseHurricane
         }
     }
 
-    /// <summary>
-    /// Generate random wind speeds on a log-normal distribution, mu=0, sigma=0.4.
-    /// The consuming code instantiates with minimum value, which is projected to 0,
-    /// the requested mode value, and the maximum value.
-    /// Maximum value is enforced by getting another number if the generated one
-    /// is too high.
-    /// </summary>
-    class WindSpeedGenerator
-    {
-        private double minSpeed {get; set;}
-        private double modeSpeed { get; set; }
-        private double maxSpeed { get; set; }
-        private double sigma { get; set; }
-        private double mu { get; set; }
-        private double adjustFactor { get; set; }
-
-        private double mode
-        {
-            get { return Math.Exp(this.mu - this.sigma * this.sigma); }
-        }
-
-        internal WindSpeedGenerator(double minSpeed, double modeSpeed, double maxSpeed)
-        {
-            this.minSpeed = minSpeed;
-            this.modeSpeed = modeSpeed;
-            this.maxSpeed = maxSpeed;
-            this.sigma = 0.4;  // Hard-coded for now.
-            this.mu = 0.0;     // Hard-coded for now.
-            this.adjustFactor = (this.modeSpeed - minSpeed) / this.mode;
-        }
-
-        public double getWindSpeed()
-        {
-            PlugIn.ModelCore.LognormalDistribution.Mu = this.mu;
-            PlugIn.ModelCore.LognormalDistribution.Sigma = this.sigma;
-            bool keepComputing = true;
-            while(keepComputing)
-            {
-                double trialValue = PlugIn.ModelCore.LognormalDistribution.NextDouble();
-                trialValue = Math.Round((this.adjustFactor * trialValue)) +  this.minSpeed;
-                if(trialValue <= this.maxSpeed)
-                    return trialValue;
-            }
-            return -1.0;
-        }
-    }
 }
