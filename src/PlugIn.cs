@@ -168,12 +168,6 @@ namespace Landis.Extension.BaseHurricane
 
         //---------------------------------------------------------------------
 
-        private void LogHurricaneEvent(int currentTime, string message)
-        {
-            eventLog.Clear();
-
-        }
-
         enum unitType { Dist, Speed };
         private void LogEvent(int currentTime, HurricaneEvent hurricaneEvent = null)
         {
