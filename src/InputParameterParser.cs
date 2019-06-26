@@ -39,11 +39,13 @@ namespace Landis.Extension.BaseHurricane
                 return line.Replace("\t", " ")
                     .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             }
+            Console.Write("Okay, what are you waiting for? ");
+            System.Console.ReadKey();
 
             var stormOccurProb = "StormOccurrenceProbabilities";
+            var inputUnitsEnglish = "InputUnitsEnglish";
             var lowBoundLandfallWindSpeed = "LowBoundLandfallWindSpeed";
             var modeLandfallWindSpeed = "ModeLandfallWindSpeed";
-            var stdDevLandfallWindSpeed = "StdDevLandfallWindSpeed";
             var highBoundLandfallWindSpeed = "HighBoundLandfallWindSpeed";
             var centerPointLatitude = "CenterPointLatitude";
             var centerPointDistanceInland = "CenterPointDistanceInland";
@@ -56,8 +58,9 @@ namespace Landis.Extension.BaseHurricane
                 windSeverities, fortBragg };
 
             var singleLineNames = new HashSet<System.String> {lowBoundLandfallWindSpeed,
-                modeLandfallWindSpeed, stdDevLandfallWindSpeed, highBoundLandfallWindSpeed,
-                centerPointLatitude, centerPointDistanceInland,};
+                modeLandfallWindSpeed, highBoundLandfallWindSpeed,
+                centerPointLatitude, centerPointDistanceInland, inputUnitsEnglish,};
+            var inputUnitsAreEnglish = false;
 
             ReadLandisDataVar();
 
@@ -93,20 +96,22 @@ namespace Landis.Extension.BaseHurricane
 
                 if(singleLineNames.Contains(lastOperation))
                 {
+                    string value = "";
                     row = parseLine(this.CurrentLine);
-                    var value = row[1];
+                    if(row.Length >= 2)
+                        value = row[1];
                     if(lastOperation == lowBoundLandfallWindSpeed)
                         parameters.LowBoundLandfallWindSpeed = Convert.ToDouble(value);
                     else if(lastOperation == modeLandfallWindSpeed)
                         parameters.ModeLandfallWindSpeed = Convert.ToDouble(value);
-                    else if(lastOperation == stdDevLandfallWindSpeed)
-                        parameters.StdDevLandfallWindSpeed = Convert.ToDouble(value);
                     else if(lastOperation == highBoundLandfallWindSpeed)
                         parameters.HighBoundLandfallWindspeed = Convert.ToDouble(value);
                     else if(lastOperation == centerPointLatitude)
                         parameters.CenterPointLatitude = Convert.ToDouble(value);
                     else if(lastOperation == centerPointDistanceInland)
                         parameters.CenterPointDistanceInland = Convert.ToDouble(value);
+                    else if(lastOperation == inputUnitsEnglish)
+                        inputUnitsAreEnglish = true;
                     singleLineNames.Remove(lastOperation);
                     GetNextLine();
                     lastOperation = this.CurrentName;
@@ -114,6 +119,8 @@ namespace Landis.Extension.BaseHurricane
                 if(lastOperation == windSeverities) break;
                 if(lastOperation == fortBragg) break;
             }
+            if(inputUnitsAreEnglish)
+                parameters.AdjustValuesFromEnglishToMetric();
 
 
             //  Read table of wind event parameters for ecoregions

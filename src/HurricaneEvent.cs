@@ -15,6 +15,7 @@ namespace Landis.Extension.BaseHurricane
 
         public int hurricaneNumber { get; set; }
         public double landfallMaxWindSpeed { get; set; }
+        public double landfallLatitude { get; set; }
         public double distanceInlandToCenterPoint { get; set; }
         public double stormTrackEffectiveDistanceToCenterPoint { get; set; }
         public double stormTrackHeading { get; set; }
@@ -23,6 +24,7 @@ namespace Landis.Extension.BaseHurricane
         {
             this.hurricaneNumber = hurricaneNumber;
             this.landfallMaxWindSpeed = windSpeedGenerator.getWindSpeed();
+            this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;
             this.distanceInlandToCenterPoint = distanceInland;
             this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0;
             var modHeading = (this.stormTrackHeading - 315) * Math.PI / 180.0;

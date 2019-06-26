@@ -138,7 +138,6 @@ namespace Landis.Extension.BaseHurricane
                 }
             }
 
-
             //ModelCore.UI.WriteLine("  Hurricane events: {0}", eventCount);
 
             //  Write hurricane wind severity map
@@ -175,8 +174,16 @@ namespace Landis.Extension.BaseHurricane
 
         }
 
+        enum unitType { Dist, Speed };
         private void LogEvent(int currentTime, HurricaneEvent hurricaneEvent = null)
         {
+            string cvtKilometersToMiles(double kValue, unitType unitType)
+            {
+                double milesValue = kValue * 0.621371;
+                string kUnits = unitType == unitType.Dist ? "kilometers" : "kph";
+                string mUnits = unitType == unitType.Dist ? " miles" : " mph";
+                return $"{kValue:F1} {kUnits} / {milesValue:F1} {mUnits}";
+            }
 
             eventLog.Clear();
             EventsLog el = new EventsLog();
@@ -184,9 +191,11 @@ namespace Landis.Extension.BaseHurricane
             if(hurricaneEvent != null)
             {
                 el.hurricaneNumber = hurricaneEvent.hurricaneNumber;
-                el.landfallMaxWindspeed = hurricaneEvent.landfallMaxWindSpeed;
+                el.landfallMaxWindspeed = cvtKilometersToMiles(hurricaneEvent.landfallMaxWindSpeed, unitType.Speed);
+                el.landfallLatitude = hurricaneEvent.landfallLatitude;
                 el.stormTrackHeading = hurricaneEvent.stormTrackHeading;
-                el.effectiveDistanceInland = hurricaneEvent.stormTrackEffectiveDistanceToCenterPoint;
+                el.effectiveDistanceInland = 
+                    cvtKilometersToMiles(hurricaneEvent.stormTrackEffectiveDistanceToCenterPoint, unitType.Dist);
             }
             //el.InitRow = hurricaneEvent.StartLocation.Row;
             //el.InitColumn = hurricaneEvent.StartLocation.Column;

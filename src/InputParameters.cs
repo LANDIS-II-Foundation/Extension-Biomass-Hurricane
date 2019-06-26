@@ -38,10 +38,17 @@ namespace Landis.Extension.BaseHurricane
         public List<double> StormOccurenceProbabilities { get; set; }
         public double LowBoundLandfallWindSpeed { get; set; }
         public double ModeLandfallWindSpeed { get; set; }
-        public double StdDevLandfallWindSpeed { get; set; }
         public double HighBoundLandfallWindspeed { get; set; }
         public double CenterPointLatitude { get; set; }
         public double CenterPointDistanceInland { get; set; }
+
+        public void AdjustValuesFromEnglishToMetric()
+        {
+            this.LowBoundLandfallWindSpeed *= 1.60934;
+            this.ModeLandfallWindSpeed *= 1.60934;
+            this.HighBoundLandfallWindspeed *= 1.60934;
+            this.CenterPointDistanceInland *= 1.60934;
+        }
 
 
         //---------------------------------------------------------------------

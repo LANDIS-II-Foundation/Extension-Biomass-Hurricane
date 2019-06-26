@@ -17,16 +17,16 @@ namespace Landis.Extension.BaseHurricane
         public int hurricaneNumber { get; set; }
 
         [DataFieldAttribute(Desc = "Max Windspeed at Landfall")]
-        public double landfallMaxWindspeed { get; set; }
+        public string landfallMaxWindspeed { get; set; }
 
-        [DataFieldAttribute(Desc = "Latitude at Landfall")]
+        [DataFieldAttribute(Desc = "Landfall Latitude")]
         public double landfallLatitude { get; set; }
 
         [DataFieldAttribute(Desc = "Storm Track Heading")]
         public double stormTrackHeading { get; set; }
 
         [DataFieldAttribute(Desc = "Effective Distance Inland")]
-        public double effectiveDistanceInland { get; set; }
+        public string effectiveDistanceInland { get; set; }
 
         //[DataFieldAttribute(Desc = "Latitude Offset")]
         //public double latitudeOffset { get; set; }
