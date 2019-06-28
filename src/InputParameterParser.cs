@@ -39,8 +39,6 @@ namespace Landis.Extension.BaseHurricane
                 return line.Replace("\t", " ")
                     .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             }
-            Console.Write("Okay, what are you waiting for? ");
-            System.Console.ReadKey();
 
             var stormOccurProb = "StormOccurrenceProbabilities";
             var inputUnitsEnglish = "InputUnitsEnglish";
