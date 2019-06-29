@@ -30,6 +30,7 @@ namespace Landis.Extension.BaseHurricane
         private int summaryEventCount;
         //private int[] summaryEcoregionEventCount;
         private int actualYear { get; set; } = 2019;
+        private ContinentalGrid ContinentalGrid = null;
 
 
         //---------------------------------------------------------------------
@@ -75,6 +76,7 @@ namespace Landis.Extension.BaseHurricane
         public override void Initialize()
         {
             Console.Write("Hello Debug Hurricane");
+            // Console.ReadKey();
             List<string> colnames = new List<string>();
             foreach(IEcoregion ecoregion in modelCore.Ecoregions)
             {
@@ -89,7 +91,13 @@ namespace Landis.Extension.BaseHurricane
 
             SiteVars.Initialize();
             Event.Initialize(parameters.EventParameters, parameters.WindSeverities);
-
+            this.ContinentalGrid = new ContinentalGrid(
+                this.parameters.CenterPointLatitude, 
+                PlugIn.ModelCore.CellLength,
+                PlugIn.ModelCore.Landscape.Columns,
+                PlugIn.ModelCore.Landscape.Rows,
+                this.parameters.CenterPointDistanceInland
+                );
         }
 
         //---------------------------------------------------------------------
