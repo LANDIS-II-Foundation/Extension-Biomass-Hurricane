@@ -22,6 +22,11 @@ namespace Landis.Extension.BaseHurricane
         public Point(double x, double y)
         { this.X = x; this.Y = y; }
 
+        public override string ToString()
+        {
+            return $"X: {X:F2}, Y: {Y:F2}";
+        }
+
         public static Point operator +(Point startPt, Line line)
         {
             double deltaX = 0.0; double deltaY = 0.0;
@@ -47,12 +52,18 @@ namespace Landis.Extension.BaseHurricane
         }
     }
 
+    /// <summary>
+    /// ContinentalGrid is a class representing a cartesian plane with the origin
+    /// set at the lower left point of the raster study area. 
+    /// </summary>
     public class ContinentalGrid
     {
         public static double metersPerDegreeLat = 111000.0;
 
         public double CellSize { get; set; }
         public double CenterLatitude {get; set;}
+        public int Columns { get; set; }
+        public int Rows { get; set; }
         public double StudyAreaWidthMeters { get; set; }
         public double StudyAreaHeightMeters { get; set; }
 
@@ -63,13 +74,15 @@ namespace Landis.Extension.BaseHurricane
         public double b_coastLineLatitude { get; private set; }
 
         public ContinentalGrid(double centerLatitude, double cellSize, 
-            double studyAreaWidthInCells, double studyAreaheightInCells, 
+            double studyAreaWidthInCells, double studyAreaHeightInCells, 
             double centerPtDistanceInland_kilometers)
         {
             this.CenterLatitude = centerLatitude;
             this.CellSize = cellSize;
+            this.Columns = (int) studyAreaWidthInCells;
+            this.Rows = (int) studyAreaHeightInCells;
             this.StudyAreaWidthMeters = studyAreaWidthInCells * cellSize;
-            this.StudyAreaHeightMeters = studyAreaheightInCells * cellSize;
+            this.StudyAreaHeightMeters = studyAreaHeightInCells * cellSize;
             this.CenterPoint = 
                 new Point(this.StudyAreaWidthMeters / 2.0, this.StudyAreaHeightMeters / 2.0);
             this.CoastNearPoint = 
@@ -79,6 +92,34 @@ namespace Landis.Extension.BaseHurricane
             this.b_coastLineLatitude =
                 centerLatitude - (this.CenterPoint.Y - this.b_coastLine) /
                                         metersPerDegreeLat;
+
+            // test coordinate conversion
+            //var aPoint = this.siteIndexToCoordinates(20, 20);
+            //var convertBack = this.coordinatesToSiteIndex(aPoint);
+        }
+
+        /// <summary>
+        /// Assumes 0, 0 is at the top left corner and positive row is down.
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        public Point siteIndexToCoordinates(int column, int row)
+        {
+            int upRow = this.Rows - row - 1;
+            return new Point((double)column * this.CellSize, (double)upRow * this.CellSize);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <returns>IList where return[0] is x and return[1] is y.</returns>
+        public IList<int> coordinatesToSiteIndex(Point pt)
+        {
+            double column = (pt.X / this.CellSize) + 0.5 ;
+            double row = this.Rows - (pt.Y / this.CellSize) - 1;
+            return new List<int>() { (int) column, (int) row };
         }
     }
 }
