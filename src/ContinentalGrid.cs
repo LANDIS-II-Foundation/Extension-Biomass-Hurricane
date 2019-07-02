@@ -4,12 +4,40 @@ using System.Text;
 
 namespace Landis.Extension.BaseHurricane
 {
+    /// <summary>
+    /// Represents a line of the form: y = mx + b
+    /// Where m is the slope and b is the y-intercept.
+    /// </summary>
     public struct Line
+    {
+        public double Slope { get; set; }
+        public double b { get; set; }
+
+        public Line(Point pt, double slope)
+        {
+            this.Slope = slope;
+            double deltaY = -this.Slope * pt.X;
+            this.b = pt.Y + deltaY;
+        }
+
+        public Point GivenXGetPoint(double x)
+        {
+            return new Point(x, this.Slope * x);
+        }
+
+        public Point GivenYGetPoint(double y)
+        {
+            double deltaY = this.b - y;
+            return new Point(deltaY / -this.Slope, y);
+        }
+    }
+
+    public struct LineSegment
     {
         public double Length { get; set; }
         public double Angle { get; set; }
 
-        public Line(double len, double angle)
+        public LineSegment(double len, double angle)
         { this.Length = len; this.Angle = angle; }
 
     }
@@ -27,7 +55,7 @@ namespace Landis.Extension.BaseHurricane
             return $"X: {X:F2}, Y: {Y:F2}";
         }
 
-        public static Point operator +(Point startPt, Line line)
+        public static Point operator +(Point startPt, LineSegment line)
         {
             double deltaX = 0.0; double deltaY = 0.0;
             if(Math.Abs(line.Angle - Math.Truncate(line.Angle / 180.0)) < 0.0000001)
@@ -61,7 +89,7 @@ namespace Landis.Extension.BaseHurricane
         public static double metersPerDegreeLat = 111000.0;
 
         public double CellSize { get; set; }
-        public double CenterLatitude {get; set;}
+        public double GridOriginLatitude {get; set;}
         public int Columns { get; set; }
         public int Rows { get; set; }
         public double StudyAreaWidthMeters { get; set; }
@@ -72,26 +100,30 @@ namespace Landis.Extension.BaseHurricane
 
         public double b_coastLine { get; private set; }
         public double b_coastLineLatitude { get; private set; }
+        public Line CoastLine { get; private set; }
 
         public ContinentalGrid(double centerLatitude, double cellSize, 
             double studyAreaWidthInCells, double studyAreaHeightInCells, 
             double centerPtDistanceInland_kilometers)
         {
-            this.CenterLatitude = centerLatitude;
+            this.GridOriginLatitude = centerLatitude - (double) this.Rows / 2.0;
             this.CellSize = cellSize;
             this.Columns = (int) studyAreaWidthInCells;
             this.Rows = (int) studyAreaHeightInCells;
             this.StudyAreaWidthMeters = studyAreaWidthInCells * cellSize;
             this.StudyAreaHeightMeters = studyAreaHeightInCells * cellSize;
+            this.GridOriginLatitude = centerLatitude - this.StudyAreaHeightMeters / 2.0;
             this.CenterPoint = 
                 new Point(this.StudyAreaWidthMeters / 2.0, this.StudyAreaHeightMeters / 2.0);
             this.CoastNearPoint = 
-                this.CenterPoint + new Line(1000.0 * centerPtDistanceInland_kilometers, 135.0);
+                this.CenterPoint + new LineSegment(1000.0 * centerPtDistanceInland_kilometers, 135.0);
 
             this.b_coastLine = -this.CoastNearPoint.X;
             this.b_coastLineLatitude =
                 centerLatitude - (this.CenterPoint.Y - this.b_coastLine) /
                                         metersPerDegreeLat;
+
+            this.CoastLine = new Line(new Point(0.0, this.b_coastLine), 1.0);
 
             // test coordinate conversion
             //var aPoint = this.siteIndexToCoordinates(20, 20);
@@ -120,6 +152,11 @@ namespace Landis.Extension.BaseHurricane
             double column = (pt.X / this.CellSize) + 0.5 ;
             double row = this.Rows - (pt.Y / this.CellSize) - 1;
             return new List<int>() { (int) column, (int) row };
+        }
+
+        public double ConvertLatitudeToGridUnits(double lat)
+        {
+            return (lat - this.GridOriginLatitude) * ContinentalGrid.metersPerDegreeLat;
         }
     }
 }
