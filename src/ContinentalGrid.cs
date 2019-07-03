@@ -78,6 +78,17 @@ namespace Landis.Extension.BaseHurricane
             double newY = startPt.Y + deltaY;
             return new Point(newX, newY);
         }
+
+        public static bool operator ==(Point p1, Point p2)
+        {
+            return (Math.Abs(p2.X - p1.X) < 0.001 &&
+                Math.Abs(p2.Y - p1.Y) < 0.001);
+        }
+
+        public static bool operator !=(Point p1, Point p2)
+        {
+            return !(p1 == p2);
+        }
     }
 
     /// <summary>
@@ -98,32 +109,26 @@ namespace Landis.Extension.BaseHurricane
         public Point CenterPoint { get; private set; }
         public Point CoastNearPoint { get; private set; }
 
-        public double b_coastLine { get; private set; }
-        public double b_coastLineLatitude { get; private set; }
         public Line CoastLine { get; private set; }
 
         public ContinentalGrid(double centerLatitude, double cellSize, 
             double studyAreaWidthInCells, double studyAreaHeightInCells, 
             double centerPtDistanceInland_kilometers)
         {
-            this.GridOriginLatitude = centerLatitude - (double) this.Rows / 2.0;
             this.CellSize = cellSize;
             this.Columns = (int) studyAreaWidthInCells;
             this.Rows = (int) studyAreaHeightInCells;
             this.StudyAreaWidthMeters = studyAreaWidthInCells * cellSize;
             this.StudyAreaHeightMeters = studyAreaHeightInCells * cellSize;
-            this.GridOriginLatitude = centerLatitude - this.StudyAreaHeightMeters / 2.0;
+            double studyAreaHeightDegreesLatitude = this.StudyAreaHeightMeters / ContinentalGrid.metersPerDegreeLat;
+            this.GridOriginLatitude = centerLatitude - studyAreaHeightDegreesLatitude / 2.0;
             this.CenterPoint = 
                 new Point(this.StudyAreaWidthMeters / 2.0, this.StudyAreaHeightMeters / 2.0);
             this.CoastNearPoint = 
                 this.CenterPoint + new LineSegment(1000.0 * centerPtDistanceInland_kilometers, 135.0);
 
-            this.b_coastLine = -this.CoastNearPoint.X;
-            this.b_coastLineLatitude =
-                centerLatitude - (this.CenterPoint.Y - this.b_coastLine) /
-                                        metersPerDegreeLat;
+            this.CoastLine = new Line(this.CoastNearPoint, 1.0);
 
-            this.CoastLine = new Line(new Point(0.0, this.b_coastLine), 1.0);
 
             // test coordinate conversion
             //var aPoint = this.siteIndexToCoordinates(20, 20);

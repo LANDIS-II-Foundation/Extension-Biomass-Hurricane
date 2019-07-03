@@ -21,7 +21,7 @@ namespace Landis.Extension.BaseHurricane
         public double stormTrackHeading { get; set; }
         private double stormTrackSlope { get; set; }
         private double stormTrackPerpandicularSlope { get; set; }
-        private Point landfallPoint { get; set; }
+        public Point LandfallPoint { get; set; }
         private Line stormTrackLine { get; set; }
         internal ContinentalGrid ContinentalGrid { get; private set; }
 
@@ -30,11 +30,11 @@ namespace Landis.Extension.BaseHurricane
         {
             this.hurricaneNumber = hurricaneNumber;
             this.landfallMaxWindSpeed = windSpeedGenerator.getWindSpeed();
-            this.landfallLatitude = 34.3;   /// For testing only. Do not commit this line.
+            this.landfallLatitude = 34.3;   /// For unit testing only.
             if(PlugIn.ModelCore != null)
                 this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;
             this.distanceInlandToCenterPoint = distanceInland;
-            this.stormTrackHeading = 310.0;  /// For testing only. Do not commit this line.
+            this.stormTrackHeading = 310.0;  /// For unit testing only.
             if(PlugIn.ModelCore != null)
                 this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0;
             var modHeading = (this.stormTrackHeading - 315) * Math.PI / 180.0;
@@ -43,8 +43,8 @@ namespace Landis.Extension.BaseHurricane
             this.stormTrackSlope = 1 / Math.Tan(this.stormTrackHeading * Math.PI / 180.0);
             this.stormTrackPerpandicularSlope = -1.0 / this.stormTrackSlope;
             double landfallY = continentalGrid.ConvertLatitudeToGridUnits(this.landfallLatitude);
-            this.landfallPoint = continentalGrid.CoastLine.GivenYGetPoint(landfallY);
-            this.stormTrackLine = new Line(this.landfallPoint, this.stormTrackSlope);
+            this.LandfallPoint = continentalGrid.CoastLine.GivenYGetPoint(landfallY);
+            this.stormTrackLine = new Line(this.LandfallPoint, this.stormTrackSlope);
         }
 
         ExtensionType IDisturbance.Type => PlugIn.ExtType;
