@@ -22,13 +22,36 @@ namespace Landis.Extension.BaseHurricane
 
         public Point GivenXGetPoint(double x)
         {
-            return new Point(x, this.Slope * x);
+            return new Point(x, (this.Slope * x) + this.b);
         }
 
         public Point GivenYGetPoint(double y)
         {
             double deltaY = this.b - y;
             return new Point(deltaY / -this.Slope, y);
+        }
+
+        public (double, double) GetDistanceAndOffset(Point pt)
+        {
+            double offset = Math.Abs(this.Slope*pt.X - 1.0 * pt.Y + this.b) /
+                Math.Sqrt(Math.Pow(this.Slope, 2.0) + 1.0);
+
+            double perpandicularSlope = -1.0 / this.Slope;
+            Line perpandicularLine = new Line(pt, perpandicularSlope);
+            Point nearPoint = this.GetIntersectionPoint(perpandicularLine);
+            double dx = nearPoint.X;
+            double dy = nearPoint.Y - this.b;
+            double distanceFromYIntercept = Math.Sqrt(dx*dx + dy*dy);
+
+            return (distanceFromYIntercept, offset);
+        }
+
+        internal Point GetIntersectionPoint(Line otherLine)
+        {
+            // From https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection#Given_the_equations_of_the_lines
+            double x = (otherLine.b - this.b) / (this.Slope - otherLine.Slope);
+            double y = this.GivenXGetPoint(x).Y;
+            return new Point(x, y);
         }
     }
 

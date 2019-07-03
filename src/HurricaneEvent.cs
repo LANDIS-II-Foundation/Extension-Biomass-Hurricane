@@ -21,8 +21,8 @@ namespace Landis.Extension.BaseHurricane
         public double stormTrackHeading { get; set; }
         private double stormTrackSlope { get; set; }
         private double stormTrackPerpandicularSlope { get; set; }
-        public Point LandfallPoint { get; set; }
-        private Line stormTrackLine { get; set; }
+        public Point LandfallPoint { get; private set; }
+        public Line StormTrackLine { get; private set; }
         internal ContinentalGrid ContinentalGrid { get; private set; }
 
         public HurricaneEvent(int hurricaneNumber, WindSpeedGenerator windSpeedGenerator, 
@@ -44,7 +44,20 @@ namespace Landis.Extension.BaseHurricane
             this.stormTrackPerpandicularSlope = -1.0 / this.stormTrackSlope;
             double landfallY = continentalGrid.ConvertLatitudeToGridUnits(this.landfallLatitude);
             this.LandfallPoint = continentalGrid.CoastLine.GivenYGetPoint(landfallY);
-            this.stormTrackLine = new Line(this.LandfallPoint, this.stormTrackSlope);
+            this.StormTrackLine = new Line(this.LandfallPoint, this.stormTrackSlope);
+        }
+
+        public (double, double) GetDistanceAndOffset(Point pt)
+        {
+            double landfallPtDx = this.LandfallPoint.X;
+            double landfallPtDy = this.LandfallPoint.Y - this.StormTrackLine.b;
+            double landfallDistanceToIntercept =
+                Math.Sqrt(landfallPtDx * landfallPtDx + landfallPtDy * landfallPtDy);
+
+            (double nearPtDistYintercept, double offset) = this.StormTrackLine.GetDistanceAndOffset(pt);
+            double distNearPtToLandfall = landfallDistanceToIntercept - nearPtDistYintercept;
+
+            return (distNearPtToLandfall, offset);
         }
 
         ExtensionType IDisturbance.Type => PlugIn.ExtType;

@@ -55,5 +55,32 @@ namespace HurricaneUnitTests
             Assert.IsTrue(result);
         }
 
+        [TestMethod]
+        public void Test_Line_StormTrack()
+        {
+            Assert.IsNotNull(storm1.StormTrackLine);
+
+            double expectedYintercept = 57163.8428;
+            bool result = new Point(0.0, storm1.StormTrackLine.b) == new Point(0.0, expectedYintercept);
+            Assert.IsTrue(result);
+        }
+
+        /// <summary>
+        /// Given a point, is the distance and offset from the storm's landfall point
+        /// to the given point correct?
+        /// </summary>
+        [TestMethod]
+        public void Test_Line_GetDistanceAndOffset_IsCorrect()
+        {
+            Point testPt = new Point(43600.0, 26500.0);
+            (double distance, double offset) = storm1.GetDistanceAndOffset(testPt);
+
+            bool result = Math.Abs(offset - 4535.6734) < 0.001;
+            Assert.IsTrue(result);
+
+            result = Math.Abs(distance - 155083.064) < 0.001;
+            Assert.IsTrue(result);
+
+        }
     }
 }
