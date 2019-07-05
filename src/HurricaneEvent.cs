@@ -60,6 +60,55 @@ namespace Landis.Extension.BaseHurricane
             return (distNearPtToLandfall, offset);
         }
 
+        /// <summary>
+        /// Equation for the second derivitive of the hyperbola.
+        /// </summary>
+        /// <returns></returns>
+        private double secondDerivHyperobla(double x, double a, double b)
+        {
+            double a2 = Math.Pow(a, 2);
+            double x2 = Math.Pow(x, 2);
+            double y = b /
+                (a2 + x2) * Math.Sqrt(1.0 + (x2 / a2));
+            
+            return y;
+        }
+
+        /// <summary>
+        /// Field equation of maximum wind speed by returning a speed when given a distance
+        /// down the track (x) and the distance lateral to the track (offset).
+        /// The model is implemented as 
+        /// </summary>
+        /// <param name="x">Distance down the storm track from landfall.</param>
+        /// <param name="offset">Signed perpandicular distance from the track to the point
+        /// of interest.</param>
+        /// <param name="PeakSpeed">Wind speed at landfall</param>
+        /// <param name="a">From hyperbola a; 2 * the inflection point distance</param>
+        /// <returns>Maximum wind speed at the given point.</returns>
+        public double ComputeMaxWindSpeed(double x, double offset, double PeakSpeed=180.0, double a=360.0)
+        {
+            double baseSpeed = 48.0;
+            double Pb = PeakSpeed - baseSpeed;
+            double b = Pb * a * a;
+
+            double speedAtOffset0 = this.secondDerivHyperobla(x: x, a: a, b: b) + baseSpeed;
+
+            a = a / 2.0;
+            Pb = speedAtOffset0 - baseSpeed;
+            b = Pb * a * a;
+
+            return this.secondDerivHyperobla(x: offset, a: a, b: b) + baseSpeed;
+        }
+
+        public double GetMaxWindSpeedAtPoint(Point point)
+        {
+            (var distance, var offset) = this.GetDistanceAndOffset(point);
+
+            double speed = this.ComputeMaxWindSpeed(distance, offset);
+
+            return speed;
+        }
+
         ExtensionType IDisturbance.Type => PlugIn.ExtType;
         ActiveSite IDisturbance.CurrentSite => this.currentSite;
         public bool MarkCohortForDeath(ICohort cohort)
