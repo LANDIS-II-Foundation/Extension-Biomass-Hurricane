@@ -99,6 +99,14 @@ namespace HurricaneUnitTests
             result = Math.Abs(test60 - 60.3) < 0.15;
             Assert.IsTrue(result);
 
+            var testRight = storm1.ComputeMaxWindSpeed(x: 76.0, offset: 60.0, a: 228.0);
+            var testLeft = storm1.ComputeMaxWindSpeed(x: 76.0, offset: -60.0, a: 228.0);
+
+            result = Math.Abs(testRight - 96.9) < 0.15;
+            Assert.IsTrue(result);
+
+            result = Math.Abs(testLeft - 87.0) < 0.15;
+            Assert.IsTrue(result);
         }
 
         [TestMethod]

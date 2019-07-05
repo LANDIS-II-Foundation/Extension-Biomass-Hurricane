@@ -87,16 +87,23 @@ namespace Landis.Extension.BaseHurricane
         /// <param name="PeakSpeed">Wind speed at landfall</param>
         /// <param name="a">From hyperbola a; 2 * the inflection point distance</param>
         /// <returns>Maximum wind speed at the given point.</returns>
-        public double ComputeMaxWindSpeed(double x, double offset, double a=360.0)
+        public double ComputeMaxWindSpeed(double x, double offset, double a=360.0, double? maxWindSpeedAt00=null)
         {
             double PeakSpeed = this.landfallMaxWindSpeed;
+            if(maxWindSpeedAt00 != null)
+                PeakSpeed = (double) maxWindSpeedAt00;
             double baseSpeed = HurricaneEvent.baseWindSpeed;
             double Pb = PeakSpeed - baseSpeed;
             double b = Pb * a * a;
 
             double speedAtOffset0 = this.secondDerivHyperobla(x: x, a: a, b: b) + baseSpeed;
 
-            a = a / 2.0;
+            /* Bookmark: Adjust 'a' for side winds */
+            if(offset > 0.0)
+                a *= 0.667;
+            else
+                a *= 0.45;
+
             Pb = speedAtOffset0 - baseSpeed;
             b = Pb * a * a;
 
