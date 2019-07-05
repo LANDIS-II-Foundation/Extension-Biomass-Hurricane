@@ -12,6 +12,8 @@ namespace Landis.Extension.BaseHurricane
         private ActiveSite currentSite;
 
         private static WindSpeedGenerator windSpeedGenerator = null;
+        private static double baseWindSpeed = 48.0; // Asymptotic minimum max wind speed of a 
+                                                    // storm.
 
         public int hurricaneNumber { get; set; }
         public double landfallMaxWindSpeed { get; set; }
@@ -68,8 +70,8 @@ namespace Landis.Extension.BaseHurricane
         {
             double a2 = Math.Pow(a, 2);
             double x2 = Math.Pow(x, 2);
-            double y = b /
-                (a2 + x2) * Math.Sqrt(1.0 + (x2 / a2));
+            double y =              b /
+                ( (a2 + x2) * Math.Sqrt(1.0 + (x2 / a2)) );
             
             return y;
         }
@@ -85,9 +87,10 @@ namespace Landis.Extension.BaseHurricane
         /// <param name="PeakSpeed">Wind speed at landfall</param>
         /// <param name="a">From hyperbola a; 2 * the inflection point distance</param>
         /// <returns>Maximum wind speed at the given point.</returns>
-        public double ComputeMaxWindSpeed(double x, double offset, double PeakSpeed=180.0, double a=360.0)
+        public double ComputeMaxWindSpeed(double x, double offset, double a=360.0)
         {
-            double baseSpeed = 48.0;
+            double PeakSpeed = this.landfallMaxWindSpeed;
+            double baseSpeed = HurricaneEvent.baseWindSpeed;
             double Pb = PeakSpeed - baseSpeed;
             double b = Pb * a * a;
 

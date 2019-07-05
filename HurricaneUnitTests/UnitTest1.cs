@@ -82,5 +82,33 @@ namespace HurricaneUnitTests
             Assert.IsTrue(result);
 
         }
+
+        [TestMethod]
+        public void Test_Windfield_Equation()
+        {
+            var test119 = storm1.ComputeMaxWindSpeed(x: 0.0, offset: 0.0, a: 228.0);
+            var test108 = storm1.ComputeMaxWindSpeed(x:76.0, offset: 0.0, a: 228.0);
+            var test60 = storm1.ComputeMaxWindSpeed(x: 339.6, offset: 0.0, a: 228.0);
+
+            bool result = Math.Abs(test119 - 119.1) < 0.15;
+            Assert.IsTrue(result);
+
+            result = Math.Abs(test108 - 108.7) < 0.15;
+            Assert.IsTrue(result);
+
+            result = Math.Abs(test60 - 60.3) < 0.15;
+            Assert.IsTrue(result);
+
+        }
+
+        [TestMethod]
+        public void Test_WindSpeed_Get()
+        {
+            Point testPt = new Point(43600.0, 26500.0);
+            double maxSpeed = storm1.GetMaxWindSpeedAtPoint(testPt);
+
+            bool result = Math.Abs(maxSpeed - 55.795) < 0.001;
+            //Assert.IsTrue(result);
+        }
     }
 }
