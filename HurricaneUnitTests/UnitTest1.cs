@@ -16,7 +16,7 @@ namespace HurricaneUnitTests
         {
             windGen = new WindSpeedGenerator(67.59, 119.09, 241.40);
             grid = new ContinentalGrid(35.11, 100, 436, 265, 160.934);
-            storm1 = new HurricaneEvent(1, windGen, 160.934, grid);
+            storm1 = new HurricaneEvent(1, windGen, grid);
         }
 
         [TestMethod]
