@@ -102,6 +102,15 @@ namespace Landis.Extension.BaseHurricane
             return new Point(newX, newY);
         }
 
+        public static LineSegment operator -(Point fromPt, Point toPoint)
+        {
+            double dx = fromPt.X - toPoint.X;
+            double dy = fromPt.Y - toPoint.Y;
+            double length = Math.Sqrt(dx * dx + dy * dy);
+            double angle = Math.Atan2(dy, dx);
+            return new LineSegment(length, angle);
+        }
+
         public static bool operator ==(Point p1, Point p2)
         {
             return (Math.Abs(p2.X - p1.X) < 0.001 &&
