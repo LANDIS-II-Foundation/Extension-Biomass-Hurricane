@@ -18,35 +18,34 @@ namespace Landis.Extension.BaseHurricane
         public int hurricaneNumber { get; set; }
         public double landfallMaxWindSpeed { get; set; }
         public double landfallLatitude { get; set; }
-        public double distanceInlandToCenterPoint { get; set; }
         public double stormTrackEffectiveDistanceToCenterPoint { get; set; }
         public double stormTrackHeading { get; set; }
         private double stormTrackSlope { get; set; }
         private double stormTrackPerpandicularSlope { get; set; }
         public Point LandfallPoint { get; private set; }
         public Line StormTrackLine { get; private set; }
+        private double stormTrackLengthTo_b { get; set; }
         internal ContinentalGrid ContinentalGrid { get; private set; }
 
         public HurricaneEvent(int hurricaneNumber, WindSpeedGenerator windSpeedGenerator, 
-            double distanceInland, ContinentalGrid continentalGrid)
+            ContinentalGrid continentalGrid)
         {
             this.hurricaneNumber = hurricaneNumber;
             this.landfallMaxWindSpeed = windSpeedGenerator.getWindSpeed();
             this.landfallLatitude = 34.3;   /// For unit testing only.
             if(PlugIn.ModelCore != null)
                 this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;
-            this.distanceInlandToCenterPoint = distanceInland;
             this.stormTrackHeading = 310.0;  /// For unit testing only.
             if(PlugIn.ModelCore != null)
                 this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0;
             var modHeading = (this.stormTrackHeading - 315) * Math.PI / 180.0;
-            this.stormTrackEffectiveDistanceToCenterPoint = 
-                this.distanceInlandToCenterPoint / Math.Cos(modHeading);
             this.stormTrackSlope = 1 / Math.Tan(this.stormTrackHeading * Math.PI / 180.0);
             this.stormTrackPerpandicularSlope = -1.0 / this.stormTrackSlope;
             double landfallY = continentalGrid.ConvertLatitudeToGridUnits(this.landfallLatitude);
             this.LandfallPoint = continentalGrid.CoastLine.GivenYGetPoint(landfallY);
             this.StormTrackLine = new Line(this.LandfallPoint, this.stormTrackSlope);
+            var stormTrackInterceptPt = this.StormTrackLine.GivenXGetPoint(0.0);
+            this.stormTrackLengthTo_b = (this.LandfallPoint - stormTrackInterceptPt).Length;
         }
 
         public (double, double) GetDistanceAndOffset(Point pt)
@@ -81,11 +80,12 @@ namespace Landis.Extension.BaseHurricane
         /// down the track (x) and the distance lateral to the track (offset).
         /// The model is implemented as 
         /// </summary>
-        /// <param name="x">Distance down the storm track from landfall.</param>
+        /// <param name="x">Distance down the storm track from landfall (kilometers).</param>
         /// <param name="offset">Signed perpandicular distance from the track to the point
         /// of interest.</param>
         /// <param name="PeakSpeed">Wind speed at landfall</param>
-        /// <param name="a">From hyperbola a; 2 * the inflection point distance</param>
+        /// <param name="a">From hyperbola a; 2 * the inflection point distance. 
+        /// Unit is kilometers, then the value is adjusted to be in meters. </param>
         /// <returns>Maximum wind speed at the given point.</returns>
         public double ComputeMaxWindSpeed(double x, double offset, double a=360.0, double? maxWindSpeedAt00=null)
         {
@@ -94,9 +94,10 @@ namespace Landis.Extension.BaseHurricane
                 PeakSpeed = (double) maxWindSpeedAt00;
             double baseSpeed = HurricaneEvent.baseWindSpeed;
             double Pb = PeakSpeed - baseSpeed;
+            a *= 1000.0;
             double b = Pb * a * a;
 
-            double speedAtOffset0 = this.secondDerivHyperobla(x: x, a: a, b: b) + baseSpeed;
+            double speedAtOffset0 = this.secondDerivHyperobla(x: x*1000.0, a: a, b: b) + baseSpeed;
 
             /* Bookmark: Adjust 'a' for side winds */
             if(offset > 0.0)
@@ -107,7 +108,7 @@ namespace Landis.Extension.BaseHurricane
             Pb = speedAtOffset0 - baseSpeed;
             b = Pb * a * a;
 
-            return this.secondDerivHyperobla(x: offset, a: a, b: b) + baseSpeed;
+            return this.secondDerivHyperobla(x: offset * 1000.0, a: a, b: b) + baseSpeed;
         }
 
         public double GetMaxWindSpeedAtPoint(Point point)
@@ -134,8 +135,8 @@ namespace Landis.Extension.BaseHurricane
             Dimensions dimensions = new Dimensions(modelCore.Landscape.Rows, modelCore.Landscape.Columns);
             int columns = modelCore.Landscape.Columns;
             int rows = modelCore.Landscape.Rows;
-            double lowerLeftWindspeed = this.GetWindSpeed(0, rows);
-            double lowerRightWindSpeed = this.GetWindSpeed(columns, rows);
+            //double lowerLeftWindspeed = this.GetWindSpeed(0, rows);
+            //double lowerRightWindSpeed = this.GetWindSpeed(columns, rows);
             double upperRightWindSpeed = this.GetWindSpeed(columns, 0);
             IOutputRaster<BytePixel> outputRaster = null;
             using(outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
@@ -164,7 +165,7 @@ namespace Landis.Extension.BaseHurricane
         private double GetWindSpeed(int column, int row)
         {
             Point pt = this.ContinentalGrid.siteIndexToCoordinates(column, row);
-            return 0.0;
+            return this.GetMaxWindSpeedAtPoint(pt);
             //this.
         }
     }
