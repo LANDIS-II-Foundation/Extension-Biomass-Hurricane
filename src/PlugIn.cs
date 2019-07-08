@@ -126,8 +126,7 @@ namespace Landis.Extension.BaseHurricane
                 stormsThisYear = 2;  // todo: remove this line.
                 foreach(var stormCount in Enumerable.Range(0, stormsThisYear))
                 {
-                    var storm = new HurricaneEvent(stormCount+1, this.windSpeedGenerator, 
-                        this.parameters.CenterPointDistanceInland, this.ContinentalGrid);
+                    var storm = new HurricaneEvent(stormCount+1, this.windSpeedGenerator, this.ContinentalGrid);
 
                     storm.GenerateWindFieldRaster(this.mapNameTemplate, PlugIn.modelCore, this.ContinentalGrid);
 
