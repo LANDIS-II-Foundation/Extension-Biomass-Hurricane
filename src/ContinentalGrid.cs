@@ -43,6 +43,7 @@ namespace Landis.Extension.BaseHurricane
             double dy = nearPoint.Y - this.b;
             double distanceFromYIntercept = Math.Sqrt(dx*dx + dy*dy);
 
+            if(pt.X - dx < 0.0) offset *= -1.0;
             return (distanceFromYIntercept, offset);
         }
 
@@ -175,7 +176,7 @@ namespace Landis.Extension.BaseHurricane
         /// <returns></returns>
         public Point siteIndexToCoordinates(int column, int row)
         {
-            int upRow = this.Rows - row - 1;
+            int upRow = this.Rows - row;
             return new Point((double)column * this.CellSize, (double)upRow * this.CellSize);
         }
 

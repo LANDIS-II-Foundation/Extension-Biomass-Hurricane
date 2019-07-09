@@ -87,8 +87,8 @@ namespace HurricaneUnitTests
         public void Test_Windfield_Equation()
         {
             var test119 = storm1.ComputeMaxWindSpeed(x: 0.0, offset: 0.0, a: 228.0);
-            var test108 = storm1.ComputeMaxWindSpeed(x:76.0, offset: 0.0, a: 228.0);
-            var test60 = storm1.ComputeMaxWindSpeed(x: 339.6, offset: 0.0, a: 228.0);
+            var test108 = storm1.ComputeMaxWindSpeed(x:76.0 * 1000.0, offset: 0.0, a: 228.0);
+            var test60 = storm1.ComputeMaxWindSpeed(x: 339.6 * 1000.0, offset: 0.0, a: 228.0);
 
             bool result = Math.Abs(test119 - 119.1) < 0.15;
             Assert.IsTrue(result);
@@ -99,8 +99,8 @@ namespace HurricaneUnitTests
             result = Math.Abs(test60 - 60.3) < 0.15;
             Assert.IsTrue(result);
 
-            var testRight = storm1.ComputeMaxWindSpeed(x: 76.0, offset: 60.0, a: 228.0);
-            var testLeft = storm1.ComputeMaxWindSpeed(x: 76.0, offset: -60.0, a: 228.0);
+            var testRight = storm1.ComputeMaxWindSpeed(x: 76.0 * 1000.0, offset: 60.0 * 1000.0, a: 228.0);
+            var testLeft = storm1.ComputeMaxWindSpeed(x: 76.0 * 1000.0, offset: -60.0 * 1000.0, a: 228.0);
 
             result = Math.Abs(testRight - 96.9) < 0.15;
             Assert.IsTrue(result);
@@ -110,13 +110,35 @@ namespace HurricaneUnitTests
         }
 
         [TestMethod]
-        public void Test_WindSpeed_Get()
+        public void Test_WindSpeed_GivenGridCoordinates_Get()
         {
             Point testPt = new Point(43600.0, 26500.0);
             double maxSpeed = storm1.GetMaxWindSpeedAtPoint(testPt);
 
-            bool result = Math.Abs(maxSpeed - 55.795) < 0.001;
-            //Assert.IsTrue(result);
+            bool result = Math.Abs(maxSpeed - 103.040) < 0.001;
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void Test_WindSpeed_AtThreePrincipleCorners()
+        {
+            (int LLrow, int LLcol) = (265, 0);
+            (int LRrow, int LRcol) = (265, 436);
+            (int URrow, int URcol) = (0, 436);
+
+            double LLwindspeed = storm1.GetWindSpeed(LLcol, LLrow);
+            double LRwindspeed = storm1.GetWindSpeed(LRcol, LRrow); 
+            double URwindspeed = storm1.GetWindSpeed(URcol, URrow);
+
+            bool result = Math.Abs(LLwindspeed - 95.07) < 0.015;
+            Assert.IsTrue(result);
+
+            result = Math.Abs(LRwindspeed - 105.06) < 0.015;
+            Assert.IsTrue(result);
+
+            result = Math.Abs(URwindspeed - 103.04) < 0.015;
+            Assert.IsTrue(result);
+
         }
     }
 }
