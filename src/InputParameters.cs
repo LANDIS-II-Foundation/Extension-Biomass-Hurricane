@@ -36,6 +36,11 @@ namespace Landis.Extension.BaseHurricane
 		}
 
         public List<double> StormOccurenceProbabilities { get; set; }
+
+        //               <species name      <max age,        <max wind kph, mort probability>>>
+        public Dictionary<string, Dictionary<double, Dictionary<double, double>>>
+            windSpeedVulnverabilities { get; set; }
+
         public double LowBoundLandfallWindSpeed { get; set; }
         public double ModeLandfallWindSpeed { get; set; }
         public double HighBoundLandfallWindspeed { get; set; }

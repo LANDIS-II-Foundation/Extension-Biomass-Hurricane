@@ -48,12 +48,13 @@ namespace Landis.Extension.BaseHurricane
             var centerPointLatitude = "CenterPointLatitude";
             var centerPointDistanceInland = "CenterPointDistanceInland";
             var windSeverities = "WindSeverities";
+            var windSpeedVuln = "WindSpeedVulnerabilities";
             var fortBragg = "FortBragg";
 
 
 
             var sectionNames = new HashSet<System.String> {stormOccurProb, 
-                windSeverities, fortBragg };
+                windSeverities, windSpeedVuln, fortBragg };
 
             var singleLineNames = new HashSet<System.String> {lowBoundLandfallWindSpeed,
                 modeLandfallWindSpeed, highBoundLandfallWindSpeed,
@@ -80,14 +81,13 @@ namespace Landis.Extension.BaseHurricane
                     GetNextLine();
                     if(lastOperation == stormOccurProb)
                     {
-                        parameters.StormOccurenceProbabilities = new List<double>();
-                        while(!(sectionNames.Contains(this.CurrentName) || 
-                            singleLineNames.Contains(this.CurrentName)))
-                        {
-                            row = parseLine(this.CurrentLine);
-                            parameters.StormOccurenceProbabilities.Add(Convert.ToDouble(row[1]));
-                            GetNextLine();
-                        }
+                        populateStormOccurenceProbabilities(
+                            parameters, sectionNames, singleLineNames, parseLine);
+                    }
+                    else if (lastOperation == windSpeedVuln)
+                    {
+                        populateWindSpeedVulnverabilities(
+                            parameters, sectionNames, singleLineNames, parseLine);
                     }
                     lastOperation = this.CurrentName;
                 }
@@ -263,6 +263,71 @@ namespace Landis.Extension.BaseHurricane
             CheckNoDataAfter(string.Format("the {0} parameter", logFile.Name));
 
             return parameters; //.GetComplete();
+        }
+
+        private void populateWindSpeedVulnverabilities(
+            InputParameters parameters, 
+            HashSet<string> sectionNames, HashSet<string> singleLineNames, 
+            Func<string, string[]> parseLine)
+        {
+            string[] aRow;
+            parameters.windSpeedVulnverabilities =
+                new Dictionary<string, Dictionary<double, Dictionary<double, double>>>();
+
+            while(!(sectionNames.Contains(this.CurrentName) ||
+                singleLineNames.Contains(this.CurrentName)))
+            {
+                aRow = parseLine(this.CurrentLine);
+                string speciesName = aRow[0];
+                if(!parameters.windSpeedVulnverabilities.ContainsKey(speciesName))
+                    parameters.windSpeedVulnverabilities[speciesName] =
+                        new Dictionary<double, Dictionary<double, double>>();
+
+                double age = Convert.ToDouble(aRow[1]);
+                var dataVals = aRow.SliceToEnd(2);
+                Dictionary<double, double> probabilities = new Dictionary<double, double>();
+                foreach(var entry in dataVals)
+                {
+                    var split = entry.Split(':');
+                    var speed = Convert.ToDouble(split[0]);
+                    var probability = Convert.ToDouble(split[1]);
+                    probabilities[speed] = probability;
+                }
+                var cohortAges = new Dictionary<double, Dictionary<double, double>>();
+                cohortAges[age] = probabilities;
+
+                parameters.windSpeedVulnverabilities[speciesName][age] = probabilities;
+
+                //parameters.windSpeedVulnverabilities;
+                GetNextLine();
+            }
+        }
+
+        private void populateStormOccurenceProbabilities(
+            InputParameters parameters, HashSet<string> sectionNames, 
+            HashSet<string> singleLineNames, Func<string, string[]> parseLine)
+        {
+            string[] aRow;
+            parameters.StormOccurenceProbabilities = new List<double>();
+            while(!(sectionNames.Contains(this.CurrentName) ||
+                singleLineNames.Contains(this.CurrentName)))
+            {
+                aRow = parseLine(this.CurrentLine);
+                parameters.StormOccurenceProbabilities.Add(Convert.ToDouble(aRow[1]));
+                GetNextLine();
+            }
+        }
+    }
+
+    public static class ExtensionMethods
+    {
+        public static List<string> SliceToEnd(this string[] strArray, int startIdx)
+        {
+            var len = strArray.Length;
+            var retList = new List<string>(strArray);
+            retList = retList.GetRange(startIdx, len - startIdx);
+            return retList;
+
         }
     }
 }

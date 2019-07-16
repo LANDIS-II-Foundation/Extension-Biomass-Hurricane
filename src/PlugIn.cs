@@ -128,7 +128,8 @@ namespace Landis.Extension.BaseHurricane
                 {
                     var storm = new HurricaneEvent(stormCount+1, this.windSpeedGenerator, this.ContinentalGrid);
 
-                    storm.GenerateWindFieldRaster(this.mapNameTemplate, PlugIn.modelCore, this.ContinentalGrid);
+                    bool impactsOurSite = 
+                        storm.GenerateWindFieldRaster(this.mapNameTemplate, PlugIn.modelCore, this.ContinentalGrid);
 
                     LogEvent(PlugIn.ModelCore.CurrentTime, storm);
                 }
@@ -152,25 +153,25 @@ namespace Landis.Extension.BaseHurricane
             //ModelCore.UI.WriteLine("  Hurricane events: {0}", eventCount);
 
             //  Write hurricane wind severity map
-            string path = MapNames.ReplaceTemplateVars(mapNameTemplate, PlugIn.modelCore.CurrentTime);
-            Dimensions dimensions = new Dimensions(modelCore.Landscape.Rows, modelCore.Landscape.Columns);
-            using(IOutputRaster<BytePixel> outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
-            {
-                BytePixel pixel = outputRaster.BufferPixel;
-                foreach(Site site in PlugIn.ModelCore.Landscape.AllSites) {
-                    if(site.IsActive) {
-                        if(SiteVars.Disturbed[site])
-                            pixel.MapCode.Value = (byte)(SiteVars.Severity[site] + 1);
-                        else
-                            pixel.MapCode.Value = 1;
-                    }
-                    else {
-                        //  Inactive site
-                        pixel.MapCode.Value = 0;
-                    }
-                    outputRaster.WriteBufferPixel();
-                }
-            }
+            //string path = MapNames.ReplaceTemplateVars(mapNameTemplate, PlugIn.modelCore.CurrentTime);
+            //Dimensions dimensions = new Dimensions(modelCore.Landscape.Rows, modelCore.Landscape.Columns);
+            //using(IOutputRaster<BytePixel> outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
+            //{
+            //    BytePixel pixel = outputRaster.BufferPixel;
+            //    foreach(Site site in PlugIn.ModelCore.Landscape.AllSites) {
+            //        if(site.IsActive) {
+            //            if(SiteVars.Disturbed[site])
+            //                pixel.MapCode.Value = (byte)(SiteVars.Severity[site] + 1);
+            //            else
+            //                pixel.MapCode.Value = 1;
+            //        }
+            //        else {
+            //            //  Inactive site
+            //            pixel.MapCode.Value = 0;
+            //        }
+            //        outputRaster.WriteBufferPixel();
+            //    }
+            //}
 
             WriteSummaryLog(PlugIn.modelCore.CurrentTime);
             summaryTotalSites = 0;

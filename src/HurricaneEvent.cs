@@ -2,6 +2,7 @@
 using Landis.Library.AgeOnlyCohorts;
 using Landis.SpatialModeling;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,6 +15,7 @@ namespace Landis.Extension.BaseHurricane
         private static WindSpeedGenerator windSpeedGenerator = null;
         private static double baseWindSpeed = 48.0; // Asymptotic minimum max wind speed of a 
                                                     // storm.
+        private static double minimumWSforDamage = baseWindSpeed + 1.0;
 
         public int hurricaneNumber { get; set; }
         public double landfallMaxWindSpeed { get; set; }
@@ -128,7 +130,7 @@ namespace Landis.Extension.BaseHurricane
             return false;
         }
 
-        internal void GenerateWindFieldRaster(
+        internal bool GenerateWindFieldRaster(
             string mapNameTemplate, ICore modelCore, ContinentalGrid continentalGrid)
         {
             this.ContinentalGrid = continentalGrid;
@@ -136,9 +138,12 @@ namespace Landis.Extension.BaseHurricane
             Dimensions dimensions = new Dimensions(modelCore.Landscape.Rows, modelCore.Landscape.Columns);
             int columns = modelCore.Landscape.Columns;
             int rows = modelCore.Landscape.Rows;
-            double lowerLeftWindspeed = this.GetWindSpeed(0, rows);
-            double lowerRightWindSpeed = this.GetWindSpeed(columns, rows);
-            double upperRightWindSpeed = this.GetWindSpeed(columns, 0);
+            double lowerLeftWindspeed = this.GetWindSpeed(0, 0);
+            double lowerRightWindSpeed = this.GetWindSpeed(columns, 0);
+            double upperRightWindSpeed = this.GetWindSpeed(columns, rows);
+            double maxWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed }).Max();
+            if(maxWS < minimumWSforDamage)
+                return false;
             IOutputRaster<BytePixel> outputRaster = null;
             using(outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
             {
@@ -147,19 +152,17 @@ namespace Landis.Extension.BaseHurricane
                 {
                     if(site.IsActive)
                     {
-                        if(SiteVars.Disturbed[site])
-                            pixel.MapCode.Value = (byte)(SiteVars.Severity[site] + 1);
-                        else
-                            pixel.MapCode.Value = 1;
+                        pixel.MapCode.Value = (byte)(this.GetWindSpeed(site.Location.Column, site.Location.Row));
                     }
                     else
                     {
                         //  Inactive site
-                        pixel.MapCode.Value = 0;
+                        pixel.MapCode.Value = (byte)93;
                     }
                     outputRaster.WriteBufferPixel();
                 }
             }
+            return true;
 
         }
 
