@@ -86,8 +86,9 @@ namespace Landis.Extension.BaseHurricane
                     }
                     else if (lastOperation == windSpeedVuln)
                     {
-                        populateWindSpeedVulnverabilities(
-                            parameters, sectionNames, singleLineNames, parseLine);
+                        parameters.windSpeedVulnverabilities =
+                            populateWindSpeedVulnverabilities(
+                                sectionNames, singleLineNames, parseLine);
                     }
                     lastOperation = this.CurrentName;
                 }
@@ -265,13 +266,13 @@ namespace Landis.Extension.BaseHurricane
             return parameters; //.GetComplete();
         }
 
-        private void populateWindSpeedVulnverabilities(
-            InputParameters parameters, 
+        private Dictionary<string, Dictionary<double, Dictionary<double, double>>> 
+            populateWindSpeedVulnverabilities(
             HashSet<string> sectionNames, HashSet<string> singleLineNames, 
             Func<string, string[]> parseLine)
         {
             string[] aRow;
-            parameters.windSpeedVulnverabilities =
+            var windSpeedVulnverabilities =
                 new Dictionary<string, Dictionary<double, Dictionary<double, double>>>();
 
             while(!(sectionNames.Contains(this.CurrentName) ||
@@ -279,8 +280,8 @@ namespace Landis.Extension.BaseHurricane
             {
                 aRow = parseLine(this.CurrentLine);
                 string speciesName = aRow[0];
-                if(!parameters.windSpeedVulnverabilities.ContainsKey(speciesName))
-                    parameters.windSpeedVulnverabilities[speciesName] =
+                if(!windSpeedVulnverabilities.ContainsKey(speciesName))
+                    windSpeedVulnverabilities[speciesName] =
                         new Dictionary<double, Dictionary<double, double>>();
 
                 double age = Convert.ToDouble(aRow[1]);
@@ -296,11 +297,12 @@ namespace Landis.Extension.BaseHurricane
                 var cohortAges = new Dictionary<double, Dictionary<double, double>>();
                 cohortAges[age] = probabilities;
 
-                parameters.windSpeedVulnverabilities[speciesName][age] = probabilities;
+                windSpeedVulnverabilities[speciesName][age] = probabilities;
 
                 //parameters.windSpeedVulnverabilities;
                 GetNextLine();
             }
+            return windSpeedVulnverabilities;
         }
 
         private void populateStormOccurenceProbabilities(
