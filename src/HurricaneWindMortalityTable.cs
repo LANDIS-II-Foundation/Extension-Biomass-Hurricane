@@ -17,7 +17,37 @@ namespace Landis.Extension.BaseHurricane
 
         public double GetMortalityProbability(string species, double age, double windspeed)
         {
-            return 0.0;
+            var speciesTable = this.theTable[species];
+            
+            // Note: The next two lines, running once per site, is very inefficent.
+            // To optimize it (later) will require creating a new class so the keys
+            // may be stored in sorted order.    All this is necessary because the order
+            // of keys is not guaranteed in Dictionaries.
+            var ages = new List<double>(speciesTable.Keys);
+            ages.Sort();
+            ages.Reverse();
+
+            var ageToPick = 0.0;
+            foreach(var tblAge in ages)
+            {
+                ageToPick = tblAge;
+                if(age > tblAge)
+                    break;
+            }
+
+            var speed_probabilityTable = speciesTable[ageToPick];
+            var speeds = new List<double>(speed_probabilityTable.Keys);
+            speeds.Sort();
+            speeds.Reverse();
+            var speedToUse = 0.0;
+            foreach(var tblSpeed in speeds)
+            {
+                speedToUse = tblSpeed;
+                if(windspeed > tblSpeed)
+                    break;
+            }
+
+            return speed_probabilityTable[speedToUse];
         }
 
         internal void ChangeSpeedsFromEnglishToMetric()

@@ -263,27 +263,27 @@ namespace Landis.Extension.BaseHurricane
 
             CheckNoDataAfter(string.Format("the {0} parameter", logFile.Name));
 
-            testStuff(parameters);
+            // testStuff(parameters);
 
             return parameters; //.GetComplete();
         }
 
-        private void testStuff(InputParameters parameters)
-        {
-            var speciesName = "LobPine";
-            var age = 8.0;
-            var windSpeed = 115.2;
-            var expectedProbability = 0.60;
-            double actualProbability = parameters.HurricaneMortalityTable
-                .GetMortalityProbability(speciesName, age, windSpeed);
-            var diff = expectedProbability - actualProbability;
+        //private void testStuff(InputParameters parameters)
+        //{
+        //    var speciesName = "LobPine";
+        //    var age = 8.0;
+        //    var windSpeed = 115.2 * 1.60934;
+        //    var expectedProbability = 0.60;
+        //    double actualProbability = parameters.HurricaneMortalityTable
+        //        .GetMortalityProbability(speciesName, age, windSpeed);
+        //    var diff = expectedProbability - actualProbability;
 
-            age = 15.0;
-            actualProbability = parameters.HurricaneMortalityTable
-                .GetMortalityProbability(speciesName, age, windSpeed);
-            expectedProbability = 0.65;
-            diff = expectedProbability - actualProbability;
-        }
+        //    age = 15.0;
+        //    actualProbability = parameters.HurricaneMortalityTable
+        //        .GetMortalityProbability(speciesName, age, windSpeed);
+        //    expectedProbability = 0.65;
+        //    diff = expectedProbability - actualProbability;
+        //}
 
         private HurricaneWindMortalityTable
             populateWindSpeedVulnverabilities(
