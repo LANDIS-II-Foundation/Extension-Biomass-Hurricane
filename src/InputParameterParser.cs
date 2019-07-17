@@ -86,7 +86,7 @@ namespace Landis.Extension.BaseHurricane
                     }
                     else if (lastOperation == windSpeedVuln)
                     {
-                        parameters.windSpeedVulnverabilities =
+                        parameters.HurricaneMortalityTable =
                             populateWindSpeedVulnverabilities(
                                 sectionNames, singleLineNames, parseLine);
                     }
@@ -263,10 +263,29 @@ namespace Landis.Extension.BaseHurricane
 
             CheckNoDataAfter(string.Format("the {0} parameter", logFile.Name));
 
+            testStuff(parameters);
+
             return parameters; //.GetComplete();
         }
 
-        private Dictionary<string, Dictionary<double, Dictionary<double, double>>> 
+        private void testStuff(InputParameters parameters)
+        {
+            var speciesName = "LobPine";
+            var age = 8.0;
+            var windSpeed = 115.2;
+            var expectedProbability = 0.60;
+            double actualProbability = parameters.HurricaneMortalityTable
+                .GetMortalityProbability(speciesName, age, windSpeed);
+            var diff = expectedProbability - actualProbability;
+
+            age = 15.0;
+            actualProbability = parameters.HurricaneMortalityTable
+                .GetMortalityProbability(speciesName, age, windSpeed);
+            expectedProbability = 0.65;
+            diff = expectedProbability - actualProbability;
+        }
+
+        private HurricaneWindMortalityTable
             populateWindSpeedVulnverabilities(
             HashSet<string> sectionNames, HashSet<string> singleLineNames, 
             Func<string, string[]> parseLine)
@@ -302,7 +321,7 @@ namespace Landis.Extension.BaseHurricane
                 //parameters.windSpeedVulnverabilities;
                 GetNextLine();
             }
-            return windSpeedVulnverabilities;
+            return new HurricaneWindMortalityTable(windSpeedVulnverabilities);
         }
 
         private void populateStormOccurenceProbabilities(

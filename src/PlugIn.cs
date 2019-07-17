@@ -75,7 +75,7 @@ namespace Landis.Extension.BaseHurricane
         /// </param>
         public override void Initialize()
         {
-            Console.Write("Hello Debug Hurricane");
+            // Console.Write("Hello Debug Hurricane");
             // Console.ReadKey();
             List<string> colnames = new List<string>();
             foreach(IEcoregion ecoregion in modelCore.Ecoregions)
