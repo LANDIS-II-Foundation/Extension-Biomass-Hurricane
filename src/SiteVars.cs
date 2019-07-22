@@ -80,6 +80,5 @@ namespace Landis.Extension.BaseHurricane
             }
         }
 
-        public static ISiteVar<double> WindSpeed { get; set; }
     }
 }

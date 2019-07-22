@@ -58,7 +58,7 @@ namespace Landis.Extension.BaseHurricane
             // Console.ReadKey();
             InputParameterParser parser = new InputParameterParser();
             this.parameters = Landis.Data.Load<IInputParameters>(dataFile, parser);
-            this.windSpeedGenerator = new WindSpeedGenerator(this.parameters.LowBoundLandfallWindSpeed,
+            HurricaneEvent.windSpeedGenerator = new WindSpeedGenerator(this.parameters.LowBoundLandfallWindSpeed,
                 this.parameters.ModeLandfallWindSpeed, this.parameters.HighBoundLandfallWindspeed);
         }
         //---------------------------------------------------------------------
@@ -75,8 +75,8 @@ namespace Landis.Extension.BaseHurricane
         /// </param>
         public override void Initialize()
         {
-            // Console.Write("Hello Debug Hurricane");
-            // Console.ReadKey();
+            //Console.WriteLine("Hello Debug Hurricane");
+            //Console.ReadKey();
             List<string> colnames = new List<string>();
             foreach(IEcoregion ecoregion in modelCore.Ecoregions)
             {

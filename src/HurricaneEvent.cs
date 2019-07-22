@@ -12,7 +12,7 @@ namespace Landis.Extension.BaseHurricane
     {
         private ActiveSite currentSite;
 
-        private static WindSpeedGenerator windSpeedGenerator = null;
+        internal static WindSpeedGenerator windSpeedGenerator { get; set; } = null;
         private static double baseWindSpeed = 48.0; // Asymptotic minimum max wind speed of a 
                                                     // storm.
         private static double minimumWSforDamage = baseWindSpeed + 1.0;
@@ -64,7 +64,7 @@ namespace Landis.Extension.BaseHurricane
         {
             //this.hurricaneNumber = hurricaneNumber;
             this.ContinentalGrid = continentalGrid;
-            this.landfallMaxWindSpeed = windSpeedGenerator.getWindSpeed();
+            this.landfallMaxWindSpeed = HurricaneEvent.windSpeedGenerator.getWindSpeed();
             this.landfallLatitude = 34.3;   /// For unit testing only.
             this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;
             this.stormTrackHeading = 310.0;  /// For unit testing only.
@@ -153,7 +153,7 @@ namespace Landis.Extension.BaseHurricane
 
         public bool MarkCohortForDeath(ICohort cohort)
         {
-            return false;
+            return true;
         }
 
         internal bool GenerateWindFieldRaster(
