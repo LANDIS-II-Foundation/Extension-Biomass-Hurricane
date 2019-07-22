@@ -1,0 +1,93 @@
+LandisData  "Base Hurricane"
+
+Timestep  2
+
+>> Likelihood a given year will have this number of storms
+>> On the US southeastern seaboard
+StormOccurrenceProbabilities
+ >> Storms
+ >>  Per
+ >>  Year       Probability  << Sum must = 1.0
+        0			0.01	>> 0.60  recommended values
+        1			0.09	>> 0.33
+        2       	0.10	>> 0.06
+        3          	0.80	>> 0.01
+
+InputUnitsEnglish
+
+>> Max Wind Speed at Landfall is on a log normal distribution
+LowBoundLandfallWindSpeed	42 >> mph
+ModeLandfallWindSpeed	74 >> mph
+HighBoundLandfallWindSpeed  150 >> mph  Values greater than this are recomputed, so it truncates here.
+
+>> Study area location (Center point of the raster)
+CenterPointLatitude			35.11  << decimal degrees
+CenterPointDistanceInland	100   << miles 
+
+WindSpeedVulnerabilities
+>> Species		MaxAge			Mortality Probabilities
+LobPine			10		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+LobPine			30		60:0.15   75:0.30    95:0.5    110:0.65   125:0.80    140:1.0
+LobPine			60		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+LobPine			90		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+LobPine			999		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+LongleafPine	10		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+LongleafPine	30		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+LongleafPine	60		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+LongleafPine	90		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+LongleafPine	999		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+ShortPine		10		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+ShortPine		30		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+ShortPine		60		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+ShortPine		90		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+ShortPine		999		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+SlashPine		10		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+SlashPine		30		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+SlashPine		60		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+SlashPine		90		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+SlashPine		999		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+WhiteOak		10		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+WhiteOak		30		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+WhiteOak		70		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+WhiteOak		110		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+WhiteOak		999		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+TurkeyOak		10		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+TurkeyOak		30		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+TurkeyOak		70		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+TurkeyOak		110		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+TurkeyOak		999		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+SweetGum		10		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+SweetGum		30		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+SweetGum		60		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+SweetGum		90		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+SweetGum		999		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+RedMaple		10		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+RedMaple		30		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+RedMaple		60		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+RedMaple		90		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+RedMaple		999		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+TulipTree		10		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+TulipTree		30		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+TulipTree		60		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+TulipTree		90		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+TulipTree		999		60:0.1    75:0.25    95:0.4    110:0.6    125:0.75    140:1.0
+
+>>             ___ Event Size ___   Rotation
+>> Ecoregion    Max   Mean    Min   Period
+>> ---------   ----   ----   ----   --------
+    FortBragg   400    100      4     100
+
+WindSeverities
+ >>              Cohort Age      Mortality
+ >> Severity   % of longevity   Probability
+ >> --------   --------------   -----------
+       5          0% to  20%       0.05
+       4         20% to  50%       0.1
+       3         50% to  70%       0.5
+       2         70% to  85%       0.85
+       1         85% to 100%       0.95
+
+
+MapNames  hurricane/mortalities-{timestep}.gis
+LogFile   hurricane/hurlog.csv
+
