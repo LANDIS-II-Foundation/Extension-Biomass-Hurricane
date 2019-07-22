@@ -130,7 +130,7 @@ namespace Landis.Extension.BaseHurricane
 
                     bool impactsOurSite = 
                         storm.GenerateWindFieldRaster(this.mapNameTemplate, PlugIn.modelCore, this.ContinentalGrid);
-
+                    
                     LogEvent(PlugIn.ModelCore.CurrentTime, storm);
                 }
                 this.actualYear++;
