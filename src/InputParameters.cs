@@ -38,7 +38,7 @@ namespace Landis.Extension.BaseHurricane
         public List<double> StormOccurenceProbabilities { get; set; }
 
         //               <species name      <max age,        <max wind kph, mort probability>>>
-        public HurricaneWindMortalityTable HurricaneMortalityTable { get; set; }
+        // public HurricaneWindMortalityTable HurricaneMortalityTable { get; set; }
 
         public double LowBoundLandfallWindSpeed { get; set; }
         public double ModeLandfallWindSpeed { get; set; }
@@ -52,7 +52,7 @@ namespace Landis.Extension.BaseHurricane
             this.ModeLandfallWindSpeed *= 1.60934;
             this.HighBoundLandfallWindspeed *= 1.60934;
             this.CenterPointDistanceInland *= 1.60934;
-            this.HurricaneMortalityTable.ChangeSpeedsFromEnglishToMetric();
+            HurricaneEvent.windMortalityTable.ChangeSpeedsFromEnglishToMetric();
         }
 
 

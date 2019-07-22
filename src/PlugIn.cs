@@ -123,13 +123,13 @@ namespace Landis.Extension.BaseHurricane
                 }
                 string message = stormsThisYear + " storms.";
                 if(stormsThisYear == 1) message = "1 storm.";
-                stormsThisYear = 2;  // todo: remove this line.
                 foreach(var stormCount in Enumerable.Range(0, stormsThisYear))
                 {
                     var storm = HurricaneEvent.Initiate(this.ContinentalGrid);
 
                     bool impactsOurSite = 
-                        storm.GenerateWindFieldRaster(this.mapNameTemplate, PlugIn.modelCore, this.ContinentalGrid);
+                        storm.GenerateWindFieldRaster(this.mapNameTemplate, 
+                        PlugIn.modelCore, this.ContinentalGrid);
                     
                     LogEvent(PlugIn.ModelCore.CurrentTime, storm);
                 }

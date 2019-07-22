@@ -13,6 +13,7 @@ namespace Landis.Extension.BaseHurricane
         private ActiveSite currentSite;
 
         internal static WindSpeedGenerator windSpeedGenerator { get; set; } = null;
+        internal static HurricaneWindMortalityTable windMortalityTable { get; set; } = null;
         private static double baseWindSpeed = 48.0; // Asymptotic minimum max wind speed of a 
                                                     // storm.
         private static double minimumWSforDamage = baseWindSpeed + 1.0;
@@ -151,11 +152,6 @@ namespace Landis.Extension.BaseHurricane
             return speed;
         }
 
-        public bool MarkCohortForDeath(ICohort cohort)
-        {
-            return true;
-        }
-
         internal bool GenerateWindFieldRaster(
             string mapNameTemplate, ICore modelCore, ContinentalGrid continentalGrid)
         {
@@ -173,8 +169,8 @@ namespace Landis.Extension.BaseHurricane
             IOutputRaster<BytePixel> outputRaster = null;
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape.ActiveSites)
             {
-                SiteVars.WindSpeed[site] = this.GetWindSpeed(site.Location.Column, site.Location.Row);
                 currentSite = site;
+                SiteVars.WindSpeed[this.currentSite] = this.GetWindSpeed(site.Location.Column, site.Location.Row);
                 KillSiteCohorts(currentSite);
             }
             
@@ -216,7 +212,17 @@ namespace Landis.Extension.BaseHurricane
 
         bool ICohortDisturbance.MarkCohortForDeath(ICohort cohort)
         {
-            return true;
+            var windSpeed = SiteVars.WindSpeed[this.currentSite];
+            var name = cohort.Species.Name;
+            var age = cohort.Age;
+
+            var deathLiklihood = HurricaneEvent.windMortalityTable
+                .GetMortalityProbability(species: cohort.Species.Name,
+                age: cohort.Age, windspeed: SiteVars.WindSpeed[this.currentSite]);
+
+            var randomVar = PlugIn.ModelCore.GenerateUniform();
+
+            return (randomVar <= deathLiklihood);
         }
     }
 

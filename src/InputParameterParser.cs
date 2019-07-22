@@ -86,7 +86,7 @@ namespace Landis.Extension.BaseHurricane
                     }
                     else if (lastOperation == windSpeedVuln)
                     {
-                        parameters.HurricaneMortalityTable =
+                        HurricaneEvent.windMortalityTable =
                             populateWindSpeedVulnverabilities(
                                 sectionNames, singleLineNames, parseLine);
                     }
