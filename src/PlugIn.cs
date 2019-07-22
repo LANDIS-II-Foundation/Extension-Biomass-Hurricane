@@ -28,8 +28,6 @@ namespace Landis.Extension.BaseHurricane
         private static ICore modelCore;
         private int summaryTotalSites;
         private int summaryEventCount;
-        //private int[] summaryEcoregionEventCount;
-        private int actualYear { get; set; } = 2019;
         private ContinentalGrid ContinentalGrid = null;
 
 
@@ -54,8 +52,6 @@ namespace Landis.Extension.BaseHurricane
         public override void LoadParameters(string dataFile, ICore mCore)
         {
             modelCore = mCore;
-            // Console.WriteLine("vvvvvvvvvvvv   ^^^^^^^^^^^^^^^^   vvvvvvvvvvvvvvvvvvvvvvvvvvvvv Hit Enter.");
-            // Console.ReadKey();
             InputParameterParser parser = new InputParameterParser();
             this.parameters = Landis.Data.Load<IInputParameters>(dataFile, parser);
             HurricaneEvent.windSpeedGenerator = new WindSpeedGenerator(this.parameters.LowBoundLandfallWindSpeed,
@@ -75,8 +71,6 @@ namespace Landis.Extension.BaseHurricane
         /// </param>
         public override void Initialize()
         {
-            //Console.WriteLine("Hello Debug Hurricane");
-            //Console.ReadKey();
             List<string> colnames = new List<string>();
             foreach(IEcoregion ecoregion in modelCore.Ecoregions)
             {
@@ -90,7 +84,6 @@ namespace Landis.Extension.BaseHurricane
             mapNameTemplate = parameters.MapNamesTemplate;
 
             SiteVars.Initialize();
-            //HurricaneEvent.Initialize(parameters.EventParameters, parameters.WindSeverities);
             this.ContinentalGrid = new ContinentalGrid(
                 this.parameters.CenterPointLatitude, 
                 PlugIn.ModelCore.CellLength,
@@ -133,50 +126,9 @@ namespace Landis.Extension.BaseHurricane
                     
                     LogEvent(PlugIn.ModelCore.CurrentTime, storm);
                 }
-                this.actualYear++;
             }
 
-            SiteVars.Event.SiteValues = null;
-            //SiteVars.Severity.ActiveSiteValues = 0;
-            SiteVars.WindSpeed.ActiveSiteValues = 0;
-
-            int eventCount = 0;
-            //foreach(ActiveSite site in PlugIn.ModelCore.Landscape) {
-            //    HurricaneEvent hurricaneEvent = HurricaneEvent.Initiate(site, Timestep);
-            //    if(hurricaneEvent != null) {
-            //        // LogEvent(PlugIn.ModelCore.CurrentTime, hurricaneEvent);
-            //        eventCount++;
-            //        summaryEventCount++;
-
-            //    }
-            //}
-
-            //ModelCore.UI.WriteLine("  Hurricane events: {0}", eventCount);
-
-            //  Write hurricane wind severity map
-            //string path = MapNames.ReplaceTemplateVars(mapNameTemplate, PlugIn.modelCore.CurrentTime);
-            //Dimensions dimensions = new Dimensions(modelCore.Landscape.Rows, modelCore.Landscape.Columns);
-            //using(IOutputRaster<BytePixel> outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
-            //{
-            //    BytePixel pixel = outputRaster.BufferPixel;
-            //    foreach(Site site in PlugIn.ModelCore.Landscape.AllSites) {
-            //        if(site.IsActive) {
-            //            if(SiteVars.Disturbed[site])
-            //                pixel.MapCode.Value = (byte)(SiteVars.Severity[site] + 1);
-            //            else
-            //                pixel.MapCode.Value = 1;
-            //        }
-            //        else {
-            //            //  Inactive site
-            //            pixel.MapCode.Value = 0;
-            //        }
-            //        outputRaster.WriteBufferPixel();
-            //    }
-            //}
-
             WriteSummaryLog(PlugIn.modelCore.CurrentTime);
-            summaryTotalSites = 0;
-            summaryEventCount = 0;
         }
 
         //---------------------------------------------------------------------
@@ -198,24 +150,9 @@ namespace Landis.Extension.BaseHurricane
             if(hurricaneEvent != null)
             {
                 el.hurricaneNumber = hurricaneEvent.hurricaneNumber;
-                //el.landfallMaxWindspeed = cvtKilometersToMiles(hurricaneEvent.landfallMaxWindSpeed, unitType.Speed);
-                //el.landfallLatitude = hurricaneEvent.landfallLatitude;
-                //el.stormTrackHeading = hurricaneEvent.stormTrackHeading;
-                //el.effectiveDistanceInland = 
-                //    cvtKilometersToMiles(hurricaneEvent.stormTrackEffectiveDistanceToCenterPoint, unitType.Dist);
             }
-            //el.InitRow = hurricaneEvent.StartLocation.Row;
-            //el.InitColumn = hurricaneEvent.StartLocation.Column;
-            //el.TotalSites = hurricaneEvent.Size;
-            //el.DamagedSites = hurricaneEvent.SitesDamaged;
-            //el.CohortsKilled = hurricaneEvent.CohortsKilled;
-            //el.MeanSeverity = hurricaneEvent.Severity;
-
-            //summaryTotalSites += hurricaneEvent.SitesDamaged;
             eventLog.AddObject(el);
             eventLog.WriteToFile();
-
-
         }
 
         //---------------------------------------------------------------------
