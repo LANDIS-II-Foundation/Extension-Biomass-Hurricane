@@ -29,6 +29,9 @@ namespace Landis.Extension.BaseHurricane
         private double stormTrackLengthTo_b { get; set; }
         internal ContinentalGrid ContinentalGrid { get; private set; }
 
+        ExtensionType IDisturbance.Type => PlugIn.ExtType;
+        ActiveSite IDisturbance.CurrentSite => this.currentSite;
+
         public HurricaneEvent(int hurricaneNumber, WindSpeedGenerator windSpeedGenerator, 
             ContinentalGrid continentalGrid)
         {
@@ -114,6 +117,16 @@ namespace Landis.Extension.BaseHurricane
             return this.secondDerivHyperobla(x: offset, a: a, b: b) + baseSpeed;
         }
 
+
+        //internal void DetermineMortalities()
+        //{
+        //    var b = SiteVars.Cohorts[   ;
+        //    foreach(var cohort in SiteVars.Cohorts)
+        //    {
+
+        //    }
+        //}
+
         public double GetMaxWindSpeedAtPoint(Point point)
         {
             (var distance, var offset) = this.GetDistanceAndOffset(point);
@@ -123,11 +136,18 @@ namespace Landis.Extension.BaseHurricane
             return speed;
         }
 
-        ExtensionType IDisturbance.Type => PlugIn.ExtType;
-        ActiveSite IDisturbance.CurrentSite => this.currentSite;
-        public bool MarkCohortForDeath(ICohort cohort)
+        private void KillSiteCohorts(ActiveSite site)
         {
-            return false;
+            SiteVars.Cohorts[site].RemoveMarkedCohorts(this);
+        }
+
+        bool ICohortDisturbance.MarkCohortForDeath(ICohort cohort)
+        {
+            //var randomDouble = PlugIn.ModelCore.GenerateUniform();
+            //var probability = this.
+            //cohort.Species.Name
+
+            return true;
         }
 
         internal bool GenerateWindFieldRaster(
@@ -145,6 +165,15 @@ namespace Landis.Extension.BaseHurricane
             if(maxWS < minimumWSforDamage)
                 return false;
             IOutputRaster<BytePixel> outputRaster = null;
+
+            foreach(ActiveSite aSite in PlugIn.ModelCore.Landscape.ActiveSites)
+            {
+                var temp = this.currentSite;
+                SiteVars.WindSpeed[aSite] =
+                    this.GetWindSpeed(aSite.Location.Column, aSite.Location.Row);
+                KillSiteCohorts(aSite);
+            }
+
             using(outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
             {
                 BytePixel pixel = outputRaster.BufferPixel;
@@ -152,7 +181,8 @@ namespace Landis.Extension.BaseHurricane
                 {
                     if(site.IsActive)
                     {
-                        pixel.MapCode.Value = (byte)(this.GetWindSpeed(site.Location.Column, site.Location.Row));
+                        pixel.MapCode.Value = (byte)(SiteVars.WindSpeed[site]);
+
                     }
                     else
                     {
