@@ -9,7 +9,7 @@ namespace Landis.Extension.BaseHurricane
 {
     public static class SiteVars
     {
-        private static ISiteVar<Event> eventVar;
+        private static ISiteVar<HurricaneEvent> eventVar;
         private static ISiteVar<int> timeOfLastEvent;
         private static ISiteVar<byte> severity;
         private static ISiteVar<bool> disturbed;
@@ -19,13 +19,14 @@ namespace Landis.Extension.BaseHurricane
 
         public static void Initialize()
         {
-            eventVar        = PlugIn.ModelCore.Landscape.NewSiteVar<Event>(InactiveSiteMode.DistinctValues);
+            eventVar        = PlugIn.ModelCore.Landscape.NewSiteVar<HurricaneEvent>(InactiveSiteMode.DistinctValues);
             timeOfLastEvent = PlugIn.ModelCore.Landscape.NewSiteVar<int>();
-            severity        = PlugIn.ModelCore.Landscape.NewSiteVar<byte>();
+            //severity        = PlugIn.ModelCore.Landscape.NewSiteVar<byte>();
             disturbed      = PlugIn.ModelCore.Landscape.NewSiteVar<bool>();
+            WindSpeed = PlugIn.ModelCore.Landscape.NewSiteVar<double>();
 
             PlugIn.ModelCore.RegisterSiteVar(SiteVars.TimeOfLastEvent, "Hurricane.TimeOfLastEvent");
-            PlugIn.ModelCore.RegisterSiteVar(SiteVars.Severity, "Hurricane.Severity");
+            //PlugIn.ModelCore.RegisterSiteVar(SiteVars.Severity, "Hurricane.Severity");
 
             cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.AgeCohorts");
 
@@ -41,7 +42,7 @@ namespace Landis.Extension.BaseHurricane
         }
         //---------------------------------------------------------------------
 
-        public static ISiteVar<Event> Event
+        public static ISiteVar<HurricaneEvent> Event
         {
             get {
                 return eventVar;
@@ -59,11 +60,16 @@ namespace Landis.Extension.BaseHurricane
 
         //---------------------------------------------------------------------
 
-        public static ISiteVar<byte> Severity
+        //public static ISiteVar<byte> Severity
+        //{
+        //    get {
+        //        return severity;
+        //    }
+        //}
+
+       public static ISiteVar<double> WindSpeed
         {
-            get {
-                return severity;
-            }
+            get; set;
         }
         //---------------------------------------------------------------------
 

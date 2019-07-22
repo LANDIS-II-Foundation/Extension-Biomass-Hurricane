@@ -90,7 +90,7 @@ namespace Landis.Extension.BaseHurricane
             mapNameTemplate = parameters.MapNamesTemplate;
 
             SiteVars.Initialize();
-            Event.Initialize(parameters.EventParameters, parameters.WindSeverities);
+            //HurricaneEvent.Initialize(parameters.EventParameters, parameters.WindSeverities);
             this.ContinentalGrid = new ContinentalGrid(
                 this.parameters.CenterPointLatitude, 
                 PlugIn.ModelCore.CellLength,
@@ -126,7 +126,7 @@ namespace Landis.Extension.BaseHurricane
                 stormsThisYear = 2;  // todo: remove this line.
                 foreach(var stormCount in Enumerable.Range(0, stormsThisYear))
                 {
-                    var storm = new HurricaneEvent(stormCount+1, this.windSpeedGenerator, this.ContinentalGrid);
+                    var storm = HurricaneEvent.Initiate(this.ContinentalGrid);
 
                     bool impactsOurSite = 
                         storm.GenerateWindFieldRaster(this.mapNameTemplate, PlugIn.modelCore, this.ContinentalGrid);
@@ -137,18 +137,19 @@ namespace Landis.Extension.BaseHurricane
             }
 
             SiteVars.Event.SiteValues = null;
-            SiteVars.Severity.ActiveSiteValues = 0;
+            //SiteVars.Severity.ActiveSiteValues = 0;
+            SiteVars.WindSpeed.ActiveSiteValues = 0;
 
             int eventCount = 0;
-            foreach(ActiveSite site in PlugIn.ModelCore.Landscape) {
-                Event hurricaneEvent = Event.Initiate(site, Timestep);
-                if(hurricaneEvent != null) {
-                    // LogEvent(PlugIn.ModelCore.CurrentTime, hurricaneEvent);
-                    eventCount++;
-                    summaryEventCount++;
+            //foreach(ActiveSite site in PlugIn.ModelCore.Landscape) {
+            //    HurricaneEvent hurricaneEvent = HurricaneEvent.Initiate(site, Timestep);
+            //    if(hurricaneEvent != null) {
+            //        // LogEvent(PlugIn.ModelCore.CurrentTime, hurricaneEvent);
+            //        eventCount++;
+            //        summaryEventCount++;
 
-                }
-            }
+            //    }
+            //}
 
             //ModelCore.UI.WriteLine("  Hurricane events: {0}", eventCount);
 
@@ -197,11 +198,11 @@ namespace Landis.Extension.BaseHurricane
             if(hurricaneEvent != null)
             {
                 el.hurricaneNumber = hurricaneEvent.hurricaneNumber;
-                el.landfallMaxWindspeed = cvtKilometersToMiles(hurricaneEvent.landfallMaxWindSpeed, unitType.Speed);
-                el.landfallLatitude = hurricaneEvent.landfallLatitude;
-                el.stormTrackHeading = hurricaneEvent.stormTrackHeading;
-                el.effectiveDistanceInland = 
-                    cvtKilometersToMiles(hurricaneEvent.stormTrackEffectiveDistanceToCenterPoint, unitType.Dist);
+                //el.landfallMaxWindspeed = cvtKilometersToMiles(hurricaneEvent.landfallMaxWindSpeed, unitType.Speed);
+                //el.landfallLatitude = hurricaneEvent.landfallLatitude;
+                //el.stormTrackHeading = hurricaneEvent.stormTrackHeading;
+                //el.effectiveDistanceInland = 
+                //    cvtKilometersToMiles(hurricaneEvent.stormTrackEffectiveDistanceToCenterPoint, unitType.Dist);
             }
             //el.InitRow = hurricaneEvent.StartLocation.Row;
             //el.InitColumn = hurricaneEvent.StartLocation.Column;

@@ -1,12 +1,12 @@
 ; LANDIS-II Extension infomation
 #define CoreRelease "LANDIS-II-V7"
-#define ExtensionName "Base Wind"
-#define AppVersion "3.1"
+#define ExtensionName "Base Hurricane"
+#define AppVersion "0.1"
 #define AppPublisher "LANDIS-II Foundation"
 #define AppURL "http://www.landis-ii.org/"
 
 ; Build directory
-#define BuildDir "..\..\src\bin\Release\netstandard2.0"
+#define BuildDir "..\..\src\bin\Debug\netstandard2.0"
 
 ; LANDIS-II installation directories
 #define ExtDir "C:\Program Files\LANDIS-II-v7\extensions"
@@ -45,7 +45,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 ; This .dll IS the extension (ie, the extension's assembly)
 ; NB: Do not put an additional version number in the file name of this .dll
 ; (The name of this .dll is defined in the extension's \src\*.csproj file)
-Source: {#BuildDir}\Landis.Extension.BaseWind-v3.dll; DestDir: {#ExtDir}; Flags: replacesameversion
+Source: {#BuildDir}\Landis.Extension.BaseHurricane-v0.dll; DestDir: {#ExtDir}; Flags: replacesameversion
 
 ; Requisite auxiliary libraries
 ; NB. These libraries are used by other extensions and thus are never uninstalled.
@@ -62,18 +62,18 @@ Source: ..\examples\*.bat; DestDir: {#AppDir}\examples\{#ExtensionName}; Flags: 
 
 ; LANDIS-II identifies the extension with the info in this .txt file
 ; NB. New releases must modify the name of this file and the info in it
-#define InfoTxt "Base Wind 3.0.txt"
+#define InfoTxt "Base Hurricane 0.1.txt"
 Source: {#InfoTxt}; DestDir: {#LandisPlugInDir}
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 
 [Run]
-Filename: {#ExtensionsCmd}; Parameters: "remove ""Base Wind"" "; WorkingDir: {#LandisPlugInDir}
+Filename: {#ExtensionsCmd}; Parameters: "remove ""Base Hurricane"" "; WorkingDir: {#LandisPlugInDir}
 Filename: {#ExtensionsCmd}; Parameters: "add ""{#InfoTxt}"" "; WorkingDir: {#LandisPlugInDir} 
 
 
 [UninstallRun]
 ; Remove "Age-Only Succession" from "extensions.xml" file.
-Filename: {#ExtensionsCmd}; Parameters: "remove ""Base Wind"" "; WorkingDir: {#LandisPlugInDir}
+Filename: {#ExtensionsCmd}; Parameters: "remove ""Base Hurricane"" "; WorkingDir: {#LandisPlugInDir}
 
 

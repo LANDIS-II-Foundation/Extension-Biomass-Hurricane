@@ -2,9 +2,7 @@
   <PropertyGroup>
     <RootNamespace>Landis.Extension.BaseHurricane</RootNamespace>
     <AssemblyName>Landis.Extension.BaseHurricane-v0</AssemblyName>
-    <AssemblyTitle>Landis.Extension.BaseWind-v3</AssemblyTitle>
-    <AssemblyCompany>Portland State University</AssemblyCompany>
-    <AssemblyProduct>base_wind.Properties</AssemblyProduct>
+    <AssemblyTitle>Landis.Extension.BaseHurricane-v0</AssemblyTitle>
     <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
     <AssemblyVersion>0.1</AssemblyVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -13,19 +11,12 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseUrl>https://github.com/LANDIS-II-Foundation/Extension-Base-Hurricane/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>http://www.landis-ii.org</PackageProjectUrl>
-    <NeutralLanguage>English</NeutralLanguage>
-    <Authors>Portland State University</Authors>
-    <Product>base_hurricane.Properties</Product>
+    <Authors>Paul Schrum, Robert Scheller</Authors>
     <Copyright>Landis-II-Foundation</Copyright>
     <Version>0.1</Version>
     <PackageTags>LANDIS-II;Landis;Extension;Base hurricane</PackageTags>
-    <Description>Landis.Extension.BaseHurricane</Description>
-    <PackageReleaseNotes>Landis.Extension.BaseHurricane</PackageReleaseNotes>
+    <Description>Hurricane Extension</Description>
     <FileVersion>0.1.0.0</FileVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>C:\Program Files\LANDIS-II-v7\extensions</OutputPath>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -44,7 +35,4 @@
     </Reference>
   </ItemGroup>
   
-  <ItemGroup>
-    <Compile Remove="Model.cs" />
-  </ItemGroup>
 </Project>

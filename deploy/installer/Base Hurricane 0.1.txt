@@ -4,6 +4,6 @@ Name         "Base Hurricane"
 Version      "0.1"
 Type         disturbance:hurricane
 Assembly     Landis.Extension.BaseHurricane-v0
-Class        Landis.Extension.BaseWind.PlugIn
-Description  "Hurricane Disturbance"
+Class        Landis.Extension.BaseHurricane.PlugIn
+Description  "Wind Disturbance"
 CoreVersion  7.0

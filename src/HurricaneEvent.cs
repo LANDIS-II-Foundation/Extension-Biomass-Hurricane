@@ -18,10 +18,10 @@ namespace Landis.Extension.BaseHurricane
         private static double minimumWSforDamage = baseWindSpeed + 1.0;
 
         public int hurricaneNumber { get; set; }
-        public double landfallMaxWindSpeed { get; set; }
-        public double landfallLatitude { get; set; }
-        public double stormTrackEffectiveDistanceToCenterPoint { get; set; }
-        public double stormTrackHeading { get; set; }
+        private double landfallMaxWindSpeed; // { get; set; }
+        private double landfallLatitude { get; set; }
+        private double stormTrackEffectiveDistanceToCenterPoint { get; set; }
+        private double stormTrackHeading { get; set; }
         private double stormTrackSlope { get; set; }
         private double stormTrackPerpandicularSlope { get; set; }
         public Point LandfallPoint { get; private set; }
@@ -29,21 +29,49 @@ namespace Landis.Extension.BaseHurricane
         private double stormTrackLengthTo_b { get; set; }
         internal ContinentalGrid ContinentalGrid { get; private set; }
 
-        public HurricaneEvent(int hurricaneNumber, WindSpeedGenerator windSpeedGenerator, 
-            ContinentalGrid continentalGrid)
+        //---------------------------------------------------------------------
+
+        static HurricaneEvent()
         {
-            this.hurricaneNumber = hurricaneNumber;
+        }
+        //---------------------------------------------------------------------
+        ExtensionType IDisturbance.Type
+        {
+            get
+            {
+                return PlugIn.ExtType;
+            }
+        }
+        //---------------------------------------------------------------------
+
+        ActiveSite IDisturbance.CurrentSite
+        {
+            get
+            {
+                return currentSite;
+            }
+        }
+
+
+        public static HurricaneEvent Initiate(ContinentalGrid continentalGrid)
+        {
+
+            HurricaneEvent hurrEvent = new HurricaneEvent(continentalGrid);
+            return hurrEvent;
+        }
+
+        private HurricaneEvent(ContinentalGrid continentalGrid)
+        {
+            //this.hurricaneNumber = hurricaneNumber;
+            this.ContinentalGrid = continentalGrid;
             this.landfallMaxWindSpeed = windSpeedGenerator.getWindSpeed();
             this.landfallLatitude = 34.3;   /// For unit testing only.
-            if(PlugIn.ModelCore != null)
-                this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;
+            this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;
             this.stormTrackHeading = 310.0;  /// For unit testing only.
-            if(PlugIn.ModelCore != null)
-                this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0;
+            this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0;
             var modHeading = (this.stormTrackHeading - 315) * Math.PI / 180.0;
             this.stormTrackSlope = 1 / Math.Tan(this.stormTrackHeading * Math.PI / 180.0);
             this.stormTrackPerpandicularSlope = -1.0 / this.stormTrackSlope;
-            this.ContinentalGrid = continentalGrid;
             double landfallY = this.ContinentalGrid.ConvertLatitudeToGridUnits(this.landfallLatitude);
             this.LandfallPoint = this.ContinentalGrid.CoastLine.GivenYGetPoint(landfallY);
             this.StormTrackLine = new Line(this.LandfallPoint, this.stormTrackSlope);
@@ -123,8 +151,6 @@ namespace Landis.Extension.BaseHurricane
             return speed;
         }
 
-        ExtensionType IDisturbance.Type => PlugIn.ExtType;
-        ActiveSite IDisturbance.CurrentSite => this.currentSite;
         public bool MarkCohortForDeath(ICohort cohort)
         {
             return false;
@@ -145,14 +171,22 @@ namespace Landis.Extension.BaseHurricane
             if(maxWS < minimumWSforDamage)
                 return false;
             IOutputRaster<BytePixel> outputRaster = null;
-            using(outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
+            foreach (ActiveSite site in PlugIn.ModelCore.Landscape.ActiveSites)
+            {
+                SiteVars.WindSpeed[site] = this.GetWindSpeed(site.Location.Column, site.Location.Row);
+                currentSite = site;
+                KillSiteCohorts(currentSite);
+            }
+            
+
+            using (outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
             {
                 BytePixel pixel = outputRaster.BufferPixel;
                 foreach(Site site in PlugIn.ModelCore.Landscape.AllSites)
                 {
                     if(site.IsActive)
                     {
-                        pixel.MapCode.Value = (byte)(this.GetWindSpeed(site.Location.Column, site.Location.Row));
+                        pixel.MapCode.Value = (byte) SiteVars.WindSpeed[site];
                     }
                     else
                     {
@@ -171,6 +205,18 @@ namespace Landis.Extension.BaseHurricane
             Point pt = this.ContinentalGrid.siteIndexToCoordinates(column, row);
             return this.GetMaxWindSpeedAtPoint(pt);
             //this.
+        }
+        //---------------------------------------------------------------------
+
+        private void KillSiteCohorts(ActiveSite site)
+        {
+            SiteVars.Cohorts[site].RemoveMarkedCohorts(this);
+        }
+        //---------------------------------------------------------------------
+
+        bool ICohortDisturbance.MarkCohortForDeath(ICohort cohort)
+        {
+            return true;
         }
     }
 
