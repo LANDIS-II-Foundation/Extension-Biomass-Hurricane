@@ -14,7 +14,7 @@ namespace Landis.Extension.BaseHurricane
         public int Time {set; get;}
 
         [DataFieldAttribute(Desc = "Hurricane Number")]
-        public int hurricaneNumber { get; set; }
+        public int HurricaneNumber { get; set; }
 
         [DataFieldAttribute(Desc = "Max Windspeed at Landfall")]
         public string landfallMaxWindspeed { get; set; }

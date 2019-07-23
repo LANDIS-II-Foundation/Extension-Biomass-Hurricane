@@ -151,7 +151,7 @@ namespace Landis.Extension.BaseHurricane
             el.Time = currentTime;
             if(hurricaneEvent != null)
             {
-                el.HurricaneNumber = hurricaneEvent.hurricaneNumber;
+                el.HurricaneNumber =  hurricaneEvent.hurricaneNumber;
             }
             eventLog.AddObject(el);
             eventLog.WriteToFile();
