@@ -112,6 +112,16 @@ namespace Landis.Extension.BaseHurricane
             return new LineSegment(length, angle);
         }
 
+        public override int GetHashCode()
+        {
+            return (int)(10.0 * (this.X + this.Y));
+        }
+
+        public override bool Equals(object obj)
+        {
+            return this == (Point) obj;
+        }
+
         public static bool operator ==(Point p1, Point p2)
         {
             return (Math.Abs(p2.X - p1.X) < 0.001 &&

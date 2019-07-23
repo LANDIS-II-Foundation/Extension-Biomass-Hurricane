@@ -24,10 +24,10 @@ namespace Landis.Extension.BaseHurricane
 
         private string mapNameTemplate;
         private IInputParameters parameters;
-        private WindSpeedGenerator windSpeedGenerator = null;
+        //private WindSpeedGenerator windSpeedGenerator = null;
         private static ICore modelCore;
-        private int summaryTotalSites;
-        private int summaryEventCount;
+        private int summaryTotalSites = 0;
+        private int summaryEventCount = 0;
         private ContinentalGrid ContinentalGrid = null;
 
 
@@ -136,20 +136,22 @@ namespace Landis.Extension.BaseHurricane
         enum unitType { Dist, Speed };
         private void LogEvent(int currentTime, HurricaneEvent hurricaneEvent = null)
         {
-            string cvtKilometersToMiles(double kValue, unitType unitType)
-            {
-                double milesValue = kValue * 0.621371;
-                string kUnits = unitType == unitType.Dist ? "kilometers" : "kph";
-                string mUnits = unitType == unitType.Dist ? " miles" : " mph";
-                return $"{kValue:F1} {kUnits} / {milesValue:F1} {mUnits}";
-            }
+            // commented out in case I want to use it later.
+            // commented out to eliminate a warning.
+            //string cvtKilometersToMiles(double kValue, unitType unitType)
+            //{
+            //    double milesValue = kValue * 0.621371;
+            //    string kUnits = unitType == unitType.Dist ? "kilometers" : "kph";
+            //    string mUnits = unitType == unitType.Dist ? " miles" : " mph";
+            //    return $"{kValue:F1} {kUnits} / {milesValue:F1} {mUnits}";
+            //}
 
             eventLog.Clear();
             EventsLog el = new EventsLog();
             el.Time = currentTime;
             if(hurricaneEvent != null)
             {
-                el.hurricaneNumber = hurricaneEvent.hurricaneNumber;
+                el.HurricaneNumber = hurricaneEvent.hurricaneNumber;
             }
             eventLog.AddObject(el);
             eventLog.WriteToFile();
