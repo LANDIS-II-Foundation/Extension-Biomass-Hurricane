@@ -12,9 +12,9 @@ namespace Landis.Extension.BaseHurricane
 		: IInputParameters
 	{
 		private int timestep;
-		private IEventParameters[] eventParameters;
-		private List<ISeverity> severities;
-		private string mapNamesTemplate;
+        private IEventParameters[] eventParameters;
+        //private List<ISeverity> severities;
+        private string mapNamesTemplate;
 		private string logFileName;
 
 		//---------------------------------------------------------------------
@@ -76,12 +76,12 @@ namespace Landis.Extension.BaseHurricane
 		/// <summary>
 		/// Definitions of wind severities.
 		/// </summary>
-		public List<ISeverity> WindSeverities
-		{
-			get {
-				return severities;
-			}
-		}
+		//public List<ISeverity> WindSeverities
+		//{
+		//	get {
+		//		return severities;
+		//	}
+		//}
 
 		//---------------------------------------------------------------------
 
@@ -121,7 +121,7 @@ namespace Landis.Extension.BaseHurricane
         public InputParameters(int ecoregionCount)
         {
             eventParameters = new IEventParameters[ecoregionCount];
-            severities = new List<ISeverity>();
+            //severities = new List<ISeverity>();
         }
 /*		//---------------------------------------------------------------------
 

@@ -11,7 +11,7 @@ namespace Landis.Extension.BaseHurricane
     {
         private static ISiteVar<HurricaneEvent> eventVar;
         private static ISiteVar<int> timeOfLastEvent;
-        private static ISiteVar<byte> severity;
+        //private static ISiteVar<byte> severity;
         private static ISiteVar<bool> disturbed;
         private static ISiteVar<ISiteCohorts> cohorts;
 

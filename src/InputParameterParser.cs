@@ -26,7 +26,7 @@ namespace Landis.Extension.BaseHurricane
 
         public InputParameterParser()
         {
-            // FIXME: Hack to ensure that Percentage is registered with InputValues
+            // ToDo: fix this Hack to ensure that Percentage is registered with InputValues
             Landis.Utilities.Percentage p = new Landis.Utilities.Percentage();
         }
 
@@ -47,15 +47,10 @@ namespace Landis.Extension.BaseHurricane
             var highBoundLandfallWindSpeed = "HighBoundLandfallWindSpeed";
             var centerPointLatitude = "CenterPointLatitude";
             var centerPointDistanceInland = "CenterPointDistanceInland";
-            //var windSeverities = "WindSeverities";
             var windSpeedVuln = "WindSpeedVulnerabilities";
-            var fortBragg = "FortBragg";
             var map_names = "MapNames";
 
-
-
             var sectionNames = new HashSet<System.String> {stormOccurProb, 
-                // windSeverities,
                 windSpeedVuln, map_names };
 
             var singleLineNames = new HashSet<System.String> {lowBoundLandfallWindSpeed,

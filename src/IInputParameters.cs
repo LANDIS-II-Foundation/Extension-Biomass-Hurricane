@@ -25,20 +25,20 @@ namespace Landis.Extension.BaseHurricane
 		/// <remarks>
 		/// Use Ecoregion.Index property to index this array.
 		/// </remarks>
-		IEventParameters[] EventParameters
-		{
-			get;
-		}
+		//IEventParameters[] EventParameters
+		//{
+		//	get;
+		//}
 
 		//---------------------------------------------------------------------
 
-		/// <summary>
-		/// Definitions of hurricane wind severities.
-		/// </summary>
-		List<ISeverity> WindSeverities
-		{
-			get;
-		}
+		///// <summary>
+		///// Definitions of hurricane wind severities.
+		///// </summary>
+		//List<ISeverity> WindSeverities
+		//{
+		//	get;
+		//}
 
 		//---------------------------------------------------------------------
 
