@@ -18,7 +18,11 @@ namespace Landis.Extension.BaseHurricane
                                                     // storm.
         private static double minimumWSforDamage = baseWindSpeed + 1.0;
 
+        public int hurricaneYear { get; set; }
         public int hurricaneNumber { get; set; }
+        public double studyAreaMaxWindspeed { get; set; }
+        public double studyAreaMinWindspeed { get; set; }
+        public string studyAreaImpacts { get; set; }
         private double landfallMaxWindSpeed; // { get; set; }
         private double landfallLatitude { get; set; }
         private double stormTrackEffectiveDistanceToCenterPoint { get; set; }
@@ -164,8 +168,10 @@ namespace Landis.Extension.BaseHurricane
             double lowerRightWindSpeed = this.GetWindSpeed(columns, 0);
             double upperRightWindSpeed = this.GetWindSpeed(columns, rows);
             double maxWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed }).Max();
+            this.studyAreaImpacts = "No";
             if(maxWS < minimumWSforDamage)
                 return false;
+            this.studyAreaImpacts = "Yes";
             IOutputRaster<BytePixel> outputRaster = null;
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape.ActiveSites)
             {
@@ -173,7 +179,8 @@ namespace Landis.Extension.BaseHurricane
                 SiteVars.WindSpeed[this.currentSite] = this.GetWindSpeed(site.Location.Column, site.Location.Row);
                 KillSiteCohorts(currentSite);
             }
-            
+
+            double minWS = 999.0;
 
             using (outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
             {
@@ -182,7 +189,10 @@ namespace Landis.Extension.BaseHurricane
                 {
                     if(site.IsActive)
                     {
-                        pixel.MapCode.Value = (byte) SiteVars.WindSpeed[site];
+                        double windspeed = SiteVars.WindSpeed[site];
+                        pixel.MapCode.Value = (byte)windspeed;
+                        if(minWS > windspeed) minWS = windspeed;
+                        if(maxWS < windspeed) maxWS = windspeed;
                     }
                     else
                     {
@@ -192,6 +202,8 @@ namespace Landis.Extension.BaseHurricane
                     outputRaster.WriteBufferPixel();
                 }
             }
+            this.studyAreaMinWindspeed = minWS;
+            this.studyAreaMaxWindspeed = maxWS;
             return true;
 
         }

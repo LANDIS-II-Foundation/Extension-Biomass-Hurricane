@@ -11,22 +11,25 @@ namespace Landis.Extension.BaseHurricane
         //log.WriteLine("Time,Initiation Site,Total Sites,Damaged Sites,Cohorts Killed,Mean Severity");
 
         [DataFieldAttribute(Unit = FieldUnits.Year, Desc = "...")]
-        public int Time {set; get;}
+        public int Time { get; set; }
+
+        [DataFieldAttribute(Desc = "Hurricane Year")]
+        public int Year { get; set; }
 
         [DataFieldAttribute(Desc = "Hurricane Number")]
-        public int HurricaneNumber { get; set; }
+        public int Hnumber { get; set; }
 
-        [DataFieldAttribute(Desc = "Max Windspeed at Landfall")]
-        public string landfallMaxWindspeed { get; set; }
+        [DataFieldAttribute(Desc = "Study Area Max Windspeed")]
+        public double StudyAreaMaxWS { get; set; }
 
-        [DataFieldAttribute(Desc = "Landfall Latitude")]
-        public double landfallLatitude { get; set; }
+        [DataFieldAttribute(Desc = "Study Area Min Windspeed")]
+        public double StudyAreaMinWS { get; set; }
 
-        [DataFieldAttribute(Desc = "Storm Track Heading")]
-        public double stormTrackHeading { get; set; }
+        //[DataFieldAttribute(Desc = "Max Windspeed at Landfall")]
+        //public string landfallMaxWindspeed { get; set; }
 
-        [DataFieldAttribute(Desc = "Effective Distance Inland")]
-        public string effectiveDistanceInland { get; set; }
+        [DataFieldAttribute(Desc = "Impacts the Study Area?")]
+        public string ImpactsStudyArea { get; set; }
 
         //[DataFieldAttribute(Desc = "Latitude Offset")]
         //public double latitudeOffset { get; set; }

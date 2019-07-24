@@ -119,8 +119,13 @@ namespace Landis.Extension.BaseHurricane
                 foreach(var stormCount in Enumerable.Range(0, stormsThisYear))
                 {
                     var storm = HurricaneEvent.Initiate(this.ContinentalGrid);
+                    storm.hurricaneYear = 
+                        year + PlugIn.ModelCore.CurrentTime - 
+                        this.parameters.Timestep;
 
-                    bool impactsOurSite = 
+                    storm.hurricaneNumber = stormCount+1;
+
+                    bool impactsStudyArea = 
                         storm.GenerateWindFieldRaster(this.mapNameTemplate, 
                         PlugIn.modelCore, this.ContinentalGrid);
                     
@@ -151,7 +156,12 @@ namespace Landis.Extension.BaseHurricane
             el.Time = currentTime;
             if(hurricaneEvent != null)
             {
-                el.HurricaneNumber =  hurricaneEvent.hurricaneNumber;
+                el.Year = hurricaneEvent.hurricaneYear;
+                el.Hnumber =  hurricaneEvent.hurricaneNumber;
+                el.ImpactsStudyArea = hurricaneEvent.studyAreaImpacts;
+                el.StudyAreaMaxWS = hurricaneEvent.studyAreaMaxWindspeed;
+                el.StudyAreaMinWS = hurricaneEvent.studyAreaMinWindspeed;
+
             }
             eventLog.AddObject(el);
             eventLog.WriteToFile();
