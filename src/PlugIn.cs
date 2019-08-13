@@ -161,6 +161,9 @@ namespace Landis.Extension.BaseHurricane
                 el.ImpactsStudyArea = hurricaneEvent.studyAreaImpacts;
                 el.StudyAreaMaxWS = hurricaneEvent.studyAreaMaxWindspeed;
                 el.StudyAreaMinWS = hurricaneEvent.studyAreaMinWindspeed;
+                el.LandfallLatitude = hurricaneEvent.landfallLatitude;
+                el.LandfallMaxWindSpeed = hurricaneEvent.landfallMaxWindSpeed;
+                el.PathHeading = hurricaneEvent.stormTrackHeading;
 
             }
             eventLog.AddObject(el);

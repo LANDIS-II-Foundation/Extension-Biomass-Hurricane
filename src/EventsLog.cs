@@ -19,38 +19,24 @@ namespace Landis.Extension.BaseHurricane
         [DataFieldAttribute(Desc = "Hurricane Number")]
         public int Hnumber { get; set; }
 
+        [DataFieldAttribute(Desc = "Latitude at Landfall")]
+        public double LandfallLatitude { get; set; }
+
+        [DataFieldAttribute(Desc = "Max Windspeed at Landfall")]
+        public double LandfallMaxWindSpeed { get; set; }
+
+        [DataFieldAttribute(Desc = "Storm Path Direction (Heading)")]
+        public double PathHeading { get; set; }
+
         [DataFieldAttribute(Desc = "Study Area Max Windspeed")]
         public double StudyAreaMaxWS { get; set; }
 
         [DataFieldAttribute(Desc = "Study Area Min Windspeed")]
         public double StudyAreaMinWS { get; set; }
 
-        //[DataFieldAttribute(Desc = "Max Windspeed at Landfall")]
-        //public string landfallMaxWindspeed { get; set; }
-
         [DataFieldAttribute(Desc = "Impacts the Study Area?")]
         public string ImpactsStudyArea { get; set; }
 
-        //[DataFieldAttribute(Desc = "Latitude Offset")]
-        //public double latitudeOffset { get; set; }
-
-        //[DataFieldAttribute(Desc = "Initiation Row")]
-        //public int InitRow { set; get; }
-
-        //[DataFieldAttribute(Desc = "Initiation Column")]
-        //public int InitColumn { set; get; }
-
-        //[DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Total Number of Sites in Event")]
-        //public int TotalSites { set; get; }
-
-        //[DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Damaged Sites in Event")]
-        //public int DamagedSites { set; get; }
-
-        //[DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Cohorts Killed")]
-        //public int CohortsKilled { set; get; }
-
-        //[DataFieldAttribute(Unit = FieldUnits.Severity_Rank, Desc = "Mean Severity (1-5)", Format="0.00")]
-        //public double MeanSeverity { set; get; }
 
     }
 }

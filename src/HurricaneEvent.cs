@@ -16,17 +16,17 @@ namespace Landis.Extension.BaseHurricane
         internal static HurricaneWindMortalityTable windMortalityTable { get; set; } = null;
         private static double baseWindSpeed = 48.0; // Asymptotic minimum max wind speed of a 
                                                     // storm.
-        private static double minimumWSforDamage = baseWindSpeed + 1.0;
+        private static double minimumWSforDamage = 96.5;
 
         public int hurricaneYear { get; set; }
         public int hurricaneNumber { get; set; }
         public double studyAreaMaxWindspeed { get; set; }
         public double studyAreaMinWindspeed { get; set; }
         public string studyAreaImpacts { get; set; }
-        private double landfallMaxWindSpeed; // { get; set; }
-        private double landfallLatitude { get; set; }
+        public double landfallMaxWindSpeed { get; private set; }
+        public double landfallLatitude { get; private set; }
         private double stormTrackEffectiveDistanceToCenterPoint { get; set; }
-        private double stormTrackHeading { get; set; }
+        public double stormTrackHeading { get; private set; }
         private double stormTrackSlope { get; set; }
         private double stormTrackPerpandicularSlope { get; set; }
         public Point LandfallPoint { get; private set; }
@@ -169,8 +169,13 @@ namespace Landis.Extension.BaseHurricane
             double upperRightWindSpeed = this.GetWindSpeed(columns, rows);
             double maxWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed }).Max();
             this.studyAreaImpacts = "No";
-            if(maxWS < minimumWSforDamage)
+            if(maxWS < HurricaneEvent.minimumWSforDamage)
+            {
+                this.studyAreaMaxWindspeed = maxWS;
+                this.studyAreaMinWindspeed =
+                    (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed }).Min();
                 return false;
+            }
             this.studyAreaImpacts = "Yes";
             IOutputRaster<BytePixel> outputRaster = null;
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape.ActiveSites)
@@ -197,7 +202,7 @@ namespace Landis.Extension.BaseHurricane
                     else
                     {
                         //  Inactive site
-                        pixel.MapCode.Value = (byte)93;
+                        pixel.MapCode.Value = (byte)0;
                     }
                     outputRaster.WriteBufferPixel();
                 }
