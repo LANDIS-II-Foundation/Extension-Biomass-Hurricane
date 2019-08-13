@@ -18,6 +18,13 @@
     <Description>Hurricane Extension</Description>
     <FileVersion>0.1.0.0</FileVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>C:\Program Files\LANDIS-II-v7\extensions</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>C:\Program Files\LANDIS-II-v7\extensions</OutputPath>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Landis.Core" Version="2.0.0" />
