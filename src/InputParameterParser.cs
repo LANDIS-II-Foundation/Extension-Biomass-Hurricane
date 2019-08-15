@@ -117,6 +117,8 @@ namespace Landis.Extension.BaseHurricane
             }
             if(inputUnitsAreEnglish)
                 parameters.AdjustValuesFromEnglishToMetric();
+            HurricaneEvent.minimumWSforDamage =
+                HurricaneEvent.windMortalityTable.MinimumWindSpeed;
 
             const string MapNames = "MapNames";
             InputVar<string> mapNames = new InputVar<string>(MapNames);

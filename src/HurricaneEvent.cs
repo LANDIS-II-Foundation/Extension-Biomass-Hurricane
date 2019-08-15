@@ -16,7 +16,7 @@ namespace Landis.Extension.BaseHurricane
         internal static HurricaneWindMortalityTable windMortalityTable { get; set; } = null;
         private static double baseWindSpeed = 48.0; // Asymptotic minimum max wind speed of a 
                                                     // storm.
-        private static double minimumWSforDamage = 96.5;
+        public static double minimumWSforDamage { get; internal set; } = 96.5;
 
         public int hurricaneYear { get; set; }
         public int hurricaneNumber { get; set; }

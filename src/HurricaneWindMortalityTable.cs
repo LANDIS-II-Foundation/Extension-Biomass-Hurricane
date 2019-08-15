@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Landis.Extension.BaseHurricane
@@ -65,6 +66,27 @@ namespace Landis.Extension.BaseHurricane
                         age[kph] = prob;
                     }
                 }
+            }
+        }
+
+        internal double MinimumWindSpeed
+        {
+            get
+            {
+                double returnValue = 100000.0;
+                foreach(var species in this.theTable.Values)
+                {
+                    foreach(var age in species.Values)
+                    {
+                        var thisMin = age.Keys.Min();
+                        returnValue = Math.Min(thisMin, returnValue);
+                    }
+                }
+
+                if(returnValue >= 999.0)
+                    returnValue = 0.0;
+
+                return returnValue;
             }
         }
     }
