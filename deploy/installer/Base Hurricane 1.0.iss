@@ -1,7 +1,7 @@
 ; LANDIS-II Extension infomation
 #define CoreRelease "LANDIS-II-V7"
 #define ExtensionName "Base Hurricane"
-#define AppVersion "0.1"
+#define AppVersion "1.0"
 #define AppPublisher "LANDIS-II Foundation"
 #define AppURL "http://www.landis-ii.org/"
 
@@ -18,7 +18,7 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{0999FCA2-EE86-4035-9206-2990D5A93ED8}
+AppId={{74A7EF72-64A5-4846-ACAB-17F686F66D76}
 AppName={#CoreRelease} {#ExtensionName}
 AppVersion={#AppVersion}
 ; Name in "Programs and Features"
