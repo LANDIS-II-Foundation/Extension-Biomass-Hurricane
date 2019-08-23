@@ -1,9 +1,9 @@
 LandisData   Extension
 
 Name         "Base Hurricane"
-Version      "0.1"
+Version      "1.0"
 Type         disturbance:hurricane
-Assembly     Landis.Extension.BaseHurricane-v0
+Assembly     Landis.Extension.BaseHurricane-v1
 Class        Landis.Extension.BaseHurricane.PlugIn
-Description  "Wind Disturbance"
+Description  "Hurricane Disturbance"
 CoreVersion  7.0
