@@ -123,7 +123,7 @@ namespace Landis.Extension.BaseHurricane
         /// <param name="a">From hyperbola a; 2 * the inflection point distance. 
         /// Unit is kilometers, then the value is adjusted to be in meters. </param>
         /// <returns>Maximum wind speed at the given point.</returns>
-        public double ComputeMaxWindSpeed(double x, double offset, double a=360.0, double? maxWindSpeedAt00=null)
+        public double ComputeMaxWindSpeed(double x, double offset, double a=150.0, double? maxWindSpeedAt00=null)
         {
             double PeakSpeed = this.landfallMaxWindSpeed;
             if(maxWindSpeedAt00 != null)
