@@ -160,3 +160,7 @@ $RECYCLE.BIN/
 /src/lib/*.dll
 /src/.vs
 /testing/Core7-BaseHurricane0.0/Run from here - Shortcut.lnk
+/testing/HurricaneUnitTests/.vs/HurricaneUnitTests/v16/Server/sqlite3/storage.ide
+/testing/HurricaneUnitTests/.vs/HurricaneUnitTests/v16/Server/sqlite3/db.lock
+/testing/HurricaneUnitTests/.vs/HurricaneUnitTests/v16/Server/sqlite3
+/testing/HurricaneUnitTests/.vs/HurricaneUnitTests/DesignTimeBuild/.dtbcache
