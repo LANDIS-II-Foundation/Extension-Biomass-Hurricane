@@ -13,9 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Landis.Extension.BaseHurricane-v0">
-      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Extension.BaseHurricane-v0.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\src\base-hurricane.csproj" />
   </ItemGroup>
 
 </Project>
