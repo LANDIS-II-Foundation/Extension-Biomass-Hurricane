@@ -4,7 +4,7 @@
     <AssemblyName>Landis.Extension.BaseHurricane-v1</AssemblyName>
     <AssemblyTitle>Landis.Extension.BaseHurricane-v0</AssemblyTitle>
     <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
-    <AssemblyVersion>0.1</AssemblyVersion>
+    <AssemblyVersion>1.1</AssemblyVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-Base-Hurricane</RepositoryUrl>
@@ -13,10 +13,10 @@
     <PackageProjectUrl>http://www.landis-ii.org</PackageProjectUrl>
     <Authors>Paul Schrum, Robert Scheller</Authors>
     <Copyright>Landis-II-Foundation</Copyright>
-    <Version>0.1</Version>
+    <Version>1.1</Version>
     <PackageTags>LANDIS-II;Landis;Extension;Base hurricane</PackageTags>
     <Description>Hurricane Extension</Description>
-    <FileVersion>0.1.0.0</FileVersion>
+    <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>C:\Program Files\LANDIS-II-v7\extensions</OutputPath>
