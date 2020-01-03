@@ -13,7 +13,6 @@ namespace Landis.Extension.BaseHurricane
 	{
 		private int timestep;
         private IEventParameters[] eventParameters;
-        //private List<ISeverity> severities;
         private string mapNamesTemplate;
 		private string logFileName;
 
@@ -37,9 +36,6 @@ namespace Landis.Extension.BaseHurricane
 
         public List<double> StormOccurenceProbabilities { get; set; }
 
-        //               <species name      <max age,        <max wind kph, mort probability>>>
-        // public HurricaneWindMortalityTable HurricaneMortalityTable { get; set; }
-
         public double LowBoundLandfallWindSpeed { get; set; }
         public double ModeLandfallWindSpeed { get; set; }
         public double HighBoundLandfallWindspeed { get; set; }
@@ -50,6 +46,8 @@ namespace Landis.Extension.BaseHurricane
         public Dictionary<string, Dictionary<double, Dictionary<double, double>>> WindSpeedMortalityProbabilities { get; set; }
 
         public bool InputUnitsEnglish { get; set; } = false;
+
+        public int HurricaneRandomNumberSeed { get; set; } = -999;
 
 
 
@@ -67,18 +65,6 @@ namespace Landis.Extension.BaseHurricane
 				return eventParameters;
 			}
 		}
-
-		//---------------------------------------------------------------------
-
-		/// <summary>
-		/// Definitions of wind severities.
-		/// </summary>
-		//public List<ISeverity> WindSeverities
-		//{
-		//	get {
-		//		return severities;
-		//	}
-		//}
 
 		//---------------------------------------------------------------------
 
@@ -118,21 +104,7 @@ namespace Landis.Extension.BaseHurricane
         public InputParameters(int ecoregionCount)
         {
             eventParameters = new IEventParameters[ecoregionCount];
-            //severities = new List<ISeverity>();
-        }
-/*		//---------------------------------------------------------------------
 
-		public Parameters(int                timestep,
-		                  IEventParameters[] eventParameters,
-		                  ISeverity[]        severities,
-		                  string             mapNameTemplate,
-		                  string             logFileName)
-		{
-			this.timestep = timestep;
-			this.eventParameters = eventParameters;
-			this.severities = severities;
-			this.mapNamesTemplate = mapNameTemplate;
-			this.logFileName = logFileName;
-		}*/
+        }
 	}
 }

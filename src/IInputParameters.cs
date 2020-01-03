@@ -71,6 +71,8 @@ namespace Landis.Extension.BaseHurricane
 
         bool InputUnitsEnglish { get; set; }
 
+        int HurricaneRandomNumberSeed { get; set; }
+
 
 
     }

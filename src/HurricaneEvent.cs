@@ -14,9 +14,10 @@ namespace Landis.Extension.BaseHurricane
 
         internal static WindSpeedGenerator windSpeedGenerator { get; set; } = null;
         public static HurricaneWindMortalityTable WindMortalityTable { get; set; } = null;
-        private static double baseWindSpeed = 48.0; // Asymptotic minimum max wind speed of a 
-                                                    // storm.
+        private static double baseWindSpeed = 48.0; // Asymptotic minimum max wind speed of a storm.
         public static double minimumWSforDamage { get; set; }
+
+        public static bool HurricaneRandomNumber { get; set; }
 
         //public int hurricaneYear { get; set; }
         public int hurricaneNumber { get; set; }
@@ -25,6 +26,7 @@ namespace Landis.Extension.BaseHurricane
         public bool studyAreaImpacts { get; set; }
         public double landfallMaxWindSpeed { get; private set; }
         public double landfallLatitude { get; private set; }
+
         private double stormTrackEffectiveDistanceToCenterPoint { get; set; }
         public double stormTrackHeading { get; private set; }
         private double stormTrackSlope { get; set; }
@@ -67,13 +69,13 @@ namespace Landis.Extension.BaseHurricane
 
         private HurricaneEvent(ContinentalGrid continentalGrid)
         {
+            this.landfallLatitude = 34.3;   /// For unit testing only.
+            this.stormTrackHeading = 310.0;  /// For unit testing only.
             //this.hurricaneNumber = hurricaneNumber;
             this.ContinentalGrid = continentalGrid;
-            this.landfallMaxWindSpeed = HurricaneEvent.windSpeedGenerator.getWindSpeed();
-            this.landfallLatitude = 34.3;   /// For unit testing only.
-            this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;
-            this.stormTrackHeading = 310.0;  /// For unit testing only.
-            this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0;
+            this.landfallMaxWindSpeed = HurricaneEvent.windSpeedGenerator.GetWindSpeed();
+            this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;  // Specific to the southeastern US
+            this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0; // Specific to the southeastern US
             var modHeading = (this.stormTrackHeading - 315) * Math.PI / 180.0;
             this.stormTrackSlope = 1 / Math.Tan(this.stormTrackHeading * Math.PI / 180.0);
             this.stormTrackPerpandicularSlope = -1.0 / this.stormTrackSlope;
@@ -82,6 +84,11 @@ namespace Landis.Extension.BaseHurricane
             this.StormTrackLine = new Line(this.LandfallPoint, this.stormTrackSlope);
             var stormTrackInterceptPt = this.StormTrackLine.GivenXGetPoint(0.0);
             this.stormTrackLengthTo_b = (this.LandfallPoint - stormTrackInterceptPt).Length;
+            if(HurricaneRandomNumber)
+            {
+                this.landfallLatitude = 7.75 * PlugIn.hurricaneGeneratorStandard.NextDouble() + 30.7;
+                this.stormTrackHeading = 80.0 * PlugIn.hurricaneGeneratorStandard.NextDouble() + 280.0;
+            }
         }
 
         public (double, double) GetDistanceAndOffset(Point pt)
@@ -237,8 +244,9 @@ namespace Landis.Extension.BaseHurricane
 
             //PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}, Pmort={3}", name, age, windSpeed, deathLiklihood);
 
-
             var randomVar = PlugIn.ModelCore.GenerateUniform();
+            if (HurricaneRandomNumber)
+                randomVar = PlugIn.hurricaneGeneratorStandard.NextDouble();
 
             return (randomVar <= deathLiklihood);
         }
@@ -267,7 +275,7 @@ namespace Landis.Extension.BaseHurricane
         bins = null;
     } /* */
 
-    // testWindGenerationDistribution();
+    
 
     /// <summary>
     /// Generate random wind speeds on a log-normal distribution, mu=0, sigma=0.4.
@@ -300,17 +308,22 @@ namespace Landis.Extension.BaseHurricane
             this.adjustFactor = (this.modeSpeed - minSpeed) / this.mode;
         }
 
-        public double getWindSpeed()
+        public double GetWindSpeed()
         {
             if(PlugIn.ModelCore == null)
                 return this.modeSpeed;
 
             PlugIn.ModelCore.LognormalDistribution.Mu = this.mu;
             PlugIn.ModelCore.LognormalDistribution.Sigma = this.sigma;
+            PlugIn.hurricaneGeneratorLogNormal.Mu = this.mu;
+            PlugIn.hurricaneGeneratorLogNormal.Sigma = this.sigma;
             bool keepComputing = true;
             while(keepComputing)
             {
                 double trialValue = PlugIn.ModelCore.LognormalDistribution.NextDouble();
+                if (HurricaneEvent.HurricaneRandomNumber)
+                    trialValue = PlugIn.hurricaneGeneratorLogNormal.NextDouble();
+
                 trialValue = Math.Round((this.adjustFactor * trialValue)) + this.minSpeed;
                 if(trialValue <= this.maxSpeed)
                     return trialValue;

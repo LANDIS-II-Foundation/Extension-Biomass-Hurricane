@@ -33,7 +33,6 @@ namespace Landis.Extension.BaseHurricane
             // ToDo: fix this Hack to ensure that Percentage is registered with InputValues
             //Landis.Utilities.Percentage p = new Landis.Utilities.Percentage();
             this.speciesDataset = PlugIn.ModelCore.Species;
-            //this.speciesLineNums = new Dictionary<string, int>();
             this.speciesName = new InputVar<string>("Species");
         }
 
@@ -41,29 +40,10 @@ namespace Landis.Extension.BaseHurricane
 
         protected override IInputParameters Parse()
         {
-            //string[] parseLine(string line)
-            //{
-            //    return line.Replace("\t", " ")
-            //        .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            //}
-
-            //var stormOccurProb = "StormOccurrenceProbabilities";
             var inputUnitsEnglish = "InputUnitsEnglish";
             var lowBoundLandfallWindSpeed = "LowBoundLandfallWindSpeed";
-            //var modeLandfallWindSpeed = "ModeLandfallWindSpeed";
-            //var highBoundLandfallWindSpeed = "HighBoundLandfallWindSpeed";
-            //var centerPointLatitude = "CenterPointLatitude";
-            //var centerPointDistanceInland = "CenterPointDistanceInland";
             var windSpeedVuln = "WindSpeedVulnerabilities";
             var map_names = "MapNames";
-
-            //var sectionNames = new HashSet<System.String> {stormOccurProb, 
-            //    windSpeedVuln, map_names };
-
-            //var singleLineNames = new HashSet<System.String> {lowBoundLandfallWindSpeed,
-            //    modeLandfallWindSpeed, highBoundLandfallWindSpeed,
-            //    centerPointLatitude, centerPointDistanceInland, inputUnitsEnglish,};
-            //var inputUnitsAreEnglish = false;
 
             ReadLandisDataVar();
 
@@ -76,11 +56,12 @@ namespace Landis.Extension.BaseHurricane
             // Read the Storm Occurrence Probabilities table
             ReadName("StormOccurrenceProbabilities");
             parameters.StormOccurenceProbabilities = new List<double>();
+
             InputVar<int> stormYear = new InputVar<int>("Year Count");
             InputVar<double> stormProb = new InputVar<double>("Hurricane Probability");
 
             Dictionary<string, int> lineNumbers = new Dictionary<string, int>();
-            //lineNumbers.Clear();
+
 
             while (!AtEndOfInput && CurrentName != inputUnitsEnglish && CurrentName != lowBoundLandfallWindSpeed)
             {
@@ -98,6 +79,10 @@ namespace Landis.Extension.BaseHurricane
             InputVar<bool> iue = new InputVar<bool>("InputUnitsEnglish");
             if (ReadOptionalVar(iue))
                 parameters.InputUnitsEnglish = iue.Value;
+
+            InputVar<int> hrs = new InputVar<int>("HurricaneRandomNumberSeed");
+            if (ReadOptionalVar(hrs))
+                parameters.HurricaneRandomNumberSeed = hrs.Value;
 
             InputVar<int> lowboundLFWS = new InputVar<int>("LowBoundLandfallWindSpeed");
             ReadVar(lowboundLFWS);

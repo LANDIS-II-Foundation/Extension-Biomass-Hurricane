@@ -9,15 +9,15 @@ StormOccurrenceProbabilities
  >> Storms
  >>  Per
  >>  Year       Probability  << Sum must = 1.0
->>        0			0.60 
->>        1			0.33
->>        2       	0.06
->>        3          	0.01
-        0			0. 
-        1			1.0
+        0			0.60 
+        1			0.33
+        2       	0.06
+        3          	0.01
 
 
 InputUnitsEnglish Y
+
+HurricaneRandomNumberSeed 1968
 
 >> Max Wind Speed at Landfall is on a log normal distribution
 LowBoundLandfallWindSpeed	42 << mph
