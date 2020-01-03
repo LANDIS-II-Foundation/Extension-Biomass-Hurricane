@@ -1,0 +1,21 @@
+LandisData  "Output Biomass Reclass"
+
+Timestep   1
+
+
+ReclassMaps
+
+>> Map Name    Forest Type    Species
+>> --------    -------------  -------
+
+>>These are the common forest types in Fort Bragg.
+
+reclass1 -> 	Longleaf		LongleafPine -ShortPine -SlashPine
+		Slash			SlashPine -ShortPine 
+		Loblolly		LobPine -TurkeyOak -WhiteOak -ShortPine -RedMaple -SweetGum -SlashPine
+		Hardwoods_uplands	TurkeyOak WhiteOak 
+		Hardwoods_lowlands	RedMaple SweetGum TulipTree -TurkeyOak -WhiteOak
+		
+		
+
+MapFileNames   output-biomass-reclass/bio-{reclass-map-name}-{timestep}.img

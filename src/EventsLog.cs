@@ -13,11 +13,11 @@ namespace Landis.Extension.BaseHurricane
         [DataFieldAttribute(Unit = FieldUnits.Year, Desc = "...")]
         public int Time { get; set; }
 
-        [DataFieldAttribute(Desc = "Hurricane Year")]
-        public int Year { get; set; }
+        //[DataFieldAttribute(Desc = "Hurricane Year")]
+        //public int Year { get; set; }
 
-        [DataFieldAttribute(Desc = "Hurricane Number")]
-        public int Hnumber { get; set; }
+        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Hurricane Number")]
+        public int HurricaneNumber { get; set; }
 
         [DataFieldAttribute(Desc = "Latitude at Landfall")]
         public double LandfallLatitude { get; set; }
@@ -35,7 +35,7 @@ namespace Landis.Extension.BaseHurricane
         public double StudyAreaMinWS { get; set; }
 
         [DataFieldAttribute(Desc = "Impacts the Study Area?")]
-        public string ImpactsStudyArea { get; set; }
+        public bool ImpactsStudyArea { get; set; }
 
 
     }

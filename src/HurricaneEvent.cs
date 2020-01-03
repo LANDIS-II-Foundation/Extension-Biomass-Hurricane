@@ -13,16 +13,16 @@ namespace Landis.Extension.BaseHurricane
         private ActiveSite currentSite;
 
         internal static WindSpeedGenerator windSpeedGenerator { get; set; } = null;
-        internal static HurricaneWindMortalityTable windMortalityTable { get; set; } = null;
+        public static HurricaneWindMortalityTable WindMortalityTable { get; set; } = null;
         private static double baseWindSpeed = 48.0; // Asymptotic minimum max wind speed of a 
                                                     // storm.
-        public static double minimumWSforDamage { get; internal set; } = 96.5;
+        public static double minimumWSforDamage { get; set; }
 
-        public int hurricaneYear { get; set; }
+        //public int hurricaneYear { get; set; }
         public int hurricaneNumber { get; set; }
         public double studyAreaMaxWindspeed { get; set; }
         public double studyAreaMinWindspeed { get; set; }
-        public string studyAreaImpacts { get; set; }
+        public bool studyAreaImpacts { get; set; }
         public double landfallMaxWindSpeed { get; private set; }
         public double landfallLatitude { get; private set; }
         private double stormTrackEffectiveDistanceToCenterPoint { get; set; }
@@ -168,15 +168,15 @@ namespace Landis.Extension.BaseHurricane
             double lowerRightWindSpeed = this.GetWindSpeed(columns, 0);
             double upperRightWindSpeed = this.GetWindSpeed(columns, rows);
             double maxWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed }).Max();
-            this.studyAreaImpacts = "No";
+            this.studyAreaImpacts = false;
             if(maxWS < HurricaneEvent.minimumWSforDamage)
-            {
-                this.studyAreaMaxWindspeed = maxWS;
+                {
+                    this.studyAreaMaxWindspeed = maxWS;
                 this.studyAreaMinWindspeed =
                     (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed }).Min();
                 return false;
             }
-            this.studyAreaImpacts = "Yes";
+            this.studyAreaImpacts = true;
             IOutputRaster<BytePixel> outputRaster = null;
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape.ActiveSites)
             {
@@ -233,9 +233,10 @@ namespace Landis.Extension.BaseHurricane
             var name = cohort.Species.Name;
             var age = cohort.Age;
 
-            var deathLiklihood = HurricaneEvent.windMortalityTable
-                .GetMortalityProbability(species: cohort.Species.Name,
-                age: cohort.Age, windspeed: SiteVars.WindSpeed[this.currentSite]);
+            var deathLiklihood = HurricaneEvent.WindMortalityTable.GetMortalityProbability(cohort.Species.Name, cohort.Age, SiteVars.WindSpeed[this.currentSite]);
+
+            //PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}, Pmort={3}", name, age, windSpeed, deathLiklihood);
+
 
             var randomVar = PlugIn.ModelCore.GenerateUniform();
 

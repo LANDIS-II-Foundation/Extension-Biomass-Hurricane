@@ -22,41 +22,48 @@ namespace Landis.Extension.BaseHurricane
             }
         }
 
+        private ISpeciesDataset speciesDataset;
+        //private Dictionary<string, int> speciesLineNums;
+        private InputVar<string> speciesName;
+
         //---------------------------------------------------------------------
 
         public InputParameterParser()
         {
             // ToDo: fix this Hack to ensure that Percentage is registered with InputValues
-            Landis.Utilities.Percentage p = new Landis.Utilities.Percentage();
+            //Landis.Utilities.Percentage p = new Landis.Utilities.Percentage();
+            this.speciesDataset = PlugIn.ModelCore.Species;
+            //this.speciesLineNums = new Dictionary<string, int>();
+            this.speciesName = new InputVar<string>("Species");
         }
 
         //---------------------------------------------------------------------
 
         protected override IInputParameters Parse()
         {
-            string[] parseLine(string line)
-            {
-                return line.Replace("\t", " ")
-                    .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            }
+            //string[] parseLine(string line)
+            //{
+            //    return line.Replace("\t", " ")
+            //        .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            //}
 
-            var stormOccurProb = "StormOccurrenceProbabilities";
+            //var stormOccurProb = "StormOccurrenceProbabilities";
             var inputUnitsEnglish = "InputUnitsEnglish";
             var lowBoundLandfallWindSpeed = "LowBoundLandfallWindSpeed";
-            var modeLandfallWindSpeed = "ModeLandfallWindSpeed";
-            var highBoundLandfallWindSpeed = "HighBoundLandfallWindSpeed";
-            var centerPointLatitude = "CenterPointLatitude";
-            var centerPointDistanceInland = "CenterPointDistanceInland";
+            //var modeLandfallWindSpeed = "ModeLandfallWindSpeed";
+            //var highBoundLandfallWindSpeed = "HighBoundLandfallWindSpeed";
+            //var centerPointLatitude = "CenterPointLatitude";
+            //var centerPointDistanceInland = "CenterPointDistanceInland";
             var windSpeedVuln = "WindSpeedVulnerabilities";
             var map_names = "MapNames";
 
-            var sectionNames = new HashSet<System.String> {stormOccurProb, 
-                windSpeedVuln, map_names };
+            //var sectionNames = new HashSet<System.String> {stormOccurProb, 
+            //    windSpeedVuln, map_names };
 
-            var singleLineNames = new HashSet<System.String> {lowBoundLandfallWindSpeed,
-                modeLandfallWindSpeed, highBoundLandfallWindSpeed,
-                centerPointLatitude, centerPointDistanceInland, inputUnitsEnglish,};
-            var inputUnitsAreEnglish = false;
+            //var singleLineNames = new HashSet<System.String> {lowBoundLandfallWindSpeed,
+            //    modeLandfallWindSpeed, highBoundLandfallWindSpeed,
+            //    centerPointLatitude, centerPointDistanceInland, inputUnitsEnglish,};
+            //var inputUnitsAreEnglish = false;
 
             ReadLandisDataVar();
 
@@ -67,58 +74,118 @@ namespace Landis.Extension.BaseHurricane
             parameters.Timestep = timestep.Value;
 
             // Read the Storm Occurrence Probabilities table
-            // The call to ReadVar advanced the cursor, so it contains the next line.
-            string lastOperation = this.CurrentName;
-            while(sectionNames.Contains(lastOperation) || singleLineNames.Contains(lastOperation))
+            ReadName("StormOccurrenceProbabilities");
+            parameters.StormOccurenceProbabilities = new List<double>();
+            InputVar<int> stormYear = new InputVar<int>("Year Count");
+            InputVar<double> stormProb = new InputVar<double>("Hurricane Probability");
+
+            Dictionary<string, int> lineNumbers = new Dictionary<string, int>();
+            //lineNumbers.Clear();
+
+            while (!AtEndOfInput && CurrentName != inputUnitsEnglish && CurrentName != lowBoundLandfallWindSpeed)
             {
-                string[] row;
-                if(sectionNames.Contains(lastOperation))
+                StringReader currentLine = new StringReader(CurrentLine);
+
+                ReadValue(stormYear, currentLine);
+
+                ReadValue(stormProb, currentLine);
+                parameters.StormOccurenceProbabilities.Add(stormProb.Value);
+
+                CheckNoDataAfter("the " + stormProb.Name + " column", currentLine);
+                GetNextLine();
+            }
+
+            InputVar<bool> iue = new InputVar<bool>("InputUnitsEnglish");
+            if (ReadOptionalVar(iue))
+                parameters.InputUnitsEnglish = iue.Value;
+
+            InputVar<int> lowboundLFWS = new InputVar<int>("LowBoundLandfallWindSpeed");
+            ReadVar(lowboundLFWS);
+            parameters.LowBoundLandfallWindSpeed = lowboundLFWS.Value;
+
+            InputVar<int> modeLFWS = new InputVar<int>("ModeLandfallWindSpeed");
+            ReadVar(modeLFWS);
+            parameters.ModeLandfallWindSpeed = modeLFWS.Value;
+
+            InputVar<int> hiboundLFWS = new InputVar<int>("HighBoundLandfallWindSpeed");
+            ReadVar(hiboundLFWS);
+            parameters.HighBoundLandfallWindspeed = hiboundLFWS.Value;
+
+            InputVar<double> cpl = new InputVar<double>("CenterPointLatitude");
+            ReadVar(cpl);
+            parameters.CenterPointLatitude = cpl.Value;
+
+            InputVar<int> cpdi = new InputVar<int>("CenterPointDistanceInland");
+            ReadVar(cpdi);
+            parameters.CenterPointDistanceInland = cpdi.Value;
+
+            ReadName(windSpeedVuln);
+
+            parameters.WindSpeedMortalityProbabilities =
+                new Dictionary<string, Dictionary<double, Dictionary<double, double>>>();
+            //string[] aRow;
+            //Func<string, string[]> parseLine;
+            InputVar<int> maxAge = new InputVar<int>("Maximum Age");
+            InputVar<string> age_prob_string = new InputVar<string>("Age Prob Combo");
+            double minimumWindSpeed = 96.5;
+
+
+            while (!AtEndOfInput && CurrentName != map_names)
+            {
+                StringReader currentLine = new StringReader(CurrentLine);
+
+                ISpecies species = ReadSpecies(currentLine);
+
+                ReadValue(maxAge, currentLine);
+                double max_age = maxAge.Value;
+
+                //  Read ages and probabilities
+                List<string> ages_probs = new List<string>();
+                TextReader.SkipWhitespace(currentLine);
+                while (currentLine.Peek() != -1)
                 {
-                    sectionNames.Remove(lastOperation);
-                    GetNextLine();
-                    if(lastOperation == stormOccurProb)
-                    {
-                        populateStormOccurenceProbabilities(
-                            parameters, sectionNames, singleLineNames, parseLine);
-                    }
-                    else if (lastOperation == windSpeedVuln)
-                    {
-                        HurricaneEvent.windMortalityTable =
-                            populateWindSpeedVulnverabilities(
-                                sectionNames, singleLineNames, parseLine);
-                    }
-                    lastOperation = this.CurrentName;
+                    ReadValue(age_prob_string, currentLine);
+                    ages_probs.Add(age_prob_string.Value.Actual);
+                    TextReader.SkipWhitespace(currentLine);
                 }
 
-                if(singleLineNames.Contains(lastOperation))
+                //double age = Convert.ToDouble(aRow[1]);
+                //var dataVals = SliceToEnd(currentLine);
+                Dictionary<double, double> probabilities = new Dictionary<double, double>();
+                foreach (var entry in ages_probs)
                 {
-                    string value = "";
-                    row = parseLine(this.CurrentLine);
-                    if(row.Length >= 2)
-                        value = row[1];
-                    if(lastOperation == lowBoundLandfallWindSpeed)
-                        parameters.LowBoundLandfallWindSpeed = Convert.ToDouble(value);
-                    else if(lastOperation == modeLandfallWindSpeed)
-                        parameters.ModeLandfallWindSpeed = Convert.ToDouble(value);
-                    else if(lastOperation == highBoundLandfallWindSpeed)
-                        parameters.HighBoundLandfallWindspeed = Convert.ToDouble(value);
-                    else if(lastOperation == centerPointLatitude)
-                        parameters.CenterPointLatitude = Convert.ToDouble(value);
-                    else if(lastOperation == centerPointDistanceInland)
-                        parameters.CenterPointDistanceInland = Convert.ToDouble(value);
-                    else if(lastOperation == inputUnitsEnglish)
-                        inputUnitsAreEnglish = true;
-                    singleLineNames.Remove(lastOperation);
-                    GetNextLine();
-                    lastOperation = this.CurrentName;
+                    var split = entry.Split(':');
+                    var speed = Convert.ToDouble(split[0]);
+                    if (parameters.InputUnitsEnglish)
+                        speed *= 1.60934;
+                    if (speed < minimumWindSpeed)
+                        minimumWindSpeed = speed;
+                    var probability = Convert.ToDouble(split[1]);
+                    probabilities[speed] = probability;
+                    PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality Table:  {0}:{1}, Wind={2}, Pmort={3}", species.Name, max_age, speed, probability);
                 }
-                if(lastOperation == map_names)
-                    break;
+
+                var cohortAges = new Dictionary<double, Dictionary<double, double>>();
+                cohortAges[max_age] = probabilities;
+
+                if (!parameters.WindSpeedMortalityProbabilities.ContainsKey(species.Name))
+                    parameters.WindSpeedMortalityProbabilities.Add(species.Name, cohortAges);
+                else
+                    parameters.WindSpeedMortalityProbabilities[species.Name][max_age] = probabilities;
+
+
+
+
+                GetNextLine();
             }
-            if(inputUnitsAreEnglish)
-                parameters.AdjustValuesFromEnglishToMetric();
-            HurricaneEvent.minimumWSforDamage =
-                HurricaneEvent.windMortalityTable.MinimumWindSpeed;
+
+            HurricaneEvent.minimumWSforDamage = minimumWindSpeed;
+            ////parameters.minimumWSforDamage = 
+            //    HurricaneEvent.windMortalityTable.MinimumWindSpeed;
+
+                //HurricaneEvent.windMortalityTable =
+                //                            populateWindSpeedVulnverabilities(
+                //                                sectionNames, singleLineNames, parseLine);
 
             const string MapNames = "MapNames";
             InputVar<string> mapNames = new InputVar<string>(MapNames);
@@ -133,7 +200,7 @@ namespace Landis.Extension.BaseHurricane
 
             // testStuff(parameters);
 
-            return parameters; //.GetComplete();
+            return parameters; 
         }
 
         //private void testStuff(InputParameters parameters)
@@ -191,21 +258,52 @@ namespace Landis.Extension.BaseHurricane
             }
             return new HurricaneWindMortalityTable(windSpeedVulnverabilities);
         }
+        //---------------------------------------------------------------------
 
-        private void populateStormOccurenceProbabilities(
-            InputParameters parameters, HashSet<string> sectionNames, 
-            HashSet<string> singleLineNames, Func<string, string[]> parseLine)
+        /// <summary>
+        /// Reads a species name from the current line, and verifies the name.
+        /// </summary>
+        private ISpecies ReadSpecies(StringReader currentLine)
         {
-            string[] aRow;
-            parameters.StormOccurenceProbabilities = new List<double>();
-            while(!(sectionNames.Contains(this.CurrentName) ||
-                singleLineNames.Contains(this.CurrentName)))
-            {
-                aRow = parseLine(this.CurrentLine);
-                parameters.StormOccurenceProbabilities.Add(Convert.ToDouble(aRow[1]));
-                GetNextLine();
-            }
+            ReadValue(speciesName, currentLine);
+            ISpecies species = PlugIn.ModelCore.Species[speciesName.Value.Actual];
+            if (species == null)
+                throw new InputValueException(speciesName.Value.String,
+                                              "{0} is not a species name.",
+                                              speciesName.Value.String);
+            //int lineNumber;
+            //if (speciesLineNums.TryGetValue(species.Name, out lineNumber))
+            //    throw new InputValueException(speciesName.Value.String,
+            //                                  "The species {0} was previously used on line {1}",
+            //                                  speciesName.Value.String, lineNumber);
+            //else
+            //    speciesLineNums[species.Name] = LineNumber;
+            return species;
         }
+        public static List<string> SliceToEnd(StringReader currentLine)
+        {
+            string[] strArray = new System.String[] { currentLine.ReadToEnd() };
+            int startIdx = 0; // currentLine.Index;
+            var len = strArray.Length;
+            List<string> retList = new List<string>(strArray);
+            retList = retList.GetRange(startIdx, len - startIdx);
+            return retList;
+
+        }
+        //private void populateStormOccurenceProbabilities(
+        //    InputParameters parameters, HashSet<string> sectionNames, 
+        //    HashSet<string> singleLineNames, Func<string, string[]> parseLine)
+        //{
+        //    string[] aRow;
+        //    parameters.StormOccurenceProbabilities = new List<double>();
+        //    while(!(sectionNames.Contains(this.CurrentName) ||
+        //        singleLineNames.Contains(this.CurrentName)))
+        //    {
+        //        aRow = parseLine(this.CurrentLine);
+        //        parameters.StormOccurenceProbabilities.Add(Convert.ToDouble(aRow[1]));
+        //        GetNextLine();
+        //    }
+        //}
     }
 
     public static class ExtensionMethods

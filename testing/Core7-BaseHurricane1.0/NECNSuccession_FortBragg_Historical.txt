@@ -1,0 +1,106 @@
+
+LandisData	"NECN Succession"
+Timestep  1
+
+SeedingAlgorithm  WardSeedDispersal
+
+InitialCommunities      	./Ft.Bragg_IC_File.txt
+InitialCommunitiesMap   	./IC_Map_FortBragg.tif
+
+ClimateConfigFile		./climate-generator-baseline.txt
+
+SoilDepthMapName				./Depth_FortBragg.tif
+SoilDrainMapName				./Drainage_FortBragg.tif
+SoilBaseFlowMapName				./StormFlow_FortBragg.tif
+SoilStormFlowMapName				./StormFlow_FortBragg.tif
+SoilFieldCapacityMapName		./FieldCapacity_FortBragg_final.tif   << starting here I had to set minimum to 0.01  
+SoilWiltingPointMapName			./WiltPoint_FortBragg_final.tif  <<change 2-13-19
+SoilPercentSandMapName			./Sand_FortBragg.tif     
+SoilPercentClayMapName			./Clay_FortBragg.tif    
+InitialSOM1CsurfMapName			./SOM1surfC_FortBragg.tif   
+InitialSOM1NsurfMapName			./SOM1surfN_FortBragg.tif 
+InitialSOM1CsoilMapName			./SOM1soilC_FortBragg.tif 
+InitialSOM1NsoilMapName			./SOM1soilN_FortBragg.tif 
+InitialSOM2CMapName				./SOM2C_FortBragg.tif 
+InitialSOM2NMapName				./SOM2N_FortBragg.tif 
+InitialSOM3CMapName				./SOM3C_FortBragg.tif 
+InitialSOM3NMapName				./SOM3N_FortBragg.tif 
+InitialDeadWoodSurfaceMapName	./CWD_FortBragg.tif 
+InitialDeadCoarseRootsMapName	./CWD_FortBragg.tif   <<placeholder
+
+CalibrateMode 	no
+SmokeModelOutputs yes
+WaterDecayFunction Ratio <<Linear or Ratio
+
+ProbabilityEstablishAdjust 	0.4
+>>ProbabilityEstablishAdjust 	0.0001  << Error check mode to see how regeneration looks
+InitialMineralN			2.0
+InitialFineFuels		0.1
+AtmosphericNSlope		0.004  << aim for 0.4394533, 1.08 total
+AtmosphericNIntercept	0.25  << aim for 0.6404624
+Latitude				35.140809  <<Google maps of Fort Bragg
+DenitrificationRate			0.01
+DecayRateSurf				1.5
+DecayRateSOM1				1.5
+DecayRateSOM2				0.011
+DecayRateSOM3				0.0001
+
+MaximumLAI
+
+>> Shade	Max LAI
+>> Class	
+>> ----------	--------------------	
+	1	1 
+	2	2.5 
+	3	3.5 
+	4	6
+	5	8
+		
+
+LightEstablishmentTable
+>> Spp Shade	Probability
+>> Class	by Actual Shade
+>> ----------	--------------------	
+>>Below from Melissa August 2014
+	1	1	1	0.25	0.1	0	0
+	2	0.5	0.5	1	0.25	0.1	0
+	3	0.1	0.5	1	1	0.5	0.1
+	4	0.1	0.25	0.5	0.5	1	0.25
+	5	0	0.1	0.25	0.25	0.5	1
+	
+SpeciesParameters
+>> Species   Funct	N-fix?	GDD	  GDD	Min	Max	    Leaf	Epi-	Leaf	FRoot	Wood	CRoot	Leaf  FRoot     Wood    CRoot  Littr 	MaxANPP MaxAGB
+>>	         ional	Y/N	    Min	  Max	Jan	Drought	Long	cormic	Lign%	Lign%	Lign%	Lign%	CN    CN        CN      CN     CN	
+>> 	         Type				  Temp			            re-
+>>           								                sprout
+LobPine	  	1    N	    3165  5993   4   0.360   3       N       0.28	0.2	0.27	0.35	50	50	663	170	100	500	 39000 <<Zach used 100, seems too low based on https://www.researchgate.net/publication/325101658_Carbon_accumulation_in_loblolly_pine_plantations_is_increased_by_fertilization_across_a_soil_moisture_availability_gradient
+LongleafPine	1    N      4000  7000   3   0.423    2       N      0.28	0.2	0.27	0.35	50	50	663	170	100	340	 33000 <<Longleaf grows more slowly than Lob or short pine https://www.srs.fs.usda.gov/pubs/gtr/gtr_srs203/gtr_srs203-082.pdf
+RedMaple	2    N      1260  6600   -18  0.23    1       N       0.18	0.255	0.21	0.25	20	45	565	90	45	590	 46000 
+ShortPine	1    N      2660  5076   -1   0.423    3       N       0.28	0.2	0.27	0.35	50	50	663	170	100	360	 28000 
+SlashPine	1    N       3165  5993   4   0.360   3       N       0.28	0.2	0.27	0.35	50	50	663	170	100	330	 25000 << Used loblolly traits
+TurkeyOak       2    N      4000  7000   1   0.423    1       N       0.18	0.255	0.272	0.25	20	45	301	90	50	660	 43000
+WhiteOak	2    N      1200  5537   -14   0.330   1       N      0.18	0.255	0.272	0.25	20	45	301	90	50	550	 43000 
+SweetGum        2    N      2660  5993   -1   0.300   1       N       0.17	0.255	0.21	0.25	20	45	294	90	45	500	 43000 
+TulipTree  	2    N      2300  5993   -2  0.16     1       N      0.17	0.255	0.2	0.25	20	45	294	90	45	550	 43000 
+
+
+FunctionalGroupParameters
+>>Functional 	functional 	PPDF1	PPDF2	PPDF3	PPDF4	FCFRAC	BTOLAI	KLAI	MAXLAI	PPRPTS2	PPRPTS3	Wood	Monthly		AGE_Mort	leaf_drop     CRootFrac FRootFRac   Notes	
+DroughtTolerant	        1            28.0    45.0    2.5    1.4     0.3    -0.9  6800    10.0     1.0     0.8     0.5     0.003       15          9            0.3      0.2  <<2.0 was PPDF4, changed PPDF1 from 28 to 26
+DroughtSensitive        2       28.0    45.0    2.5     1.4     0.45     -0.9  50000   20.0    1.1     0.9     0.6     0.003       15	     9            0.33      0.25
+
+
+FireReductionParameters
+>> Based on Stacy Drury's lit review/analysis. See 'Fuel consumption based on fire severity class.docx'
+>>	Severity	WoodLitter	Litter	SOM
+>>	Fire		Reduct		Reduct	Reduction
+	1			0.05		1.0 		1.0 <<0.1     
+	2			0.2			1.0			1.0 <<0.5
+	3			0.4			1.0			1.0
+
+HarvestReductionParameters
+>>	Name			WoodLitter	Litter	SOM			CohortWood	CohortLeaf
+>>					Reduct		Reduct	Reduction	Removal		Removal
+Thinnning_Pines		.1		.1	.1		.85		.85 	 
+Clearcut_Slash		.1		.1	.1		.85		.85		 
+			

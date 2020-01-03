@@ -45,15 +45,12 @@ namespace Landis.Extension.BaseHurricane
         public double HighBoundLandfallWindspeed { get; set; }
         public double CenterPointLatitude { get; set; }
         public double CenterPointDistanceInland { get; set; }
+        //public  double minimumWSforDamage { get; set; } = 96.5;
 
-        public void AdjustValuesFromEnglishToMetric()
-        {
-            this.LowBoundLandfallWindSpeed *= 1.60934;
-            this.ModeLandfallWindSpeed *= 1.60934;
-            this.HighBoundLandfallWindspeed *= 1.60934;
-            this.CenterPointDistanceInland *= 1.60934;
-            HurricaneEvent.windMortalityTable.ChangeSpeedsFromEnglishToMetric();
-        }
+        public Dictionary<string, Dictionary<double, Dictionary<double, double>>> WindSpeedMortalityProbabilities { get; set; }
+
+        public bool InputUnitsEnglish { get; set; } = false;
+
 
 
         //---------------------------------------------------------------------

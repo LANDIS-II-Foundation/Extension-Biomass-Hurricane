@@ -1,0 +1,68 @@
+LandisData  "Base Hurricane"
+
+Timestep  1
+
+>> Likelihood a given year will have this number of storms
+>> On the US southeastern seaboard, based on 1979 -- 2018.
+>> For climate change, adjust this table
+StormOccurrenceProbabilities
+ >> Storms
+ >>  Per
+ >>  Year       Probability  << Sum must = 1.0
+>>        0			0.60 
+>>        1			0.33
+>>        2       	0.06
+>>        3          	0.01
+        0			0. 
+        1			1.0
+
+
+InputUnitsEnglish Y
+
+>> Max Wind Speed at Landfall is on a log normal distribution
+LowBoundLandfallWindSpeed	42 << mph
+
+>> For climate change, adjust these two upwards
+ModeLandfallWindSpeed	74 << mph
+HighBoundLandfallWindSpeed  150 << mph  Values greater than this are recomputed, so it truncates here.
+
+>> Study area location (Center point of the raster)
+>> These are for Fort Bragg
+CenterPointLatitude			35.11  << decimal degrees
+CenterPointDistanceInland	100   << miles 
+
+WindSpeedVulnerabilities
+>> Species		MaxAge			Mortality Probabilities
+LobPine			30		60:0.05   75:0.18    110:0.75  140:1.0
+LobPine			60		60:0.1    75:0.23   110:0.75  140:1.0
+LobPine			999		60:0.1    75:0.29   110:0.75  140:1.0
+LongleafPine		30		60:0.05   75:0.18    110:0.75  140:1.0
+LongleafPine		60		60:0.1    75:0.23   110:0.75  140:1.0
+LongleafPine		999		60:0.1    75:0.29   110:0.75  140:1.0
+ShortPine		30		60:0.05   75:0.18    110:0.75  140:1.0
+ShortPine		60		60:0.1    75:0.23   110:0.75  140:1.0
+ShortPine		999		60:0.1    75:0.29   110:0.75  140:1.0
+SlashPine		30		60:0.05   75:0.18    110:0.75  140:1.0
+SlashPine		60		60:0.1    75:0.23   110:0.75  140:1.0
+SlashPine		999		60:0.1    75:0.29   110:0.75  140:1.0
+WhiteOak		20		60:0.01    75:0.05    95:0.45    110:1.0    
+WhiteOak		60		60:0.01    75:0.10    95:0.55    110:1.0    
+WhiteOak		999		60:0.1    75:0.30    95:0.65    110:1.0    
+TurkeyOak		20		60:0.01    75:0.05    95:0.45    110:1.0    
+TurkeyOak		60		60:0.01    75:0.10    95:0.55    110:1.0    
+TurkeyOak		999		60:0.05    75:0.30    95:0.65    110:1.0    
+SweetGum		20		60:0.01    86:0.06    110:0.45    140:1.0
+SweetGum		90		60:0.01    86:0.06    110:0.45    140:1.0
+SweetGum		999		60:0.01    86:0.06    110:0.45    140:1.0
+RedMaple		20		60:0.01    86:0.06    110:0.45    140:1.0
+RedMaple		90		60:0.01    86:0.06    110:0.45    140:1.0
+RedMaple		999		60:0.01    86:0.06    110:0.45    140:1.0
+TulipTree		30		60:0.1    75:0.50    110:0.833    140:1.0
+TulipTree		50		60:0.1    75:0.80    110:0.833    140:1.0
+TulipTree		999		60:0.1    75:0.80    110:0.833    140:1.0
+
+>> >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+MapNames  hurricane/max-windspeed-{timestep}.img
+LogFile   hurricane/hurricane-log.csv
+

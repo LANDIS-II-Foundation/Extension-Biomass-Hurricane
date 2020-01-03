@@ -54,8 +54,6 @@ namespace Landis.Extension.BaseHurricane
             modelCore = mCore;
             InputParameterParser parser = new InputParameterParser();
             this.parameters = Landis.Data.Load<IInputParameters>(dataFile, parser);
-            HurricaneEvent.windSpeedGenerator = new WindSpeedGenerator(this.parameters.LowBoundLandfallWindSpeed,
-                this.parameters.ModeLandfallWindSpeed, this.parameters.HighBoundLandfallWindspeed);
         }
         //---------------------------------------------------------------------
 
@@ -71,6 +69,21 @@ namespace Landis.Extension.BaseHurricane
         /// </param>
         public override void Initialize()
         {
+
+            HurricaneEvent.WindMortalityTable = new HurricaneWindMortalityTable(parameters.WindSpeedMortalityProbabilities);
+            if (parameters.InputUnitsEnglish)
+            {
+                parameters.LowBoundLandfallWindSpeed *= 1.60934;
+                parameters.ModeLandfallWindSpeed *= 1.60934;
+                parameters.HighBoundLandfallWindspeed *= 1.60934;
+                parameters.CenterPointDistanceInland *= 1.60934;
+                //HurricaneEvent.WindMortalityTable.ChangeSpeedsFromEnglishToMetric();
+
+            }
+            HurricaneEvent.windSpeedGenerator = new WindSpeedGenerator(this.parameters.LowBoundLandfallWindSpeed,
+                this.parameters.ModeLandfallWindSpeed, this.parameters.HighBoundLandfallWindspeed);
+            //parameters.AdjustValuesFromEnglishToMetric();
+
             List<string> colnames = new List<string>();
             foreach(IEcoregion ecoregion in modelCore.Ecoregions)
             {
@@ -119,9 +132,9 @@ namespace Landis.Extension.BaseHurricane
                 foreach(var stormCount in Enumerable.Range(0, stormsThisYear))
                 {
                     var storm = HurricaneEvent.Initiate(this.ContinentalGrid);
-                    storm.hurricaneYear = 
-                        year + PlugIn.ModelCore.CurrentTime - 
-                        this.parameters.Timestep;
+                    //storm.hurricaneYear = 
+                    //    year + PlugIn.ModelCore.CurrentTime - 
+                    //    this.parameters.Timestep;
 
                     storm.hurricaneNumber = stormCount+1;
 
@@ -156,8 +169,8 @@ namespace Landis.Extension.BaseHurricane
             el.Time = currentTime;
             if(hurricaneEvent != null)
             {
-                el.Year = hurricaneEvent.hurricaneYear;
-                el.Hnumber =  hurricaneEvent.hurricaneNumber;
+                //el.Year = hurricaneEvent.hurricaneYear;
+                el.HurricaneNumber =  hurricaneEvent.hurricaneNumber;
                 el.ImpactsStudyArea = hurricaneEvent.studyAreaImpacts;
                 el.StudyAreaMaxWS = hurricaneEvent.studyAreaMaxWindspeed;
                 el.StudyAreaMinWS = hurricaneEvent.studyAreaMinWindspeed;

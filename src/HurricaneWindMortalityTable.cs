@@ -18,6 +18,8 @@ namespace Landis.Extension.BaseHurricane
 
         public double GetMortalityProbability(string species, double age, double windspeed)
         {
+            //PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}", species, age, windspeed);
+
             var speciesTable = this.theTable[species];
             
             // Note: The next two lines, running once per site, is very inefficent.
@@ -51,23 +53,23 @@ namespace Landis.Extension.BaseHurricane
             return speed_probabilityTable[speedToUse];
         }
 
-        internal void ChangeSpeedsFromEnglishToMetric()
-        {
-            foreach(var species in this.theTable.Values)
-            {
-                foreach(var age in species.Values)
-                {
-                    var ageKeys = new List<double>(age.Keys);
-                    foreach(var mph in ageKeys)
-                    {
-                        var prob = age[mph];
-                        var kph = 1.60934 * mph;
-                        age.Remove(mph);
-                        age[kph] = prob;
-                    }
-                }
-            }
-        }
+        //internal void ChangeSpeedsFromEnglishToMetric()
+        //{
+        //    foreach(var species in this.theTable.Values)
+        //    {
+        //        foreach(var age in species.Values)
+        //        {
+        //            var ageKeys = new List<double>(age.Keys);
+        //            foreach(var mph in ageKeys)
+        //            {
+        //                var prob = age[mph];
+        //                var kph = 1.60934 * mph;
+        //                age.Remove(mph);
+        //                age[kph] = prob;
+        //            }
+        //        }
+        //    }
+        //}
 
         internal double MinimumWindSpeed
         {

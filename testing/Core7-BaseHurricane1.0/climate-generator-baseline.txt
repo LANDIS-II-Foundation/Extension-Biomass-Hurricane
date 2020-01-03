@@ -1,0 +1,15 @@
+LandisData "Climate Config"				
+		
+ClimateTimeSeries			Daily_RandomYears
+ClimateFile				FortBragg_New_Climate_With_WD_noSWR.csv  << FortBragg_New_Climate_With_WD_noSWR.csv <<FortBragg_New_Climate_With_WD.csv <<FortBragg_New_Climate_With_WD_noRH.csv
+ClimateFileFormat			Daily_Temp-K_Precip-mmDay
+
+SpinUpClimateTimeSeries			Daily_RandomYears
+SpinUpClimateFile			ClimateTestOnly.csv
+SpinUpClimateFileFormat			Daily_Temp-K_Precip-mmDay
+
+UsingFireClimate			yes
+>>RelativeHumiditySlopeAdjust   75  << Original was 0.5. Changed to 75 to more match example file
+SpringStart				1
+WinterStart				213
+
