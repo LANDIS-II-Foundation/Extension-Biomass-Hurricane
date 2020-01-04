@@ -165,12 +165,6 @@ namespace Landis.Extension.BaseHurricane
             }
 
             HurricaneEvent.minimumWSforDamage = minimumWindSpeed;
-            ////parameters.minimumWSforDamage = 
-            //    HurricaneEvent.windMortalityTable.MinimumWindSpeed;
-
-                //HurricaneEvent.windMortalityTable =
-                //                            populateWindSpeedVulnverabilities(
-                //                                sectionNames, singleLineNames, parseLine);
 
             const string MapNames = "MapNames";
             InputVar<string> mapNames = new InputVar<string>(MapNames);
@@ -205,44 +199,43 @@ namespace Landis.Extension.BaseHurricane
         //    diff = expectedProbability - actualProbability;
         //}
 
-        private HurricaneWindMortalityTable
-            populateWindSpeedVulnverabilities(
-            HashSet<string> sectionNames, HashSet<string> singleLineNames, 
-            Func<string, string[]> parseLine)
-        {
-            string[] aRow;
-            var windSpeedVulnverabilities =
-                new Dictionary<string, Dictionary<double, Dictionary<double, double>>>();
+        //private HurricaneWindMortalityTable
+        //    populateWindSpeedVulnverabilities(
+        //    HashSet<string> sectionNames, HashSet<string> singleLineNames, 
+        //    Func<string, string[]> parseLine)
+        //{
+        //    string[] aRow;
+        //    var windSpeedVulnverabilities =
+        //        new Dictionary<string, Dictionary<double, Dictionary<double, double>>>();
 
-            while(!(sectionNames.Contains(this.CurrentName) ||
-                singleLineNames.Contains(this.CurrentName)))
-            {
-                aRow = parseLine(this.CurrentLine);
-                string speciesName = aRow[0];
-                if(!windSpeedVulnverabilities.ContainsKey(speciesName))
-                    windSpeedVulnverabilities[speciesName] =
-                        new Dictionary<double, Dictionary<double, double>>();
+        //    while(!(sectionNames.Contains(this.CurrentName) ||
+        //        singleLineNames.Contains(this.CurrentName)))
+        //    {
+        //        aRow = parseLine(this.CurrentLine);
+        //        string speciesName = aRow[0];
+        //        if(!windSpeedVulnverabilities.ContainsKey(speciesName))
+        //            windSpeedVulnverabilities[speciesName] =
+        //                new Dictionary<double, Dictionary<double, double>>();
 
-                double age = Convert.ToDouble(aRow[1]);
-                var dataVals = aRow.SliceToEnd(2);
-                Dictionary<double, double> probabilities = new Dictionary<double, double>();
-                foreach(var entry in dataVals)
-                {
-                    var split = entry.Split(':');
-                    var speed = Convert.ToDouble(split[0]);
-                    var probability = Convert.ToDouble(split[1]);
-                    probabilities[speed] = probability;
-                }
-                var cohortAges = new Dictionary<double, Dictionary<double, double>>();
-                cohortAges[age] = probabilities;
+        //        double age = Convert.ToDouble(aRow[1]);
+        //        var dataVals = aRow.SliceToEnd(2);
+        //        Dictionary<double, double> probabilities = new Dictionary<double, double>();
+        //        foreach(var entry in dataVals)
+        //        {
+        //            var split = entry.Split(':');
+        //            var speed = Convert.ToDouble(split[0]);
+        //            var probability = Convert.ToDouble(split[1]);
+        //            probabilities[speed] = probability;
+        //        }
+        //        var cohortAges = new Dictionary<double, Dictionary<double, double>>();
+        //        cohortAges[age] = probabilities;
 
-                windSpeedVulnverabilities[speciesName][age] = probabilities;
+        //        windSpeedVulnverabilities[speciesName][age] = probabilities;
 
-                //parameters.windSpeedVulnverabilities;
-                GetNextLine();
-            }
-            return new HurricaneWindMortalityTable(windSpeedVulnverabilities);
-        }
+        //        GetNextLine();
+        //    }
+        //    return new HurricaneWindMortalityTable(windSpeedVulnverabilities);
+        //}
         //---------------------------------------------------------------------
 
         /// <summary>
@@ -256,13 +249,6 @@ namespace Landis.Extension.BaseHurricane
                 throw new InputValueException(speciesName.Value.String,
                                               "{0} is not a species name.",
                                               speciesName.Value.String);
-            //int lineNumber;
-            //if (speciesLineNums.TryGetValue(species.Name, out lineNumber))
-            //    throw new InputValueException(speciesName.Value.String,
-            //                                  "The species {0} was previously used on line {1}",
-            //                                  speciesName.Value.String, lineNumber);
-            //else
-            //    speciesLineNums[species.Name] = LineNumber;
             return species;
         }
         public static List<string> SliceToEnd(StringReader currentLine)
@@ -275,31 +261,17 @@ namespace Landis.Extension.BaseHurricane
             return retList;
 
         }
-        //private void populateStormOccurenceProbabilities(
-        //    InputParameters parameters, HashSet<string> sectionNames, 
-        //    HashSet<string> singleLineNames, Func<string, string[]> parseLine)
-        //{
-        //    string[] aRow;
-        //    parameters.StormOccurenceProbabilities = new List<double>();
-        //    while(!(sectionNames.Contains(this.CurrentName) ||
-        //        singleLineNames.Contains(this.CurrentName)))
-        //    {
-        //        aRow = parseLine(this.CurrentLine);
-        //        parameters.StormOccurenceProbabilities.Add(Convert.ToDouble(aRow[1]));
-        //        GetNextLine();
-        //    }
-        //}
     }
 
-    public static class ExtensionMethods
-    {
-        public static List<string> SliceToEnd(this string[] strArray, int startIdx)
-        {
-            var len = strArray.Length;
-            var retList = new List<string>(strArray);
-            retList = retList.GetRange(startIdx, len - startIdx);
-            return retList;
+    //public static class ExtensionMethods
+    //{
+    //    public static List<string> SliceToEnd(this string[] strArray, int startIdx)
+    //    {
+    //        var len = strArray.Length;
+    //        var retList = new List<string>(strArray);
+    //        retList = retList.GetRange(startIdx, len - startIdx);
+    //        return retList;
 
-        }
-    }
+    //    }
+    //}
 }

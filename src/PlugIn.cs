@@ -23,8 +23,8 @@ namespace Landis.Extension.BaseHurricane
         public static MetadataTable<SummaryLog> summaryLog;
         public static readonly string ExtensionName = "Base Hurricane";
         //public static ContinuousUniformDistribution hurricaneGeneratorStandard;
-        public static LognormalDistribution hurricaneGeneratorLogNormal;
-        public static Troschuetz.Random.Generators.MT19937Generator hurricaneGeneratorStandard;
+        public static Troschuetz.Random.Distributions.Continuous.LognormalDistribution HurricaneGeneratorLogNormal;
+        public static Troschuetz.Random.Generators.MT19937Generator HurricaneGeneratorStandard;
 
         private string mapNameTemplate;
         private IInputParameters parameters;
@@ -84,7 +84,7 @@ namespace Landis.Extension.BaseHurricane
                 //HurricaneEvent.WindMortalityTable.ChangeSpeedsFromEnglishToMetric();
 
             }
-            HurricaneEvent.windSpeedGenerator = new WindSpeedGenerator(this.parameters.LowBoundLandfallWindSpeed,
+            HurricaneEvent.WindSpeedGenerator = new WindSpeedGenerator(this.parameters.LowBoundLandfallWindSpeed,
                 this.parameters.ModeLandfallWindSpeed, this.parameters.HighBoundLandfallWindspeed);
             //parameters.AdjustValuesFromEnglishToMetric();
 
@@ -112,9 +112,8 @@ namespace Landis.Extension.BaseHurricane
             if (parameters.HurricaneRandomNumberSeed > 0)
             {
                 HurricaneEvent.HurricaneRandomNumber = true;
-                hurricaneGeneratorStandard = new Troschuetz.Random.Generators.MT19937Generator((uint)parameters.HurricaneRandomNumberSeed);
-                //hurricaneGeneratorStandard = new ContinuousUniformDistribution((uint) parameters.HurricaneRandomNumberSeed);
-                hurricaneGeneratorLogNormal = new LognormalDistribution((uint)parameters.HurricaneRandomNumberSeed);
+                HurricaneGeneratorStandard = new Troschuetz.Random.Generators.MT19937Generator((uint)parameters.HurricaneRandomNumberSeed);
+                HurricaneGeneratorLogNormal = new Troschuetz.Random.Distributions.Continuous.LognormalDistribution((uint)parameters.HurricaneRandomNumberSeed);
             }
 
             //double testDouble = hurricaneGenerator.NextDouble();
@@ -134,7 +133,7 @@ namespace Landis.Extension.BaseHurricane
                 int stormsThisYear = -1;
                 var randomNum = PlugIn.ModelCore.GenerateUniform();
                 if (HurricaneEvent.HurricaneRandomNumber)
-                    randomNum = PlugIn.hurricaneGeneratorStandard.NextDouble();
+                    randomNum = PlugIn.HurricaneGeneratorStandard.NextDouble();
 
                 var cummProb = 0.0;
                 foreach(var probability in this.parameters.StormOccurenceProbabilities)
