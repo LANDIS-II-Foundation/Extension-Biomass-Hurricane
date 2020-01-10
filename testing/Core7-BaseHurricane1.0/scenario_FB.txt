@@ -1,7 +1,7 @@
 LandisData  Scenario
 
 
-Duration  25
+Duration  12
 
 Species   species_DoD.txt
 
@@ -53,5 +53,5 @@ CellLength  100 << meters, 100 x 100 m = 1 hectare
 
 
 
-RandomNumberSeed  357  << optional parameter; default = the seed is
+>>RandomNumberSeed  357  << optional parameter; default = the seed is
                          << randomly generated using the current time

@@ -112,7 +112,7 @@ namespace Landis.Extension.BaseHurricane
             //Func<string, string[]> parseLine;
             InputVar<int> maxAge = new InputVar<int>("Maximum Age");
             InputVar<string> age_prob_string = new InputVar<string>("Age Prob Combo");
-            double minimumWindSpeed = 96.5;
+            double minimumWindSpeed = 96.5;  // kph = 60 mph:  This is a standard minimum, below this effects generally not expected.
 
 
             while (!AtEndOfInput && CurrentName != map_names)
@@ -164,7 +164,7 @@ namespace Landis.Extension.BaseHurricane
                 GetNextLine();
             }
 
-            HurricaneEvent.minimumWSforDamage = minimumWindSpeed;
+            HurricaneEvent.MinimumWSforDamage = minimumWindSpeed;
 
             const string MapNames = "MapNames";
             InputVar<string> mapNames = new InputVar<string>(MapNames);

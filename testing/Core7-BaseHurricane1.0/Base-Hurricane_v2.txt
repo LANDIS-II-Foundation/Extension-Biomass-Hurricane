@@ -17,7 +17,7 @@ StormOccurrenceProbabilities
 
 InputUnitsEnglish Y
 
-HurricaneRandomNumberSeed 1968
+HurricaneRandomNumberSeed 1974
 
 >> Max Wind Speed at Landfall is on a log normal distribution
 LowBoundLandfallWindSpeed	42 << mph

@@ -183,18 +183,18 @@ namespace Landis.Extension.BaseHurricane
             eventLog.Clear();
             EventsLog el = new EventsLog();
             el.Time = currentTime;
-            if(hurricaneEvent != null)
-            {
+            //if(hurricaneEvent != null)
+            //{
                 //el.Year = hurricaneEvent.hurricaneYear;
                 el.HurricaneNumber =  hurricaneEvent.hurricaneNumber;
                 el.ImpactsStudyArea = hurricaneEvent.studyAreaImpacts;
-                el.StudyAreaMaxWS = hurricaneEvent.studyAreaMaxWindspeed;
-                el.StudyAreaMinWS = hurricaneEvent.studyAreaMinWindspeed;
+                el.StudyAreaMaxWS = hurricaneEvent.StudyAreaMaxWindspeed;
+                el.StudyAreaMinWS = hurricaneEvent.StudyAreaMinWindspeed;
                 el.LandfallLatitude = hurricaneEvent.landfallLatitude;
                 el.LandfallMaxWindSpeed = hurricaneEvent.landfallMaxWindSpeed;
                 el.PathHeading = hurricaneEvent.stormTrackHeading;
 
-            }
+            //}
             eventLog.AddObject(el);
             eventLog.WriteToFile();
         }
