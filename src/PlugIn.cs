@@ -183,20 +183,19 @@ namespace Landis.Extension.BaseHurricane
             eventLog.Clear();
             EventsLog el = new EventsLog();
             el.Time = currentTime;
-            //if(hurricaneEvent != null)
-            //{
-                //el.Year = hurricaneEvent.hurricaneYear;
-                el.HurricaneNumber =  hurricaneEvent.hurricaneNumber;
-                el.ImpactsStudyArea = hurricaneEvent.studyAreaImpacts;
-                el.StudyAreaMaxWS = hurricaneEvent.StudyAreaMaxWindspeed;
-                el.StudyAreaMinWS = hurricaneEvent.StudyAreaMinWindspeed;
-                el.LandfallLatitude = hurricaneEvent.landfallLatitude;
-                el.LandfallMaxWindSpeed = hurricaneEvent.landfallMaxWindSpeed;
-                el.PathHeading = hurricaneEvent.stormTrackHeading;
-
-            //}
+            el.HurricaneNumber = hurricaneEvent.hurricaneNumber;
+            el.ImpactsStudyArea = hurricaneEvent.studyAreaImpacts;
+            el.StudyAreaMaxWS = hurricaneEvent.StudyAreaMaxWindspeed;
+            el.StudyAreaMinWS = hurricaneEvent.StudyAreaMinWindspeed;
+            el.LandfallLatitude = hurricaneEvent.landfallLatitude;
+            el.LandfallMaxWindSpeed = hurricaneEvent.landfallMaxWindSpeed;
+            el.PathHeading = hurricaneEvent.stormTrackHeading;
             eventLog.AddObject(el);
             eventLog.WriteToFile();
+
+            if(hurricaneEvent.studyAreaImpacts)
+                summaryEventCount++;
+            //summaryTotalSites += hurricaneEvent.studyAreaImpacts;
         }
 
         //---------------------------------------------------------------------
@@ -206,7 +205,7 @@ namespace Landis.Extension.BaseHurricane
             summaryLog.Clear();
             SummaryLog sl = new SummaryLog();
             sl.Time = currentTime;
-            sl.TotalSitesDisturbed = summaryTotalSites;
+            //sl.TotalSitesDisturbed = summaryTotalSites;
             sl.NumberEvents = summaryEventCount;
 
             summaryLog.AddObject(sl);
