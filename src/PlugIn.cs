@@ -22,15 +22,15 @@ namespace Landis.Extension.BaseHurricane
         public static MetadataTable<EventsLog> eventLog;
         public static MetadataTable<SummaryLog> summaryLog;
         public static readonly string ExtensionName = "Base Hurricane";
-        //public static ContinuousUniformDistribution hurricaneGeneratorStandard;
         public static Troschuetz.Random.Distributions.Continuous.LognormalDistribution HurricaneGeneratorLogNormal;
         public static Troschuetz.Random.Generators.MT19937Generator HurricaneGeneratorStandard;
 
+        public static Dictionary<int, string> ExposureMaps;
+
         private string mapNameTemplate;
         private IInputParameters parameters;
-        //private WindSpeedGenerator windSpeedGenerator = null;
         private static ICore modelCore;
-        private int summaryTotalSites = 0;
+        //private int summaryTotalSites = 0;
         private int summaryEventCount = 0;
         private ContinentalGrid ContinentalGrid = null;
 
@@ -115,6 +115,11 @@ namespace Landis.Extension.BaseHurricane
                 HurricaneGeneratorStandard = new Troschuetz.Random.Generators.MT19937Generator((uint)parameters.HurricaneRandomNumberSeed);
                 HurricaneGeneratorLogNormal = new Troschuetz.Random.Distributions.Continuous.LognormalDistribution((uint)parameters.HurricaneRandomNumberSeed);
             }
+
+            //Convert Wind Exposure Maps into Site Dictionaries //VERSION2
+            // read in maps
+            // add data to SiteVars.WindExposure[site] dictionary
+            // LoadWindExposureData();
 
             //double testDouble = hurricaneGenerator.NextDouble();
         }
@@ -210,6 +215,18 @@ namespace Landis.Extension.BaseHurricane
 
             summaryLog.AddObject(sl);
             summaryLog.WriteToFile();
+        }
+
+        private void LoadWindExposureData()
+        {
+            // var degrees = new List<double>(windExposureDictionary.Keys);
+            // degrees.Sort();
+            // foreach degrees
+            // load map with degrees name
+
+            // foreach ActiveSite site on landscape
+            // Add degrees and map values to SiteVars.WindExpsosure
+            return;
         }
     }
 

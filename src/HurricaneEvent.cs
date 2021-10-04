@@ -69,9 +69,6 @@ namespace Landis.Extension.BaseHurricane
 
         private HurricaneEvent(ContinentalGrid continentalGrid)
         {
-            //this.landfallLatitude = 34.3;   /// For unit testing only.
-            //this.stormTrackHeading = 310.0;  /// For unit testing only.
-            //this.hurricaneNumber = hurricaneNumber;
             this.ContinentalGrid = continentalGrid;
             this.landfallMaxWindSpeed = HurricaneEvent.WindSpeedGenerator.GetWindSpeed();
             if (HurricaneRandomNumber)
@@ -134,8 +131,6 @@ namespace Landis.Extension.BaseHurricane
         public double ComputeMaxWindSpeed(double x, double offset, double a=360.0)//, double? maxWindSpeedAt00=null)
         {
             double PeakSpeed = this.landfallMaxWindSpeed;
-            //if(maxWindSpeedAt00 != null)
-            //    PeakSpeed = (double) maxWindSpeedAt00;
             double baseSpeed = HurricaneEvent.BaseWindSpeed;
             double Pb = PeakSpeed - baseSpeed;
             a *= 1000.0;
@@ -160,6 +155,8 @@ namespace Landis.Extension.BaseHurricane
             (var distance, var offset) = this.GetDistanceAndOffset(point);
 
             double speed = this.ComputeMaxWindSpeed(distance, offset);
+
+            // speed = speed * WindExposureModification //VERISION2
 
             return speed;
         }

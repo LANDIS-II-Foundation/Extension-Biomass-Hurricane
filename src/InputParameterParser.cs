@@ -23,7 +23,6 @@ namespace Landis.Extension.BaseHurricane
         }
 
         private ISpeciesDataset speciesDataset;
-        //private Dictionary<string, int> speciesLineNums;
         private InputVar<string> speciesName;
 
         //---------------------------------------------------------------------
@@ -104,15 +103,38 @@ namespace Landis.Extension.BaseHurricane
             ReadVar(cpdi);
             parameters.CenterPointDistanceInland = cpdi.Value;
 
+            InputVar<int> mws = new InputVar<int>("MinimumWindSpeedforDamage");  //VERSION2
+            ReadVar(mws);
+            //double minimumWindSpeed = 96.5;  // kph = 60 mph:  This is a standard minimum, below this effects generally not expected.
+            HurricaneEvent.MinimumWSforDamage = mws.Value;
+
+            ReadName("ExposureMaps");
+
+            parameters.WindExposureMaps = new Dictionary<double, string>();
+            InputVar<int> maxDegree = new InputVar<int>("Maximum Degree");
+            InputVar<string> mapName = new InputVar<string>("Map Name");
+            while (!AtEndOfInput && CurrentName != windSpeedVuln)
+            {
+                StringReader currentLine = new StringReader(CurrentLine);
+
+                ReadValue(maxDegree, currentLine);
+                double maxD = maxDegree.Value;
+
+                ReadValue(mapName, currentLine);
+                string mapN = mapName.Value;
+
+                parameters.WindExposureMaps.Add(maxD, mapN);
+
+                GetNextLine();
+            }
+
+
             ReadName(windSpeedVuln);
 
             parameters.WindSpeedMortalityProbabilities =
                 new Dictionary<string, Dictionary<double, Dictionary<double, double>>>();
-            //string[] aRow;
-            //Func<string, string[]> parseLine;
             InputVar<int> maxAge = new InputVar<int>("Maximum Age");
             InputVar<string> age_prob_string = new InputVar<string>("Age Prob Combo");
-            double minimumWindSpeed = 96.5;  // kph = 60 mph:  This is a standard minimum, below this effects generally not expected.
 
 
             while (!AtEndOfInput && CurrentName != map_names)
@@ -134,8 +156,6 @@ namespace Landis.Extension.BaseHurricane
                     TextReader.SkipWhitespace(currentLine);
                 }
 
-                //double age = Convert.ToDouble(aRow[1]);
-                //var dataVals = SliceToEnd(currentLine);
                 Dictionary<double, double> probabilities = new Dictionary<double, double>();
                 foreach (var entry in ages_probs)
                 {
@@ -143,8 +163,8 @@ namespace Landis.Extension.BaseHurricane
                     var speed = Convert.ToDouble(split[0]);
                     if (parameters.InputUnitsEnglish)
                         speed *= 1.60934;
-                    if (speed < minimumWindSpeed)
-                        minimumWindSpeed = speed;
+                    if (speed < HurricaneEvent.MinimumWSforDamage)
+                        HurricaneEvent.MinimumWSforDamage = speed;
                     var probability = Convert.ToDouble(split[1]);
                     probabilities[speed] = probability;
                     PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality Table:  {0}:{1}, Wind={2}, Pmort={3}", species.Name, max_age, speed, probability);
@@ -158,13 +178,9 @@ namespace Landis.Extension.BaseHurricane
                 else
                     parameters.WindSpeedMortalityProbabilities[species.Name][max_age] = probabilities;
 
-
-
-
                 GetNextLine();
             }
 
-            HurricaneEvent.MinimumWSforDamage = minimumWindSpeed;
 
             const string MapNames = "MapNames";
             InputVar<string> mapNames = new InputVar<string>(MapNames);
@@ -263,15 +279,4 @@ namespace Landis.Extension.BaseHurricane
         }
     }
 
-    //public static class ExtensionMethods
-    //{
-    //    public static List<string> SliceToEnd(this string[] strArray, int startIdx)
-    //    {
-    //        var len = strArray.Length;
-    //        var retList = new List<string>(strArray);
-    //        retList = retList.GetRange(startIdx, len - startIdx);
-    //        return retList;
-
-    //    }
-    //}
 }
