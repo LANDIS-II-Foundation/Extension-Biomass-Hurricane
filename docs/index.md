@@ -11,7 +11,7 @@ Schrum et al.
 - Latest release: Version 2.0.1 — October 2021
 
 - Full release details found in the User Guide and on GitHub.
-- [View User Guide]()
+- [View User Guide](https://github.com/LANDIS-II-Foundation/Extension-Base-Hurricane/blob/master/docs/)
 
 - Copyright: The LANDIS-II Foundation
 
@@ -24,7 +24,7 @@ You need:
 
 # Download
 
-- The latest version can be [downloaded from GitHub](). To install it on your computer, launch the installer.
+- The latest version can be [downloaded from GitHub](https://github.com/LANDIS-II-Foundation/Extension-Base-Hurricane/blob/master/deploy/installer/LANDIS-II-V7%20Base%20Hurricane%202.0.1-setup.exe). To install it on your computer, launch the installer.
 
 # Example Files
 
