@@ -29,8 +29,6 @@ namespace Landis.Extension.BaseHurricane
 
         public InputParameterParser()
         {
-            // ToDo: fix this Hack to ensure that Percentage is registered with InputValues
-            //Landis.Utilities.Percentage p = new Landis.Utilities.Percentage();
             this.speciesDataset = PlugIn.ModelCore.Species;
             this.speciesName = new InputVar<string>("Species");
         }

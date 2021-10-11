@@ -4,9 +4,9 @@
     <AssemblyName>Landis.Extension.BaseHurricane-v2</AssemblyName>
     <AssemblyTitle>Landis.Extension.BaseHurricane-v2</AssemblyTitle>
     <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
-    <AssemblyVersion>2.0</AssemblyVersion>
-    <Version>2.0</Version>
-    <FileVersion>2.0.0.0</FileVersion>
+    <AssemblyVersion>2.0.1</AssemblyVersion>
+    <Version>2.0.1</Version>
+    <FileVersion>2.0.1.0</FileVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-Base-Hurricane</RepositoryUrl>

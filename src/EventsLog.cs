@@ -8,13 +8,9 @@ namespace Landis.Extension.BaseHurricane
 {
     public class EventsLog
     {
-        //log.WriteLine("Time,Initiation Site,Total Sites,Damaged Sites,Cohorts Killed,Mean Severity");
 
         [DataFieldAttribute(Unit = FieldUnits.Year, Desc = "...")]
         public int Time { get; set; }
-
-        //[DataFieldAttribute(Desc = "Hurricane Year")]
-        //public int Year { get; set; }
 
         [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Hurricane Number")]
         public int HurricaneNumber { get; set; }

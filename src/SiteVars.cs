@@ -1,6 +1,7 @@
 //  Authors:  Robert M. Scheller, James B. Domingo
 
 using Landis.Core;
+using System.Collections.Generic;
 using Landis.SpatialModeling;
 using Landis.Library.AgeOnlyCohorts;
 using System;
@@ -14,21 +15,27 @@ namespace Landis.Extension.BaseHurricane
         //private static ISiteVar<byte> severity;
         private static ISiteVar<bool> disturbed;
         private static ISiteVar<ISiteCohorts> cohorts;
+        public static ISiteVar<Dictionary<int, int>> WindExposure;
 
         //---------------------------------------------------------------------
 
         public static void Initialize()
         {
-            eventVar        = PlugIn.ModelCore.Landscape.NewSiteVar<HurricaneEvent>(InactiveSiteMode.DistinctValues);
+            eventVar = PlugIn.ModelCore.Landscape.NewSiteVar<HurricaneEvent>(InactiveSiteMode.DistinctValues);
             timeOfLastEvent = PlugIn.ModelCore.Landscape.NewSiteVar<int>();
             //severity        = PlugIn.ModelCore.Landscape.NewSiteVar<byte>();
-            disturbed      = PlugIn.ModelCore.Landscape.NewSiteVar<bool>();
+            disturbed = PlugIn.ModelCore.Landscape.NewSiteVar<bool>();
             WindSpeed = PlugIn.ModelCore.Landscape.NewSiteVar<double>();
 
             PlugIn.ModelCore.RegisterSiteVar(SiteVars.TimeOfLastEvent, "Hurricane.TimeOfLastEvent");
             //PlugIn.ModelCore.RegisterSiteVar(SiteVars.Severity, "Hurricane.Severity");
 
             cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.AgeCohorts");
+
+            foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
+            {
+                SiteVars.WindExposure[site] = new Dictionary<int, int>();
+            }
 
         }
 

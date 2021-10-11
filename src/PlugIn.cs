@@ -133,6 +133,8 @@ namespace Landis.Extension.BaseHurricane
         {
             ModelCore.UI.WriteLine("Processing landscape for hurricane events ...");
 
+            summaryEventCount = 0;
+
             foreach(var year in Enumerable.Range(0, this.parameters.Timestep))
             {
                 int stormsThisYear = -1;
@@ -145,6 +147,8 @@ namespace Landis.Extension.BaseHurricane
                 {
                     cummProb += probability;
                     stormsThisYear++;
+
+                    // Here the number of hurricanes per time step is determined:
                     if(randomNum < cummProb)
                         break;
                 }
@@ -163,7 +167,7 @@ namespace Landis.Extension.BaseHurricane
                         storm.GenerateWindFieldRaster(this.mapNameTemplate, 
                         PlugIn.modelCore, this.ContinentalGrid);
                     
-                    LogEvent(PlugIn.ModelCore.CurrentTime, storm);
+                    LogEvent(storm);
                 }
             }
 
@@ -173,7 +177,7 @@ namespace Landis.Extension.BaseHurricane
         //---------------------------------------------------------------------
 
         enum unitType { Dist, Speed };
-        private void LogEvent(int currentTime, HurricaneEvent hurricaneEvent = null)
+        private void LogEvent(HurricaneEvent hurricaneEvent = null)
         {
             // commented out in case I want to use it later.
             // commented out to eliminate a warning.
@@ -187,7 +191,7 @@ namespace Landis.Extension.BaseHurricane
 
             eventLog.Clear();
             EventsLog el = new EventsLog();
-            el.Time = currentTime;
+            el.Time = ModelCore.CurrentTime;
             el.HurricaneNumber = hurricaneEvent.hurricaneNumber;
             el.ImpactsStudyArea = hurricaneEvent.studyAreaImpacts;
             el.StudyAreaMaxWS = hurricaneEvent.StudyAreaMaxWindspeed;
@@ -200,7 +204,6 @@ namespace Landis.Extension.BaseHurricane
 
             if(hurricaneEvent.studyAreaImpacts)
                 summaryEventCount++;
-            //summaryTotalSites += hurricaneEvent.studyAreaImpacts;
         }
 
         //---------------------------------------------------------------------
@@ -209,8 +212,7 @@ namespace Landis.Extension.BaseHurricane
         {
             summaryLog.Clear();
             SummaryLog sl = new SummaryLog();
-            sl.Time = currentTime;
-            //sl.TotalSitesDisturbed = summaryTotalSites;
+            sl.Year = currentTime;
             sl.NumberEvents = summaryEventCount;
 
             summaryLog.AddObject(sl);
