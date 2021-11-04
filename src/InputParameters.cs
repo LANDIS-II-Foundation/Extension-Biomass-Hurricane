@@ -44,7 +44,7 @@ namespace Landis.Extension.BaseHurricane
         //public  double minimumWSforDamage { get; set; } = 96.5;
 
         public Dictionary<string, Dictionary<double, Dictionary<double, double>>> WindSpeedMortalityProbabilities { get; set; }
-		public Dictionary<double, string> WindExposureMaps { get; set; }
+		public Dictionary<int, string> WindExposureMaps { get; set; }
 
 		public bool InputUnitsEnglish { get; set; } = false;
 

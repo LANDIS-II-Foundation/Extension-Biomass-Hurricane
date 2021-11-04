@@ -73,12 +73,12 @@ namespace Landis.Extension.BaseHurricane
             this.landfallMaxWindSpeed = HurricaneEvent.WindSpeedGenerator.GetWindSpeed();
             if (HurricaneRandomNumber)
             {
-                this.landfallLatitude = 7.75 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 30.7;
-                this.stormTrackHeading = 80.0 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 280.0;
+                this.landfallLatitude = 7.75 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 30.7;  // VERSION 2
+                this.stormTrackHeading = 80.0 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 280.0;  // VERSION 2
             } else
             {
-                this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;  // Specific to the southeastern US
-                this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0; // Specific to the southeastern US
+                this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;  // VERSION 2
+                this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0; // VERSION 2
             }
             var modHeading = (this.stormTrackHeading - 315) * Math.PI / 180.0;
             this.stormTrackSlope = 1 / Math.Tan(this.stormTrackHeading * Math.PI / 180.0);
@@ -128,7 +128,7 @@ namespace Landis.Extension.BaseHurricane
         /// <param name="a">From hyperbola a; 2 * the inflection point distance. 
         /// Unit is kilometers, then the value is adjusted to be in meters. </param>
         /// <returns>Maximum wind speed at the given point.</returns>
-        public double ComputeMaxWindSpeed(double x, double offset, double a=360.0)//, double? maxWindSpeedAt00=null)
+        public double ComputeMaxWindSpeed(double x, double offset, double a=360.0)
         {
             double PeakSpeed = this.landfallMaxWindSpeed;
             double baseSpeed = HurricaneEvent.BaseWindSpeed;
@@ -155,8 +155,6 @@ namespace Landis.Extension.BaseHurricane
             (var distance, var offset) = this.GetDistanceAndOffset(point);
 
             double speed = this.ComputeMaxWindSpeed(distance, offset);
-
-            // speed = speed * WindExposureModification //VERISION2
 
             return speed;
         }
@@ -188,7 +186,7 @@ namespace Landis.Extension.BaseHurricane
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape.ActiveSites)
             {
                 currentSite = site;
-                SiteVars.WindSpeed[currentSite] = this.GetWindSpeed(site.Location.Column, site.Location.Row);
+                SiteVars.WindSpeed[currentSite] = this.GetModifiedWindSpeed(site.Location.Column, site.Location.Row);
                 KillSiteCohorts(currentSite);
             }
 
@@ -226,8 +224,23 @@ namespace Landis.Extension.BaseHurricane
 
         public double GetWindSpeed(int column, int row)
         {
+            Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));
             Point pt = this.ContinentalGrid.siteIndexToCoordinates(column, row);
-            return this.GetMaxWindSpeedAtPoint(pt);
+            double max_speed = this.GetMaxWindSpeedAtPoint(pt);
+
+            return max_speed;
+        }
+        public double GetModifiedWindSpeed(int column, int row)  // VERSION 2
+        {
+            Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));
+            Point pt = this.ContinentalGrid.siteIndexToCoordinates(column, row);
+            double max_speed = this.GetMaxWindSpeedAtPoint(pt);
+
+            //this.stormTrackHeading;  NEEDS METHOD TO READ THROUGH LIST OF KEYS
+            int key = 0;
+            max_speed = max_speed * SiteVars.WindExposure[site][key]; //VERISION 2
+
+            return max_speed;
         }
         //---------------------------------------------------------------------
 

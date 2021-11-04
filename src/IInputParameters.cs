@@ -68,7 +68,7 @@ namespace Landis.Extension.BaseHurricane
         double CenterPointDistanceInland { get; set; }
 
         Dictionary<string, Dictionary<double, Dictionary<double, double>>> WindSpeedMortalityProbabilities { get; set; }
-		Dictionary<double, string> WindExposureMaps { get; set; }
+		Dictionary<int, string> WindExposureMaps { get; set; }
 
 		bool InputUnitsEnglish { get; set; }
 

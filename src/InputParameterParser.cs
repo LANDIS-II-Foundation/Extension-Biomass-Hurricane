@@ -108,7 +108,7 @@ namespace Landis.Extension.BaseHurricane
 
             ReadName("ExposureMaps");
 
-            parameters.WindExposureMaps = new Dictionary<double, string>();
+            parameters.WindExposureMaps = new Dictionary<int, string>();
             InputVar<int> maxDegree = new InputVar<int>("Maximum Degree");
             InputVar<string> mapName = new InputVar<string>("Map Name");
             while (!AtEndOfInput && CurrentName != windSpeedVuln)
@@ -116,7 +116,7 @@ namespace Landis.Extension.BaseHurricane
                 StringReader currentLine = new StringReader(CurrentLine);
 
                 ReadValue(maxDegree, currentLine);
-                double maxD = maxDegree.Value;
+                int maxD = maxDegree.Value;
 
                 ReadValue(mapName, currentLine);
                 string mapN = mapName.Value;
