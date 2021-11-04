@@ -237,6 +237,7 @@ namespace Landis.Extension.BaseHurricane
             double max_speed = this.GetMaxWindSpeedAtPoint(pt);
 
             //this.stormTrackHeading;  NEEDS METHOD TO READ THROUGH LIST OF KEYS
+            // foreach (KeyValuePair<int, int> exposure in AuthorList.OrderBy(key => key.Key))
             int key = 0;
             max_speed = max_speed * SiteVars.WindExposure[site][key]; //VERISION 2
 
