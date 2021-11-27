@@ -1,4 +1,4 @@
-//  Authors:    Robert M. Scheller, James B. Domingo
+//  Authors:    Paul Schrum, Robert M. Scheller
 
 using System.Collections.Generic;
 
@@ -16,29 +16,6 @@ namespace Landis.Extension.BaseHurricane
 		{
 			get;set;
 		}
-
-		//---------------------------------------------------------------------
-
-		/// <summary>
-		/// Wind event parameters for each ecoregion.
-		/// </summary>
-		/// <remarks>
-		/// Use Ecoregion.Index property to index this array.
-		/// </remarks>
-		//IEventParameters[] EventParameters
-		//{
-		//	get;
-		//}
-
-		//---------------------------------------------------------------------
-
-		///// <summary>
-		///// Definitions of hurricane wind severities.
-		///// </summary>
-		//List<ISeverity> WindSeverities
-		//{
-		//	get;
-		//}
 
 		//---------------------------------------------------------------------
 

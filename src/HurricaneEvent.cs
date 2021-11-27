@@ -35,6 +35,7 @@ namespace Landis.Extension.BaseHurricane
         public Line StormTrackLine { get; private set; }
         private double stormTrackLengthTo_b { get; set; }
         internal ContinentalGrid ContinentalGrid { get; private set; }
+        public int ClosestExposureKey;
 
         //---------------------------------------------------------------------
 
@@ -73,14 +74,25 @@ namespace Landis.Extension.BaseHurricane
             this.landfallMaxWindSpeed = HurricaneEvent.WindSpeedGenerator.GetWindSpeed();
             if (HurricaneRandomNumber)
             {
-                this.landfallLatitude = 7.75 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 30.7;  // VERSION 2
-                this.stormTrackHeading = 80.0 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 280.0;  // VERSION 2
+                this.landfallLatitude = 7.75 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 30.7;  // VERSION2
+                this.stormTrackHeading = 80.0 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 280.0;  // VERSION2
             } else
             {
-                this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;  // VERSION 2
-                this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0; // VERSION 2
+                this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;  // VERSION2
+                this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0; // VERSION2
             }
-            var modHeading = (this.stormTrackHeading - 315) * Math.PI / 180.0;
+
+            // Find the closest exposure map key VERSION2
+            foreach (int ExposureKey in PlugIn.WindExposures)
+            {
+                int minimumDifference = 100;
+                int tempD = Math.Abs(ExposureKey - (int) this.stormTrackHeading);
+                if (tempD < minimumDifference)
+                        this.ClosestExposureKey = ExposureKey;
+            }
+            PlugIn.ModelCore.UI.WriteLine("StormHeading={0}, ClosestExposureKey={1}", this.stormTrackHeading, this.ClosestExposureKey);
+
+            //var modHeading = (this.stormTrackHeading - 315) * Math.PI / 180.0;
             this.stormTrackSlope = 1 / Math.Tan(this.stormTrackHeading * Math.PI / 180.0);
             this.stormTrackPerpandicularSlope = -1.0 / this.stormTrackSlope;
             double landfallY = this.ContinentalGrid.ConvertLatitudeToGridUnits(this.landfallLatitude);
@@ -230,16 +242,13 @@ namespace Landis.Extension.BaseHurricane
 
             return max_speed;
         }
-        public double GetModifiedWindSpeed(int column, int row)  // VERSION 2
+        public double GetModifiedWindSpeed(int column, int row)  // VERSION2
         {
             Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));
             Point pt = this.ContinentalGrid.siteIndexToCoordinates(column, row);
             double max_speed = this.GetMaxWindSpeedAtPoint(pt);
 
-            //this.stormTrackHeading;  NEEDS METHOD TO READ THROUGH LIST OF KEYS
-            // foreach (KeyValuePair<int, int> exposure in AuthorList.OrderBy(key => key.Key))
-            int key = 0;
-            max_speed = max_speed * SiteVars.WindExposure[site][key]; //VERISION 2
+            max_speed = max_speed * CalculateWindSpeedReduction(SiteVars.WindExposure[site][this.ClosestExposureKey]); //VERISION 2
 
             return max_speed;
         }
@@ -265,7 +274,36 @@ namespace Landis.Extension.BaseHurricane
 
             return (randomVar <= deathLiklihood);
         }
+        private double CalculateWindSpeedReduction(int exposureIndex)
+        {
+            switch (exposureIndex)
+            {
+                case 1:
+                    return 0.1;
+                case 2:
+                    return 0.2;
+                case 3:
+                    return 0.3;
+                case 4:
+                    return 0.4;
+                case 5:
+                    return 0.5;
+                case 6:
+                    return 0.6;
+                case 7:
+                    return 0.7;
+                case 8:
+                    return 0.8;
+                case 9:
+                    return 0.9;
+
+                default:
+                    break;
+            }
+            return 1.0;
+        }
     }
+
 
     /*      *   /
     private void testWindGenerationDistribution()
@@ -290,7 +328,7 @@ namespace Landis.Extension.BaseHurricane
         bins = null;
     } /* */
 
-    
+
 
     /// <summary>
     /// Generate random wind speeds on a log-normal distribution, mu=0, sigma=0.4.

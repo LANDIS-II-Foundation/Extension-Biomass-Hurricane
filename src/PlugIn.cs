@@ -26,12 +26,12 @@ namespace Landis.Extension.BaseHurricane
         public static Troschuetz.Random.Distributions.Continuous.LognormalDistribution HurricaneGeneratorLogNormal;
         public static Troschuetz.Random.Generators.MT19937Generator HurricaneGeneratorStandard;
 
-        public static Dictionary<int, string> ExposureMaps;
+        //public static Dictionary<int, string> ExposureMaps;
+        public static List<int> WindExposures; 
 
         private string mapNameTemplate;
         private IInputParameters parameters;
         private static ICore modelCore;
-        //private int summaryTotalSites = 0;
         private int summaryEventCount = 0;
         private ContinentalGrid ContinentalGrid = null;
 
@@ -117,33 +117,7 @@ namespace Landis.Extension.BaseHurricane
                 HurricaneGeneratorLogNormal = new Troschuetz.Random.Distributions.Continuous.LognormalDistribution((uint)parameters.HurricaneRandomNumberSeed);
             }
 
-            //Convert Wind Exposure Maps into Site Dictionaries //VERSION2
-            // read in maps
-            foreach (KeyValuePair<int, string> windmap in parameters.WindExposureMaps)
-            {
-                IInputRaster<IntPixel> map = MakeIntMap(windmap.Value);
-
-                using (map)
-                {
-                    IntPixel pixel = map.BufferPixel;
-                    foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
-                    {
-                        map.ReadBufferPixel();
-                        int mapValue = pixel.MapCode.Value;
-                        if (site.IsActive)
-                        {
-                            if (mapValue <= 0 || mapValue > 300)
-                                throw new InputValueException(mapValue.ToString(),
-                                                              "Soil depth value {0} is not between {1:0.0} and {2:0.0}. Site_Row={3:0}, Site_Column={4:0}",
-                                                              mapValue, 0, 300, site.Location.Row, site.Location.Column);
-
-                            // add data to SiteVars.WindExposure[site] dictionary
-                            SiteVars.WindExposure[site].Add(windmap.Key, mapValue);
-                        }
-                    }
-
-                }
-            }
+            LoadWindExposureData();  // VERSION2
 
 
         }
@@ -245,13 +219,36 @@ namespace Landis.Extension.BaseHurricane
 
         private void LoadWindExposureData()
         {
-            // var degrees = new List<double>(windExposureDictionary.Keys);
-            // degrees.Sort();
-            // foreach degrees
-            // load map with degrees name
+            WindExposures = new List<int>(parameters.WindExposureMaps.Keys);
 
-            // foreach ActiveSite site on landscape
             // Add degrees and map values to SiteVars.WindExpsosure
+            // Convert Wind Exposure Maps into Site Dictionaries //VERSION2
+            foreach (KeyValuePair<int, string> windmap in parameters.WindExposureMaps)
+            {
+                IInputRaster<IntPixel> map = MakeIntMap(windmap.Value);
+
+                using (map)
+                {
+                    IntPixel pixel = map.BufferPixel;
+                    foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
+                    {
+                        map.ReadBufferPixel();
+                        int mapValue = pixel.MapCode.Value;
+                        if (site.IsActive)
+                        {
+                            if (mapValue <= 0 || mapValue > 300)
+                                throw new InputValueException(mapValue.ToString(),
+                                                              "Soil depth value {0} must range from {1:0.0} and {2:0.0}. Site_Row={3:0}, Site_Column={4:0}",
+                                                              mapValue, 1, 9, site.Location.Row, site.Location.Column);
+
+                            // add data to SiteVars.WindExposure[site] dictionary
+                            SiteVars.WindExposure[site].Add(windmap.Key, mapValue);
+                        }
+                    }
+
+                }
+            }
+
             return;
         }
 
