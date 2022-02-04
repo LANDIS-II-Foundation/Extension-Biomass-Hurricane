@@ -12,7 +12,7 @@ namespace Landis.Extension.BaseHurricane
 		: IInputParameters
 	{
 		private int timestep;
-        private IEventParameters[] eventParameters;
+        //private IEventParameters[] eventParameters;
         private string mapNamesTemplate;
 		private string logFileName;
 
@@ -39,8 +39,12 @@ namespace Landis.Extension.BaseHurricane
         public double LowBoundLandfallWindSpeed { get; set; }
         public double ModeLandfallWindSpeed { get; set; }
         public double HighBoundLandfallWindspeed { get; set; }
-        public double CenterPointLatitude { get; set; }
-        public double CenterPointDistanceInland { get; set; }
+        public double LandfallLatitudeMean { get; set; }
+        public double LandfallLatitudeStdDev { get; set; }
+        public double StormDirectionMean { get; set; }
+        public double StormDirectionStdDev { get; set; }
+        //public double CenterPointLatitude { get; set; }
+        //public double CenterPointDistanceInland { get; set; }
         //public  double minimumWSforDamage { get; set; } = 96.5;
 
         public Dictionary<string, Dictionary<double, Dictionary<double, double>>> WindSpeedMortalityProbabilities { get; set; }
@@ -60,12 +64,12 @@ namespace Landis.Extension.BaseHurricane
         /// <remarks>
         /// Use Ecoregion.Index property to index this array.
         /// </remarks>
-        public IEventParameters[] EventParameters
-		{
-			get {
-				return eventParameters;
-			}
-		}
+  //      public IEventParameters[] EventParameters
+		//{
+		//	get {
+		//		return eventParameters;
+		//	}
+		//}
 
 		//---------------------------------------------------------------------
 
@@ -102,9 +106,9 @@ namespace Landis.Extension.BaseHurricane
 
         //---------------------------------------------------------------------
 
-        public InputParameters(int ecoregionCount)
+        public InputParameters() //int ecoregionCount)
         {
-            eventParameters = new IEventParameters[ecoregionCount];
+            //eventParameters = new IEventParameters; //[ecoregionCount];
 
         }
 	}

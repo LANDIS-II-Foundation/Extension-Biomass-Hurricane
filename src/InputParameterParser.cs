@@ -44,7 +44,7 @@ namespace Landis.Extension.BaseHurricane
 
             ReadLandisDataVar();
 
-            InputParameters parameters = new InputParameters(PlugIn.ModelCore.Ecoregions.Count);
+            InputParameters parameters = new InputParameters();
 
             InputVar<int> timestep = new InputVar<int>("Timestep");
             ReadVar(timestep);
@@ -57,6 +57,7 @@ namespace Landis.Extension.BaseHurricane
             InputVar<int> hrs = new InputVar<int>("HurricaneRandomNumberSeed");
             if (ReadOptionalVar(hrs))
                 parameters.HurricaneRandomNumberSeed = hrs.Value;
+
 
             // Read the Storm Occurrence Probabilities table
             ReadName("StormOccurrenceProbabilities");
@@ -93,21 +94,37 @@ namespace Landis.Extension.BaseHurricane
             ReadVar(hiboundLFWS);
             parameters.HighBoundLandfallWindspeed = hiboundLFWS.Value;
 
-            InputVar<double> cpl = new InputVar<double>("CenterPointLatitude");  //VERSION2
-            ReadVar(cpl);
-            parameters.CenterPointLatitude = cpl.Value;
+            InputVar<double> llm = new InputVar<double>("LandfallLatitudeMean");
+            ReadVar(llm);
+            parameters.LandfallLatitudeMean = llm.Value;
 
-            InputVar<int> cpdi = new InputVar<int>("CenterPointDistanceInland"); //VERSION2
-            ReadVar(cpdi);
-            parameters.CenterPointDistanceInland = cpdi.Value;
+            InputVar<double> llstd = new InputVar<double>("LandfallLatitudeStdDev");
+            ReadVar(llstd);
+            parameters.LandfallLatitudeStdDev = llstd.Value;
 
-            InputVar<int> msd = new InputVar<int>("MeanStormDirection"); //VERSION2
-            ReadVar(msd);
-            parameters.MeanStormDirection = msd.Value;
+            InputVar<double> stm = new InputVar<double>("StormDirectionMean");
+            ReadVar(stm);
+            parameters.StormDirectionMean = stm.Value;
 
-            InputVar<int> mso = new InputVar<int>("MeanStormOffset"); //VERSION2
-            ReadVar(mso);
-            parameters.MeanStormOffset = mso.Value;
+            InputVar<double> sdstd = new InputVar<double>("StormDirectionStdDev");
+            ReadVar(sdstd);
+            parameters.StormDirectionStdDev = sdstd.Value;
+
+            //InputVar<double> cpl = new InputVar<double>("CenterPointLatitude");  //VERSION2
+            //ReadVar(cpl);
+            //parameters.CenterPointLatitude = cpl.Value;
+
+            //InputVar<int> cpdi = new InputVar<int>("CenterPointDistanceInland"); //VERSION2
+            //ReadVar(cpdi);
+            //parameters.CenterPointDistanceInland = cpdi.Value;
+
+            //InputVar<int> msd = new InputVar<int>("MeanStormDirection"); //VERSION2
+            //ReadVar(msd);
+            //parameters.StormDirectionMean = msd.Value;
+
+            //InputVar<int> mso = new InputVar<int>("MeanStormOffset"); //VERSION2
+            //ReadVar(mso);
+            //parameters.StormDirectionStdDev = mso.Value;
 
             InputVar<int> mws = new InputVar<int>("MinimumWindSpeedforDamage");  //VERSION2
             ReadVar(mws);

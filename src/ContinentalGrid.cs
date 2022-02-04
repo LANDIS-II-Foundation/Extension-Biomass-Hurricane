@@ -146,11 +146,11 @@ namespace Landis.Extension.BaseHurricane
         public double GridOriginLatitude {get; set;}
         public int Columns { get; set; }
         public int Rows { get; set; }
-        public double StudyAreaWidthMeters { get; set; }
-        public double StudyAreaHeightMeters { get; set; }
+        //public double StudyAreaWidthMeters { get; set; }
+        //public double StudyAreaHeightMeters { get; set; }
 
-        public Point CenterPoint { get; private set; }
-        public Point CoastNearPoint { get; private set; }
+        //public Point CenterPoint { get; private set; }
+        //public Point CoastNearPoint { get; private set; }
 
         public Line CoastLine { get; private set; }
 
@@ -161,16 +161,16 @@ namespace Landis.Extension.BaseHurricane
             this.CellSize = cellSize;
             this.Columns = (int) studyAreaWidthInCells;
             this.Rows = (int) studyAreaHeightInCells;
-            this.StudyAreaWidthMeters = studyAreaWidthInCells * cellSize;
-            this.StudyAreaHeightMeters = studyAreaHeightInCells * cellSize;
-            double studyAreaHeightDegreesLatitude = this.StudyAreaHeightMeters / ContinentalGrid.metersPerDegreeLat;
-            this.GridOriginLatitude = centerLatitude - studyAreaHeightDegreesLatitude / 2.0;
-            this.CenterPoint = 
-                new Point(this.StudyAreaWidthMeters / 2.0, this.StudyAreaHeightMeters / 2.0);
-            this.CoastNearPoint = 
-                this.CenterPoint + new LineSegment(1000.0 * centerPtDistanceInland_kilometers, 135.0);
+            //this.StudyAreaWidthMeters = studyAreaWidthInCells * cellSize;
+            //this.StudyAreaHeightMeters = studyAreaHeightInCells * cellSize;
+            //double studyAreaHeightDegreesLatitude = this.StudyAreaHeightMeters / ContinentalGrid.metersPerDegreeLat;
+            //this.GridOriginLatitude = centerLatitude - studyAreaHeightDegreesLatitude / 2.0;
+            //this.CenterPoint = 
+            //    new Point(this.StudyAreaWidthMeters / 2.0, this.StudyAreaHeightMeters / 2.0);
+            //this.CoastNearPoint = 
+            //    this.CenterPoint + new LineSegment(1000.0 * centerPtDistanceInland_kilometers, 135.0);
 
-            this.CoastLine = new Line(this.CoastNearPoint, 1.0);
+            //this.CoastLine = new Line(this.CoastNearPoint, 1.0);
 
 
             // test coordinate conversion

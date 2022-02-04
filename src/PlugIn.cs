@@ -81,7 +81,7 @@ namespace Landis.Extension.BaseHurricane
                 parameters.LowBoundLandfallWindSpeed *= 1.60934;
                 parameters.ModeLandfallWindSpeed *= 1.60934;
                 parameters.HighBoundLandfallWindspeed *= 1.60934;
-                parameters.CenterPointDistanceInland *= 1.60934;
+                //parameters.CenterPointDistanceInland *= 1.60934;
                 //HurricaneEvent.WindMortalityTable.ChangeSpeedsFromEnglishToMetric();
 
             }
@@ -103,11 +103,11 @@ namespace Landis.Extension.BaseHurricane
 
             SiteVars.Initialize();
             this.ContinentalGrid = new ContinentalGrid(
-                this.parameters.CenterPointLatitude, 
+                //this.parameters.CenterPointLatitude, 
                 PlugIn.ModelCore.CellLength,
                 PlugIn.ModelCore.Landscape.Columns,
-                PlugIn.ModelCore.Landscape.Rows,
-                this.parameters.CenterPointDistanceInland
+                PlugIn.ModelCore.Landscape.Rows
+                //this.parameters.CenterPointDistanceInland
                 );
 
             if (parameters.HurricaneRandomNumberSeed > 0)
