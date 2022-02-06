@@ -27,14 +27,14 @@ namespace Landis.Extension.BaseHurricane
         public double landfallMaxWindSpeed { get; private set; }
         public double landfallLatitude { get; private set; }
 
-        private double stormTrackEffectiveDistanceToCenterPoint { get; set; }
+        //private double stormTrackEffectiveDistanceToCenterPoint { get; set; }
         public double stormTrackHeading { get; private set; }
         private double stormTrackSlope { get; set; }
         private double stormTrackPerpandicularSlope { get; set; }
         public Point LandfallPoint { get; private set; }
         public Line StormTrackLine { get; private set; }
         private double stormTrackLengthTo_b { get; set; }
-        internal ContinentalGrid ContinentalGrid { get; private set; }
+        //internal ContinentalGrid ContinentalGrid { get; private set; }
         public int ClosestExposureKey;
 
         //---------------------------------------------------------------------
@@ -61,16 +61,16 @@ namespace Landis.Extension.BaseHurricane
         }
 
 
-        public static HurricaneEvent Initiate(ContinentalGrid continentalGrid)
+        public static HurricaneEvent Initiate()//ContinentalGrid continentalGrid)
         {
 
-            HurricaneEvent hurrEvent = new HurricaneEvent(continentalGrid);
+            HurricaneEvent hurrEvent = new HurricaneEvent(); // continentalGrid);
             return hurrEvent;
         }
 
-        private HurricaneEvent(ContinentalGrid continentalGrid)
+        private HurricaneEvent()//ContinentalGrid continentalGrid)
         {
-            this.ContinentalGrid = continentalGrid;
+            //this.ContinentalGrid = continentalGrid;
             this.landfallMaxWindSpeed = HurricaneEvent.WindSpeedGenerator.GetWindSpeed();
             if (HurricaneRandomNumber)
             {
@@ -95,8 +95,14 @@ namespace Landis.Extension.BaseHurricane
             //var modHeading = (this.stormTrackHeading - 315) * Math.PI / 180.0;
             this.stormTrackSlope = 1 / Math.Tan(this.stormTrackHeading * Math.PI / 180.0);
             this.stormTrackPerpandicularSlope = -1.0 / this.stormTrackSlope;
-            double landfallY = this.ContinentalGrid.ConvertLatitudeToGridUnits(this.landfallLatitude);
-            this.LandfallPoint = this.ContinentalGrid.CoastLine.GivenYGetPoint(landfallY);
+
+            double metersPerDegreeLat = 111000.0; 
+            double studyAreaHeightMeters = PlugIn.ModelCore.Landscape.Dimensions.Rows * PlugIn.ModelCore.CellLength;
+            double studyAreaHeightDegreesLatitude = studyAreaHeightMeters / metersPerDegreeLat;
+
+            //double landfallY = this.ContinentalGrid.ConvertLatitudeToGridUnits(this.landfallLatitude);
+            double landfallY = (this.landfallLatitude - PlugIn.GridOriginLatitude) * metersPerDegreeLat;
+            this.LandfallPoint = PlugIn.CoastLine.GivenYGetPoint(landfallY);
             this.StormTrackLine = new Line(this.LandfallPoint, this.stormTrackSlope);
             var stormTrackInterceptPt = this.StormTrackLine.GivenXGetPoint(0.0);
             this.stormTrackLengthTo_b = (this.LandfallPoint - stormTrackInterceptPt).Length;
@@ -105,7 +111,7 @@ namespace Landis.Extension.BaseHurricane
         public (double, double) GetDistanceAndOffset(Point pt)
         {
             double landfallPtDx = this.LandfallPoint.X;
-            double landfallPtDy = this.LandfallPoint.Y - this.StormTrackLine.b;
+            double landfallPtDy = this.LandfallPoint.Y - this.StormTrackLine.yIntercept;
             double landfallDistanceToIntercept =
                 Math.Sqrt(landfallPtDx * landfallPtDx + landfallPtDy * landfallPtDy);
 
@@ -172,9 +178,9 @@ namespace Landis.Extension.BaseHurricane
         }
 
         internal bool GenerateWindFieldRaster(
-            string mapNameTemplate, ICore modelCore, ContinentalGrid continentalGrid)
+            string mapNameTemplate, ICore modelCore)//, ContinentalGrid continentalGrid)
         {
-            this.ContinentalGrid = continentalGrid;
+            //this.ContinentalGrid = continentalGrid;
             Dimensions dimensions = new Dimensions(modelCore.Landscape.Rows, modelCore.Landscape.Columns);
             int columns = modelCore.Landscape.Columns;
             int rows = modelCore.Landscape.Rows;
@@ -184,13 +190,13 @@ namespace Landis.Extension.BaseHurricane
             double upperLeftWindSpeed = this.GetWindSpeed(0, rows);
             double maxWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed, upperLeftWindSpeed }).Max();
             //double minWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed, upperLeftWindSpeed }).Min();
-            this.studyAreaImpacts = true;
-            if (maxWS < HurricaneEvent.MinimumWSforDamage)
-            {
-                //PlugIn.ModelCore.UI.WriteLine("   Hurricane Not Sufficient to Cause Damage:  MaxWS={0}, HurricaneMinWS={1}", maxWS, MinimumWSforDamage);
-                this.studyAreaImpacts = false;
-                //return false;
-            }
+            //this.studyAreaImpacts = true;
+            //if (maxWS < HurricaneEvent.MinimumWSforDamage)
+            //{
+            //    //PlugIn.ModelCore.UI.WriteLine("   Hurricane Not Sufficient to Cause Damage:  MaxWS={0}, HurricaneMinWS={1}", maxWS, MinimumWSforDamage);
+            //    this.studyAreaImpacts = false;
+            //    //return false;
+            //}
 
  
             SiteVars.WindSpeed.ActiveSiteValues = 0.0;
@@ -237,7 +243,7 @@ namespace Landis.Extension.BaseHurricane
         public double GetWindSpeed(int column, int row)
         {
             Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));
-            Point pt = this.ContinentalGrid.siteIndexToCoordinates(column, row);
+            Point pt = Point.siteIndexToCoordinates(column, row); //this.ContinentalGrid.siteIndexToCoordinates(column, row);
             double max_speed = this.GetMaxWindSpeedAtPoint(pt);
 
             return max_speed;
@@ -245,7 +251,7 @@ namespace Landis.Extension.BaseHurricane
         public double GetModifiedWindSpeed(int column, int row)  // VERSION2
         {
             Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));
-            Point pt = this.ContinentalGrid.siteIndexToCoordinates(column, row);
+            Point pt = Point.siteIndexToCoordinates(column, row);
             double max_speed = this.GetMaxWindSpeedAtPoint(pt);
 
             max_speed = max_speed * CalculateWindSpeedReduction(SiteVars.WindExposure[site][this.ClosestExposureKey]); //VERISION 2

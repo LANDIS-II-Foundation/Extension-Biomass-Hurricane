@@ -33,7 +33,14 @@ namespace Landis.Extension.BaseHurricane
         private IInputParameters parameters;
         private static ICore modelCore;
         private int summaryEventCount = 0;
-        private ContinentalGrid ContinentalGrid = null;
+
+        public static double GridOriginLatitude = 42.0;  // VERSION2
+        public static double coastalLatitude = 43.0;  // VERSION2 
+        public static double coastalSlope = 0.0;  //VERSION2
+        public static Line CoastLine;
+
+
+        //private ContinentalGrid ContinentalGrid = null;
 
 
         //---------------------------------------------------------------------
@@ -85,6 +92,10 @@ namespace Landis.Extension.BaseHurricane
                 //HurricaneEvent.WindMortalityTable.ChangeSpeedsFromEnglishToMetric();
 
             }
+
+            Point CoastalIntercept = new Point(coastalLatitude, 0.0);  // VERSION2
+            Line CoastLine = new Line(CoastalIntercept, coastalSlope);  //VERSION2
+
             HurricaneEvent.WindSpeedGenerator = new WindSpeedGenerator(this.parameters.LowBoundLandfallWindSpeed,
                 this.parameters.ModeLandfallWindSpeed, this.parameters.HighBoundLandfallWindspeed);
             //parameters.AdjustValuesFromEnglishToMetric();
@@ -102,13 +113,13 @@ namespace Landis.Extension.BaseHurricane
             mapNameTemplate = parameters.MapNamesTemplate;
 
             SiteVars.Initialize();
-            this.ContinentalGrid = new ContinentalGrid(
-                //this.parameters.CenterPointLatitude, 
-                PlugIn.ModelCore.CellLength,
-                PlugIn.ModelCore.Landscape.Columns,
-                PlugIn.ModelCore.Landscape.Rows
-                //this.parameters.CenterPointDistanceInland
-                );
+            //this.ContinentalGrid = new ContinentalGrid(
+            //    //this.parameters.CenterPointLatitude, 
+            //    PlugIn.ModelCore.CellLength,
+            //    PlugIn.ModelCore.Landscape.Columns,
+            //    PlugIn.ModelCore.Landscape.Rows
+            //    //this.parameters.CenterPointDistanceInland
+            //    );
 
             if (parameters.HurricaneRandomNumberSeed > 0)
             {
@@ -154,16 +165,16 @@ namespace Landis.Extension.BaseHurricane
                 if(stormsThisYear == 1) message = "1 storm.";
                 foreach(var stormCount in Enumerable.Range(0, stormsThisYear))
                 {
-                    var storm = HurricaneEvent.Initiate(this.ContinentalGrid);
+                    var storm = HurricaneEvent.Initiate(); // this.ContinentalGrid);
                     //storm.hurricaneYear = 
                     //    year + PlugIn.ModelCore.CurrentTime - 
                     //    this.parameters.Timestep;
 
                     storm.hurricaneNumber = stormCount+1;
 
-                    bool impactsStudyArea = 
-                        storm.GenerateWindFieldRaster(this.mapNameTemplate, 
-                        PlugIn.modelCore, this.ContinentalGrid);
+                    bool impactsStudyArea =
+                        storm.GenerateWindFieldRaster(this.mapNameTemplate,
+                        PlugIn.modelCore); //, this.ContinentalGrid);
                     
                     LogEvent(storm);
                 }
