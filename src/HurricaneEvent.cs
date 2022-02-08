@@ -37,6 +37,8 @@ namespace Landis.Extension.BaseHurricane
         //internal ContinentalGrid ContinentalGrid { get; private set; }
         public int ClosestExposureKey;
 
+        public double landfallDistanceFromCoastalCenterY = 0.0;
+
         //---------------------------------------------------------------------
 
         static HurricaneEvent()
@@ -74,12 +76,27 @@ namespace Landis.Extension.BaseHurricane
             this.landfallMaxWindSpeed = HurricaneEvent.WindSpeedGenerator.GetWindSpeed();
             if (HurricaneRandomNumber)
             {
-                this.landfallLatitude = 7.75 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 30.7;  // VERSION2
-                this.stormTrackHeading = 80.0 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 280.0;  // VERSION2
-            } else
+                PlugIn.HurricaneGeneratorNormal.Mu = 0.0;
+                PlugIn.HurricaneGeneratorNormal.Sigma = 0.0;
+                landfallDistanceFromCoastalCenterY = PlugIn.ModelCore.NormalDistribution.NextDouble();
+                PlugIn.HurricaneGeneratorNormal.Mu = 0.0;
+                PlugIn.HurricaneGeneratorNormal.Sigma = 0.0;
+                this.stormTrackHeading = PlugIn.ModelCore.NormalDistribution.NextDouble();
+
+                //this.landfallLatitude = 7.75 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 30.7;  // VERSION2
+                //this.stormTrackHeading = 80.0 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 280.0;  // VERSION2
+            }
+            else
             {
-                this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;  // VERSION2
-                this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0; // VERSION2
+                PlugIn.ModelCore.NormalDistribution.Mu = 0.0;
+                PlugIn.ModelCore.NormalDistribution.Sigma = 0.0;
+                landfallDistanceFromCoastalCenterY = PlugIn.ModelCore.NormalDistribution.NextDouble();
+                PlugIn.ModelCore.NormalDistribution.Mu = 0.0;
+                PlugIn.ModelCore.NormalDistribution.Sigma = 0.0;
+                this.stormTrackHeading = PlugIn.ModelCore.NormalDistribution.NextDouble();
+                
+                //this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;  // VERSION2
+                //this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0; // VERSION2
             }
 
             // Find the closest exposure map key VERSION2
@@ -100,12 +117,13 @@ namespace Landis.Extension.BaseHurricane
             double studyAreaHeightMeters = PlugIn.ModelCore.Landscape.Dimensions.Rows * PlugIn.ModelCore.CellLength;
             double studyAreaHeightDegreesLatitude = studyAreaHeightMeters / metersPerDegreeLat;
 
-            //double landfallY = this.ContinentalGrid.ConvertLatitudeToGridUnits(this.landfallLatitude);
-            double landfallY = (this.landfallLatitude - PlugIn.GridOriginLatitude) * metersPerDegreeLat;
+            double landfallY = PlugIn.CoastalCenterY + landfallDistanceFromCoastalCenterY;
             this.LandfallPoint = PlugIn.CoastLine.GivenYGetPoint(landfallY);
             this.StormTrackLine = new Line(this.LandfallPoint, this.stormTrackSlope);
-            var stormTrackInterceptPt = this.StormTrackLine.GivenXGetPoint(0.0);
-            this.stormTrackLengthTo_b = (this.LandfallPoint - stormTrackInterceptPt).Length;
+
+            //double landfallY = this.ContinentalGrid.ConvertLatitudeToGridUnits(this.landfallLatitude);
+            //var stormTrackInterceptPt = this.StormTrackLine.GivenXGetPoint(0.0);
+            //this.stormTrackLengthTo_b = (this.LandfallPoint - stormTrackInterceptPt).Length;
         }
 
         public (double, double) GetDistanceAndOffset(Point pt)
@@ -189,16 +207,16 @@ namespace Landis.Extension.BaseHurricane
             double upperRightWindSpeed = this.GetWindSpeed(columns, rows);
             double upperLeftWindSpeed = this.GetWindSpeed(0, rows);
             double maxWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed, upperLeftWindSpeed }).Max();
-            //double minWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed, upperLeftWindSpeed }).Min();
-            //this.studyAreaImpacts = true;
-            //if (maxWS < HurricaneEvent.MinimumWSforDamage)
-            //{
-            //    //PlugIn.ModelCore.UI.WriteLine("   Hurricane Not Sufficient to Cause Damage:  MaxWS={0}, HurricaneMinWS={1}", maxWS, MinimumWSforDamage);
-            //    this.studyAreaImpacts = false;
-            //    //return false;
-            //}
+            double minWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed, upperLeftWindSpeed }).Min();
+            this.studyAreaImpacts = true;
+            if (maxWS < HurricaneEvent.MinimumWSforDamage)
+            {
+                //PlugIn.ModelCore.UI.WriteLine("   Hurricane Not Sufficient to Cause Damage:  MaxWS={0}, HurricaneMinWS={1}", maxWS, MinimumWSforDamage);
+                this.studyAreaImpacts = false;
+                return false;
+            }
 
- 
+
             SiteVars.WindSpeed.ActiveSiteValues = 0.0;
 
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape.ActiveSites)

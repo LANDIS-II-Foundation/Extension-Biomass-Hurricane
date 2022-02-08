@@ -25,6 +25,7 @@ namespace Landis.Extension.BaseHurricane
         public static readonly string ExtensionName = "Base Hurricane";
         public static Troschuetz.Random.Distributions.Continuous.LognormalDistribution HurricaneGeneratorLogNormal;
         public static Troschuetz.Random.Generators.MT19937Generator HurricaneGeneratorStandard;
+        public static Troschuetz.Random.Distributions.Continuous.NormalDistribution HurricaneGeneratorNormal;
 
         //public static Dictionary<int, string> ExposureMaps;
         public static List<int> WindExposures; 
@@ -34,9 +35,10 @@ namespace Landis.Extension.BaseHurricane
         private static ICore modelCore;
         private int summaryEventCount = 0;
 
-        public static double GridOriginLatitude = 42.0;  // VERSION2
-        public static double coastalLatitude = 43.0;  // VERSION2 
-        public static double coastalSlope = 0.0;  //VERSION2
+        //public static double GridOriginLatitude = 42.0;  // VERSION2
+        public static double CoastalCenterX = 4300.0;  // VERSION2 
+        public static double CoastalCenterY = 4300.0;  // VERSION2 
+        public static double CoastalSlope = 0.0;  //VERSION2
         public static Line CoastLine;
 
 
@@ -93,8 +95,8 @@ namespace Landis.Extension.BaseHurricane
 
             }
 
-            Point CoastalIntercept = new Point(coastalLatitude, 0.0);  // VERSION2
-            Line CoastLine = new Line(CoastalIntercept, coastalSlope);  //VERSION2
+            Point CoastalCenter = new Point(CoastalCenterX, CoastalCenterY);  // VERSION2
+            Line CoastLine = new Line(CoastalCenter, CoastalSlope);  //VERSION2
 
             HurricaneEvent.WindSpeedGenerator = new WindSpeedGenerator(this.parameters.LowBoundLandfallWindSpeed,
                 this.parameters.ModeLandfallWindSpeed, this.parameters.HighBoundLandfallWindspeed);

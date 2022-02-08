@@ -43,9 +43,14 @@ namespace Landis.Extension.BaseHurricane
         public double LandfallLatitudeStdDev { get; set; }
         public double StormDirectionMean { get; set; }
         public double StormDirectionStdDev { get; set; }
+
+        public double CoastalCenterX { get; set; }
+        public double CoastalCenterY { get; set; }
+        public double CoastalSlope { get; set; }
+
         //public double CenterPointLatitude { get; set; }
         //public double CenterPointDistanceInland { get; set; }
-        //public  double minimumWSforDamage { get; set; } = 96.5;
+        public double minimumWSforDamage { get; set; } = 96.5;
 
         public Dictionary<string, Dictionary<double, Dictionary<double, double>>> WindSpeedMortalityProbabilities { get; set; }
 		public Dictionary<int, string> WindExposureMaps { get; set; }
