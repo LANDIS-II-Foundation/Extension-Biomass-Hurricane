@@ -1,6 +1,0 @@
-#  project information
-
-project-name	Landis.Test.BaseWind
-project-type	library
-version		1.1
-release         official

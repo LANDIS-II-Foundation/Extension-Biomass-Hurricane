@@ -1,3 +1,0 @@
->> Example of a bad input file for Wind plug-in
-
-LandisData  Earth  << Should be "Wind"

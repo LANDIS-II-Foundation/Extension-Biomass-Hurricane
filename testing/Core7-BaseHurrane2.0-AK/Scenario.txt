@@ -18,7 +18,7 @@ CellLength        90 << meters (0.09 ha)
 
 >>  Disturbance Extensions  	 Initialization File
 >> ----------------------   	-------------------
->>  "SCRAPPLE"			scrapple.txt
+  "Base Hurricane"		base-hurricane_v2.txt
 
 >>  Other Extensions         	 Initialization File
 >> ----------------         	-------------------
