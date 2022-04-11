@@ -1,0 +1,28 @@
+LandisData        "Scenario"
+
+
+Duration          40
+
+Species           species.txt
+
+Ecoregions        Ecoregions.txt
+EcoregionsMap     test_ecoregions.tif
+
+CellLength        90 << meters (0.09 ha)
+
+
+
+>> Succession Extension    	 Initialization File
+>> --------------------     	-------------------
+   "NECN Succession"   	        NECN_succession.txt  
+
+>>  Disturbance Extensions  	 Initialization File
+>> ----------------------   	-------------------
+>>  "SCRAPPLE"			scrapple.txt
+
+>>  Other Extensions         	 Initialization File
+>> ----------------         	-------------------
+  "Output Biomass"    		output-biomass.txt
+>>  "Output Biomass Reclass"	output-biomass-reclass.txt
+
+>> RandomNumberSeed 3333

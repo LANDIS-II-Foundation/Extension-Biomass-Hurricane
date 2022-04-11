@@ -1,0 +1,89 @@
+LandisData	"NECN Succession"
+
+Timestep  10
+
+SeedingAlgorithm        WardSeedDispersal 
+
+InitialCommunities      initial_communities.txt
+InitialCommunitiesMap   test_IC.tif
+ClimateConfigFile 	climate_config.txt	
+
+
+SoilDepthMapName			    soildepth.tif 
+SoilDrainMapName			    drainage.tif
+SoilBaseFlowMapName			    baseflow.tif
+SoilStormFlowMapName			baseflow.tif 
+SoilFieldCapacityMapName		fc.tif
+SoilWiltingPointMapName			wp.tif
+SoilPercentSandMapName			sand.tif
+SoilPercentClayMapName			clay.tif
+InitialSOM1CsurfMapName			soc.tif
+InitialSOM1NsurfMapName			son.tif
+InitialSOM1CsoilMapName			soc.tif
+InitialSOM1NsoilMapName			son.tif
+InitialSOM2CMapName			soc.tif
+InitialSOM2NMapName			son.tif
+InitialSOM3CMapName			soc.tif
+InitialSOM3NMapName			son.tif
+InitialDeadWoodSurfaceMapName	        deadwood.tif
+InitialDeadCoarseRootsMapName	        deadwood.tif
+
+CalibrateMode 		no
+SmokeModelOutputs  	no
+WaterDecayFunction  	Ratio 
+
+ProbabilityEstablishAdjust 	0.6
+InitialMineralN			4.00
+InitialFineFuels 		0.99 
+AtmosphericNSlope	       -0.000007
+AtmosphericNIntercept		0.04
+Latitude		       42.00
+DenitrificationRate		0.0014
+DecayRateSurf			0.9 << decay rates based off of Tahoe Central Sierra Project
+DecayRateSOM1			0.9
+DecayRateSOM2			0.02
+DecayRateSOM3			0.0002
+
+MaximumLAI
+>> ShadeClass	Max LAI
+>> ----------	-------- 	
+	1	1 
+	2	2.25 
+	3	3.5 
+	4	4.75
+	5	6	
+
+LightEstablishmentTable
+>>	Spp Shade	Probability					
+>>	Class		by Actual Shade					
+>>	 ----------	----------------------------	 				
+>>	0	1	2	3	4	5
+1	1.0	1.0	0.5	0.02	0.0	0.0	
+2	0.6	0.6	1.0	0.5	0.02	0.0	
+3	0.01	0.01	0.6	1.0	0.5	0.02	
+4	0.0	0.0	0.01	0.6	1.0	0.5	
+5	0.0	0.0	0.0	0.01	0.6	1.0	
+
+SpeciesParameters		NECN_sp.csv
+
+FunctionalGroupParameters	NECN_functional_group_params.csv
+
+FireReductionParameters
+>>   Severity   	WoodLitter			
+>>   Fire		Reductions      Litter    CohortWood    CohortFoliar    SOM
+>> -------      ----------      ------    ----------    ------------    ----
+	1		       0.20		     0.75 	  	 0	             0.1		0.5 
+	2		       0.25		     0.80 	  	0.1	             0.1		0.55 
+	3		       0.30		     0.85		0.15	         0.5		0.65
+	4		       0.50		     1.0		0.2	             0.65		0.75 
+	5		       0.55		     1.0		0.2	             0.75		0.85
+	6		       0.60		     1.0		0.2	             1.0		1.0
+	7		       0.65		     1.0		0.2            	 1.0		1.0
+	8		       0.65		     1.0		0.2	             1.0		1.0
+	9		       0.75		     1.0		0.3	             1.0		1.0
+	10		       0.85		     1.0		0.3	             1.0		1.0		
+
+HarvestReductionParameters
+>>			WoodLitter	Litter	SOM		CohortWood	CohortLeaf
+>>	Name		Reduct		Reduct	Reduction	Removal		Removal
+>> -----------		----------	------	---------	----------	----------		
