@@ -12,10 +12,15 @@ StormOccurrenceProbabilities
  >> Storms
  >>  Per
  >>  Year       Probability  << Sum must = 1.0
-        0		0.60 
-        1		0.33
-        2       	0.06
-        3          	0.01
+0	0.05
+1	0.15
+2	0.22
+3	0.22
+4	0.17
+5	0.1
+6	0.05
+7	0.03
+8	0.01
 
 
 
