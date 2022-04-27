@@ -25,9 +25,9 @@ StormOccurrenceProbabilities
 
 
 >> Max Wind Speed at Landfall is on a log normal distribution
-LowBoundLandfallWindSpeed	42 << mph
-ModeLandfallWindSpeed	74 << mph
-HighBoundLandfallWindSpeed  150 << mph  Values greater than this are recomputed, so it truncates here.
+LowBoundLandfallWindSpeed	51 << kmh
+ModeLandfallWindSpeed	65 << kmh
+HighBoundLandfallWindSpeed  161 << kmh  Values greater are truncated.
 
 CoastalSlope -100 << relative to the larger landscape
 
@@ -36,16 +36,15 @@ MeanLandfallIntersectionY 200 << in kilometers from southern edge of landscape
 
 LandfallSigma 1 << the variance of landfalls, assuming a mean location as indicated above
 
-StormDirectionMu 90  << average direction
-StormDirectionSigma 1  << variation 
+StormDirectionMu 204.4397 << average direction
+StormDirectionSigma 71.06188 << variation
 
 ExposureMaps << table
 >> Column 1 = degree
 >> Column 2 = map name
-0	my_cool_map.gis
-90	my_cool_map.gis
-180	my_cool_map.gis
-270	my_cool_map.gis
+135	test_135_wind.tif
+180	test_180_wind.tif
+225	test_225_wind.tif
 
 WindSpeedVulnerabilities
 >> Species		MaxAge			Mortality Probabilities
