@@ -35,10 +35,9 @@ namespace Landis.Extension.BaseHurricane
         private static ICore modelCore;
         private int summaryEventCount = 0;
 
-        //public static double GridOriginLatitude = 42.0;  // VERSION2
-        public static double CoastalCenterX = 4300.0;  // VERSION2 
-        public static double CoastalCenterY = 4300.0;  // VERSION2 
-        public static double CoastalSlope = 0.0;  //VERSION2
+        public static double CoastalCenterX;  // VERSION2 
+        public static double CoastalCenterY;  // VERSION2 
+        public static double CoastalSlope;  //VERSION2
         public static Line CoastLine;
 
 
@@ -90,8 +89,6 @@ namespace Landis.Extension.BaseHurricane
                 parameters.LowBoundLandfallWindSpeed *= 1.60934;
                 parameters.ModeLandfallWindSpeed *= 1.60934;
                 parameters.HighBoundLandfallWindspeed *= 1.60934;
-                //parameters.CenterPointDistanceInland *= 1.60934;
-                //HurricaneEvent.WindMortalityTable.ChangeSpeedsFromEnglishToMetric();
 
             }
 
@@ -114,7 +111,12 @@ namespace Landis.Extension.BaseHurricane
             Timestep = parameters.Timestep;
             mapNameTemplate = parameters.MapNamesTemplate;
 
+            CoastalCenterX = parameters.CoastalCenterX;  // VERSION2 
+            CoastalCenterY = parameters.CoastalCenterY;  // VERSION2 
+            CoastalSlope = parameters.CoastalSlope;  //VERSION2
+
             SiteVars.Initialize();
+
             //this.ContinentalGrid = new ContinentalGrid(
             //    //this.parameters.CenterPointLatitude, 
             //    PlugIn.ModelCore.CellLength,
@@ -249,10 +251,10 @@ namespace Landis.Extension.BaseHurricane
                         int mapValue = pixel.MapCode.Value;
                         if (site.IsActive)
                         {
-                            if (mapValue <= 0 || mapValue > 300)
+                            if (mapValue <= 0 || mapValue > 360)
                                 throw new InputValueException(mapValue.ToString(),
-                                                              "Soil depth value {0} must range from {1:0.0} and {2:0.0}. Site_Row={3:0}, Site_Column={4:0}",
-                                                              mapValue, 1, 9, site.Location.Row, site.Location.Column);
+                                                              "Wind Exposure Values: {0} is incorrect. They must range from 1-9. Site_Row={1:0}, Site_Column={2:0}",
+                                                              mapValue, site.Location.Row, site.Location.Column);
 
                             // add data to SiteVars.WindExposure[site] dictionary
                             SiteVars.WindExposure[site].Add(windmap.Key, mapValue);

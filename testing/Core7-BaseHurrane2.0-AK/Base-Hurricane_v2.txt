@@ -31,13 +31,15 @@ HighBoundLandfallWindSpeed  161 << kmh  Values greater are truncated.
 
 CoastalSlope -100 << relative to the larger landscape
 
-MeanLandfallIntersectionX 200 << in kilometers from western edge of landscape
-MeanLandfallIntersectionY 200 << in kilometers from southern edge of landscape
+MeanStormIntersectionX 200 << in kilometers from western edge of landscape
+MeanStormIntersectionY 200 << in kilometers from southern edge of landscape
 
 LandfallSigma 1 << the variance of landfalls, assuming a mean location as indicated above
 
 StormDirectionMu 204.4397 << average direction
 StormDirectionSigma 71.06188 << variation
+
+MinimumWindSpeedforDamage	96 << units = kph
 
 ExposureMaps << table
 >> Column 1 = degree

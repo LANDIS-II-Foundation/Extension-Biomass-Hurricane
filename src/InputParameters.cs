@@ -41,8 +41,8 @@ namespace Landis.Extension.BaseHurricane
         public double HighBoundLandfallWindspeed { get; set; }
         public double LandfallLatitudeMean { get; set; }
         public double LandfallLatitudeStdDev { get; set; }
-        public double StormDirectionMean { get; set; }
-        public double StormDirectionStdDev { get; set; }
+        public double StormDirectionMu { get; set; }
+        public double StormDirectionSigma { get; set; }
 
         public double CoastalCenterX { get; set; }
         public double CoastalCenterY { get; set; }

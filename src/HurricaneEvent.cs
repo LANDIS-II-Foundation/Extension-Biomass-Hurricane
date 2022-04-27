@@ -14,7 +14,7 @@ namespace Landis.Extension.BaseHurricane
 
         internal static WindSpeedGenerator WindSpeedGenerator { get; set; } = null;
         public static HurricaneWindMortalityTable WindMortalityTable { get; set; } = null;
-        private static double BaseWindSpeed = 48.0; // Asymptotic minimum max wind speed of a storm.
+        private static double BaseWindSpeed = 48.0; // Asymptotic minimum max wind speed of a storm. // FIXME VERSION 2
         public static double MinimumWSforDamage { get; set; }
 
         public static bool HurricaneRandomNumber { get; set; } = false;
@@ -102,23 +102,24 @@ namespace Landis.Extension.BaseHurricane
             // Find the closest exposure map key VERSION2
             foreach (int ExposureKey in PlugIn.WindExposures)
             {
-                int minimumDifference = 100;
-                int tempD = Math.Abs(ExposureKey - (int) this.stormTrackHeading);
-                if (tempD < minimumDifference)
+                int minimumDifference = 181;  // two degrees can't be absolutely more than 181 degree apart.
+                int tempDegree = Math.Abs(Math.Abs(ExposureKey - (int) this.stormTrackHeading) - 360);
+                if (tempDegree > 180)
+                    tempDegree = Math.Abs(360 - tempDegree);
+                if (tempDegree < minimumDifference)
                         this.ClosestExposureKey = ExposureKey;
             }
             PlugIn.ModelCore.UI.WriteLine("StormHeading={0}, ClosestExposureKey={1}", this.stormTrackHeading, this.ClosestExposureKey);
 
-            //var modHeading = (this.stormTrackHeading - 315) * Math.PI / 180.0;
             this.stormTrackSlope = 1 / Math.Tan(this.stormTrackHeading * Math.PI / 180.0);
             this.stormTrackPerpandicularSlope = -1.0 / this.stormTrackSlope;
 
-            double metersPerDegreeLat = 111000.0; 
             double studyAreaHeightMeters = PlugIn.ModelCore.Landscape.Dimensions.Rows * PlugIn.ModelCore.CellLength;
-            double studyAreaHeightDegreesLatitude = studyAreaHeightMeters / metersPerDegreeLat;
+            //double studyAreaHeightDegreesLatitude = studyAreaHeightMeters / metersPerDegreeLat;
+            //double metersPerDegreeLat = 111000.0; 
 
             double landfallY = PlugIn.CoastalCenterY + landfallDistanceFromCoastalCenterY;
-            this.LandfallPoint = PlugIn.CoastLine.GivenYGetPoint(landfallY);
+            this.LandfallPoint = PlugIn.CoastLine.GivenYGetPoint(landfallY / 1000.0);  //convert from kilometers to meters
             this.StormTrackLine = new Line(this.LandfallPoint, this.stormTrackSlope);
 
             //double landfallY = this.ContinentalGrid.ConvertLatitudeToGridUnits(this.landfallLatitude);

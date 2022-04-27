@@ -94,21 +94,29 @@ namespace Landis.Extension.BaseHurricane
             ReadVar(hiboundLFWS);
             parameters.HighBoundLandfallWindspeed = hiboundLFWS.Value;
 
-            InputVar<double> llm = new InputVar<double>("LandfallLatitudeMean");
-            ReadVar(llm);
-            parameters.LandfallLatitudeMean = llm.Value;
+            InputVar<double> cos = new InputVar<double>("CoastalSlope");
+            ReadVar(cos);
+            parameters.CoastalSlope = cos.Value;
 
-            InputVar<double> llstd = new InputVar<double>("LandfallLatitudeStdDev");
+            InputVar<double> cox = new InputVar<double>("MeanStormIntersectionX");
+            ReadVar(cox);
+            parameters.CoastalCenterX = cox.Value;
+
+            InputVar<double> coy = new InputVar<double>("MeanStormIntersectionY");
+            ReadVar(coy);
+            parameters.CoastalCenterY = coy.Value;
+
+            InputVar<double> llstd = new InputVar<double>("LandfallSigma");
             ReadVar(llstd);
             parameters.LandfallLatitudeStdDev = llstd.Value;
 
-            InputVar<double> stm = new InputVar<double>("StormDirectionMean");
+            InputVar<double> stm = new InputVar<double>("StormDirectionMu");
             ReadVar(stm);
-            parameters.StormDirectionMean = stm.Value;
+            parameters.StormDirectionMu = stm.Value;
 
-            InputVar<double> sdstd = new InputVar<double>("StormDirectionStdDev");
+            InputVar<double> sdstd = new InputVar<double>("StormDirectionSigma");
             ReadVar(sdstd);
-            parameters.StormDirectionStdDev = sdstd.Value;
+            parameters.StormDirectionSigma = sdstd.Value;
 
             //InputVar<double> cpl = new InputVar<double>("CenterPointLatitude");  //VERSION2
             //ReadVar(cpl);
@@ -128,7 +136,7 @@ namespace Landis.Extension.BaseHurricane
 
             InputVar<int> mws = new InputVar<int>("MinimumWindSpeedforDamage");  //VERSION2
             ReadVar(mws);
-            //double minimumWindSpeed = 96.5;  // kph = 60 mph:  This is a standard minimum, below this effects generally not expected.
+            //Typically 96.5 kph = 60 mph:  This is a standard minimum, below this effects generally not expected.
             HurricaneEvent.MinimumWSforDamage = mws.Value;
 
             ReadName("ExposureMaps");
