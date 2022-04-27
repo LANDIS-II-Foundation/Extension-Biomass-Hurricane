@@ -29,10 +29,10 @@ LowBoundLandfallWindSpeed	51 << kmh
 ModeLandfallWindSpeed	65 << kmh
 HighBoundLandfallWindSpeed  161 << kmh  Values greater are truncated.
 
-CoastalSlope -100 << relative to the larger landscape
+CoastalSlope -0.903 << relative to the larger landscape
 
-MeanStormIntersectionX 200 << in kilometers from western edge of landscape
-MeanStormIntersectionY 200 << in kilometers from southern edge of landscape
+MeanLandfallIntersectionX = 417.618
+MeanLandfallIntersectionY = 105.420
 
 LandfallSigma 1 << the variance of landfalls, assuming a mean location as indicated above
 
