@@ -108,7 +108,7 @@ namespace Landis.Extension.BaseHurricane
 
             InputVar<double> llstd = new InputVar<double>("LandfallSigma");
             ReadVar(llstd);
-            parameters.LandfallLatitudeStdDev = llstd.Value;
+            parameters.LandFallSigma = llstd.Value;
 
             InputVar<double> stm = new InputVar<double>("StormDirectionMu");
             ReadVar(stm);

@@ -39,10 +39,12 @@ namespace Landis.Extension.BaseHurricane
         public double LowBoundLandfallWindSpeed { get; set; }
         public double ModeLandfallWindSpeed { get; set; }
         public double HighBoundLandfallWindspeed { get; set; }
-        public double LandfallLatitudeMean { get; set; }
-        public double LandfallLatitudeStdDev { get; set; }
+        //public double LandfallLatitudeMean { get; set; }
+        //public double LandfallLatitudeStdDev { get; set; }
         public double StormDirectionMu { get; set; }
         public double StormDirectionSigma { get; set; }
+
+        public double LandFallSigma { get; set; }
 
         public double CoastalCenterX { get; set; }
         public double CoastalCenterY { get; set; }
@@ -111,10 +113,8 @@ namespace Landis.Extension.BaseHurricane
 
         //---------------------------------------------------------------------
 
-        public InputParameters() //int ecoregionCount)
+        public InputParameters() 
         {
-            //eventParameters = new IEventParameters; //[ecoregionCount];
-
         }
 	}
 }

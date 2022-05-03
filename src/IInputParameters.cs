@@ -45,8 +45,10 @@ namespace Landis.Extension.BaseHurricane
         double CoastalCenterY { get; set; }
         double CoastalSlope { get; set; }
 
-        double LandfallLatitudeMean { get; set; }
-        double LandfallLatitudeStdDev { get; set; }
+        double LandFallSigma { get; set; }
+
+        //double LandfallLatitudeMean { get; set; }
+        //double LandfallLatitudeStdDev { get; set; }
         double StormDirectionMu { get; set; }
         double StormDirectionSigma { get; set; }
 

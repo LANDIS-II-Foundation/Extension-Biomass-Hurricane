@@ -39,6 +39,7 @@ namespace Landis.Extension.BaseHurricane
         public static double CoastalCenterY;  // VERSION2 
         public static double CoastalSlope;  //VERSION2
         public static Line CoastLine;
+        public static double LandFallSigma; //VERSION2
 
 
         //private ContinentalGrid ContinentalGrid = null;
@@ -114,6 +115,7 @@ namespace Landis.Extension.BaseHurricane
             CoastalCenterX = parameters.CoastalCenterX;  // VERSION2 
             CoastalCenterY = parameters.CoastalCenterY;  // VERSION2 
             CoastalSlope = parameters.CoastalSlope;  //VERSION2
+            LandFallSigma = parameters.LandFallSigma; //VERSION2
 
             SiteVars.Initialize();
 
@@ -251,7 +253,7 @@ namespace Landis.Extension.BaseHurricane
                         int mapValue = pixel.MapCode.Value;
                         if (site.IsActive)
                         {
-                            if (mapValue <= 0 || mapValue > 360)
+                            if (mapValue <= 0 || mapValue > 9)
                                 throw new InputValueException(mapValue.ToString(),
                                                               "Wind Exposure Values: {0} is incorrect. They must range from 1-9. Site_Row={1:0}, Site_Column={2:0}",
                                                               mapValue, site.Location.Row, site.Location.Column);

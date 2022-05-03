@@ -77,7 +77,7 @@ namespace Landis.Extension.BaseHurricane
             if (HurricaneRandomNumber)
             {
                 PlugIn.HurricaneGeneratorNormal.Mu = 0.0;
-                PlugIn.HurricaneGeneratorNormal.Sigma = 0.0;
+                PlugIn.HurricaneGeneratorNormal.Sigma = PlugIn.LandFallSigma;
                 landfallDistanceFromCoastalCenterY = PlugIn.ModelCore.NormalDistribution.NextDouble();
                 PlugIn.HurricaneGeneratorNormal.Mu = 0.0;
                 PlugIn.HurricaneGeneratorNormal.Sigma = 0.0;
@@ -404,15 +404,9 @@ namespace Landis.Extension.BaseHurricane
             while(keepComputing)
             {
                 double trialValue = PlugIn.ModelCore.LognormalDistribution.NextDouble();
-                //int cnt = 0;
                 if (HurricaneEvent.HurricaneRandomNumber)
                 {
-                    
                     trialValue = PlugIn.HurricaneGeneratorLogNormal.NextDouble();
-                    //if(cnt < 10)
-                    //    PlugIn.ModelCore.UI.WriteLine("   LogNormal generator:  {0}", trialValue);
-                    //cnt++;
-
                 }
 
                 trialValue = Math.Round((this.adjustFactor * trialValue)) + this.minSpeed;
