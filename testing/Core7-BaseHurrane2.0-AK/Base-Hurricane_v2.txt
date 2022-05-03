@@ -44,9 +44,9 @@ MinimumWindSpeedforDamage	96 << units = kph
 ExposureMaps << table
 >> Column 1 = degree
 >> Column 2 = map name
-135	test_135_wind.tif
-180	test_180_wind.tif
-225	test_225_wind.tif
+135	test_135_wind_fix.tif
+180	test_180_wind_fix.tif
+225	test_225_wind_fix.tif
 
 WindSpeedVulnerabilities
 >> Species		MaxAge			Mortality Probabilities
