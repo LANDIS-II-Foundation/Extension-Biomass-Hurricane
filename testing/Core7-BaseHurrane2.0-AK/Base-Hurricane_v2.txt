@@ -31,8 +31,8 @@ HighBoundLandfallWindSpeed  161 << kmh  Values greater are truncated.
 
 CoastalSlope -0.903 << relative to the larger landscape
 
-MeanLandfallIntersectionX = 417.618
-MeanLandfallIntersectionY = 105.420
+MeanStormIntersectionX 417.618
+MeanStormIntersectionY 105.420
 
 LandfallSigma 1 << the variance of landfalls, assuming a mean location as indicated above
 
