@@ -70,7 +70,7 @@ namespace Landis.Extension.BaseHurricane
             return hurrEvent;
         }
 
-        private HurricaneEvent()//ContinentalGrid continentalGrid)
+        public HurricaneEvent()//ContinentalGrid continentalGrid)
         {
             //this.ContinentalGrid = continentalGrid;
             this.landfallMaxWindSpeed = HurricaneEvent.WindSpeedGenerator.GetWindSpeed();
@@ -80,7 +80,7 @@ namespace Landis.Extension.BaseHurricane
                 PlugIn.HurricaneGeneratorNormal.Sigma = PlugIn.LandFallSigma;
                 landfallDistanceFromCoastalCenterY = PlugIn.ModelCore.NormalDistribution.NextDouble();
                 PlugIn.HurricaneGeneratorNormal.Mu = 0.0;
-                PlugIn.HurricaneGeneratorNormal.Sigma = 0.0;
+                PlugIn.HurricaneGeneratorNormal.Sigma = PlugIn.LandFallSigma;
                 this.stormTrackHeading = PlugIn.ModelCore.NormalDistribution.NextDouble();
 
                 //this.landfallLatitude = 7.75 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 30.7;  // VERSION2

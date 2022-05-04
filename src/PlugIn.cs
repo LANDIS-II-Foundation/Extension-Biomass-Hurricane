@@ -23,9 +23,9 @@ namespace Landis.Extension.BaseHurricane
         public static MetadataTable<EventsLog> eventLog;
         public static MetadataTable<SummaryLog> summaryLog;
         public static readonly string ExtensionName = "Base Hurricane";
-        public static Troschuetz.Random.Distributions.Continuous.LognormalDistribution HurricaneGeneratorLogNormal;
-        public static Troschuetz.Random.Generators.MT19937Generator HurricaneGeneratorStandard;
-        public static Troschuetz.Random.Distributions.Continuous.NormalDistribution HurricaneGeneratorNormal;
+        public static LognormalDistribution HurricaneGeneratorLogNormal = new LognormalDistribution();
+        public static Troschuetz.Random.Generators.MT19937Generator HurricaneGeneratorStandard = new Troschuetz.Random.Generators.MT19937Generator();
+        public static NormalDistribution HurricaneGeneratorNormal = new NormalDistribution();
 
         //public static Dictionary<int, string> ExposureMaps;
         public static List<int> WindExposures; 
@@ -171,10 +171,7 @@ namespace Landis.Extension.BaseHurricane
                 if(stormsThisYear == 1) message = "1 storm.";
                 foreach(var stormCount in Enumerable.Range(0, stormsThisYear))
                 {
-                    var storm = HurricaneEvent.Initiate(); // this.ContinentalGrid);
-                    //storm.hurricaneYear = 
-                    //    year + PlugIn.ModelCore.CurrentTime - 
-                    //    this.parameters.Timestep;
+                    HurricaneEvent storm = new HurricaneEvent(); //.Initiate(); // this.ContinentalGrid);
 
                     storm.hurricaneNumber = stormCount+1;
 
@@ -253,7 +250,7 @@ namespace Landis.Extension.BaseHurricane
                         int mapValue = pixel.MapCode.Value;
                         if (site.IsActive)
                         {
-                            if (mapValue <= 0 || mapValue > 9)
+                            if (mapValue < 0 || mapValue > 9)
                                 throw new InputValueException(mapValue.ToString(),
                                                               "Wind Exposure Values: {0} is incorrect. They must range from 1-9. Site_Row={1:0}, Site_Column={2:0}",
                                                               mapValue, site.Location.Row, site.Location.Column);
