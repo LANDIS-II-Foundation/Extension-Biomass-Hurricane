@@ -67,6 +67,6 @@ MountainHemlock          800        60:0.05   75:0.18    110:0.75  140:1.0
    WesternWhitePine         400     60:0.05   75:0.18    110:0.75  140:1.0
    EngelmannSpruce          500     60:0.05   75:0.18    110:0.75  140:1.0
 
-MapNames  hurricane/max-windspeed-{timestep}.img
+MapNames  hurricane/max-windspeed-{timestep}-{stormNumber}.img
 LogFile   hurricane/hurricane-log.csv
 

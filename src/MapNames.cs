@@ -11,8 +11,9 @@ namespace Landis.Extension.BaseHurricane
 	public static class MapNames
 	{
 		public const string TimestepVar = "timestep";
+        public const string StormNumberVar = "stormNumber";
 
-		private static IDictionary<string, bool> knownVars;
+        private static IDictionary<string, bool> knownVars;
 		private static IDictionary<string, string> varValues;
 
 		//---------------------------------------------------------------------
@@ -21,6 +22,7 @@ namespace Landis.Extension.BaseHurricane
 		{
 			knownVars = new Dictionary<string, bool>();
 			knownVars[TimestepVar] = true;
+            knownVars[StormNumberVar] = true;
 
 			varValues = new Dictionary<string, string>();
 		}
@@ -35,10 +37,11 @@ namespace Landis.Extension.BaseHurricane
 		//---------------------------------------------------------------------
 
 		public static string ReplaceTemplateVars(string template,
-		                                         int    timestep)
+		                                         int    timestep, int stormNum)
 		{
 			varValues[TimestepVar] = timestep.ToString();
-			return OutputPath.ReplaceTemplateVars(template, varValues);
+            varValues[StormNumberVar] = stormNum.ToString();
+            return OutputPath.ReplaceTemplateVars(template, varValues);
 		}
 	}
 }

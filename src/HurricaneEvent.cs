@@ -89,10 +89,10 @@ namespace Landis.Extension.BaseHurricane
             else
             {
                 PlugIn.ModelCore.NormalDistribution.Mu = 0.0;
-                PlugIn.ModelCore.NormalDistribution.Sigma = 0.0;
+                PlugIn.ModelCore.NormalDistribution.Sigma = PlugIn.LandFallSigma;
                 landfallDistanceFromCoastalCenterY = PlugIn.ModelCore.NormalDistribution.NextDouble();
                 PlugIn.ModelCore.NormalDistribution.Mu = 0.0;
-                PlugIn.ModelCore.NormalDistribution.Sigma = 0.0;
+                PlugIn.ModelCore.NormalDistribution.Sigma = PlugIn.LandFallSigma;
                 this.stormTrackHeading = PlugIn.ModelCore.NormalDistribution.NextDouble();
                 
                 //this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;  // VERSION2
@@ -196,8 +196,7 @@ namespace Landis.Extension.BaseHurricane
             return speed;
         }
 
-        internal bool GenerateWindFieldRaster(
-            string mapNameTemplate, ICore modelCore)//, ContinentalGrid continentalGrid)
+        internal bool GenerateWindFieldRaster(string mapNameTemplate, ICore modelCore)//, ContinentalGrid continentalGrid)
         {
             //this.ContinentalGrid = continentalGrid;
             Dimensions dimensions = new Dimensions(modelCore.Landscape.Rows, modelCore.Landscape.Columns);
@@ -230,7 +229,7 @@ namespace Landis.Extension.BaseHurricane
             double activeAreaMinWS = 999.0;
             double activeAreaMaxWS = 0.0;
 
-            string path = MapNames.ReplaceTemplateVars(mapNameTemplate, modelCore.CurrentTime);
+            string path = MapNames.ReplaceTemplateVars(mapNameTemplate, modelCore.CurrentTime, hurricaneNumber);
             IOutputRaster<BytePixel> outputRaster = null;
             using (outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
             {

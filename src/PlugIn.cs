@@ -176,8 +176,7 @@ namespace Landis.Extension.BaseHurricane
                     storm.hurricaneNumber = stormCount+1;
 
                     bool impactsStudyArea =
-                        storm.GenerateWindFieldRaster(this.mapNameTemplate,
-                        PlugIn.modelCore); //, this.ContinentalGrid);
+                        storm.GenerateWindFieldRaster(this.mapNameTemplate, PlugIn.modelCore); //, this.ContinentalGrid);
                     
                     LogEvent(storm);
                 }
@@ -269,7 +268,7 @@ namespace Landis.Extension.BaseHurricane
         //---------------------------------------------------------------------
         private static IInputRaster<IntPixel> MakeIntMap(string path)
         {
-            PlugIn.ModelCore.UI.WriteLine("  Read in data from {0}", path);
+            PlugIn.ModelCore.UI.WriteLine("    Read in data from {0}", path);
 
             IInputRaster<IntPixel> map;
 
