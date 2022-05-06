@@ -15,8 +15,11 @@ namespace Landis.Extension.BaseHurricane
         [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Hurricane Number")]
         public int HurricaneNumber { get; set; }
 
-        [DataFieldAttribute(Desc = "Latitude at Landfall")]
-        public double LandfallLatitude { get; set; }
+        [DataFieldAttribute(Desc = "X Coordinate of Landfall")]
+        public double LandfallX { get; set; }
+
+        [DataFieldAttribute(Desc = "Y Coordinate of Landfall")]
+        public double LandfallY { get; set; }
 
         [DataFieldAttribute(Desc = "Max Windspeed at Landfall")]
         public double LandfallMaxWindSpeed { get; set; }

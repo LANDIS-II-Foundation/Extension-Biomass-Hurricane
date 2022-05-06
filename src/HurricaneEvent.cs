@@ -25,7 +25,6 @@ namespace Landis.Extension.BaseHurricane
         public double StudyAreaMinWindspeed { get; set; }
         public bool studyAreaImpacts { get; set; }
         public double landfallMaxWindSpeed { get; private set; }
-        public double landfallLatitude { get; private set; }
 
         //private double stormTrackEffectiveDistanceToCenterPoint { get; set; }
         public double stormTrackHeading { get; private set; }
@@ -66,65 +65,72 @@ namespace Landis.Extension.BaseHurricane
         public static HurricaneEvent Initiate()//ContinentalGrid continentalGrid)
         {
 
-            HurricaneEvent hurrEvent = new HurricaneEvent(); // continentalGrid);
+            HurricaneEvent hurrEvent = new HurricaneEvent(0); // continentalGrid);
             return hurrEvent;
         }
 
-        public HurricaneEvent()//ContinentalGrid continentalGrid)
+        public HurricaneEvent(int stormCnt)//ContinentalGrid continentalGrid)
         {
             //this.ContinentalGrid = continentalGrid;
+            this.hurricaneNumber = stormCnt;
             this.landfallMaxWindSpeed = HurricaneEvent.WindSpeedGenerator.GetWindSpeed();
             if (HurricaneRandomNumber)
             {
+                // Landfall
                 PlugIn.HurricaneGeneratorNormal.Mu = 0.0;
                 PlugIn.HurricaneGeneratorNormal.Sigma = PlugIn.LandFallSigma;
-                landfallDistanceFromCoastalCenterY = PlugIn.ModelCore.NormalDistribution.NextDouble();
-                PlugIn.HurricaneGeneratorNormal.Mu = 0.0;
-                PlugIn.HurricaneGeneratorNormal.Sigma = PlugIn.LandFallSigma;
-                this.stormTrackHeading = PlugIn.ModelCore.NormalDistribution.NextDouble();
+                landfallDistanceFromCoastalCenterY = PlugIn.HurricaneGeneratorNormal.NextDouble();
 
-                //this.landfallLatitude = 7.75 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 30.7;  // VERSION2
-                //this.stormTrackHeading = 80.0 * PlugIn.HurricaneGeneratorStandard.NextDouble() + 280.0;  // VERSION2
+                // Storm track
+                PlugIn.HurricaneGeneratorNormal.Mu = PlugIn.StormDirectionMu;
+                PlugIn.HurricaneGeneratorNormal.Sigma = PlugIn.StormDirectionSigma;
+                this.stormTrackHeading = PlugIn.HurricaneGeneratorNormal.NextDouble();
             }
             else
             {
+                // Landfall
                 PlugIn.ModelCore.NormalDistribution.Mu = 0.0;
                 PlugIn.ModelCore.NormalDistribution.Sigma = PlugIn.LandFallSigma;
                 landfallDistanceFromCoastalCenterY = PlugIn.ModelCore.NormalDistribution.NextDouble();
-                PlugIn.ModelCore.NormalDistribution.Mu = 0.0;
-                PlugIn.ModelCore.NormalDistribution.Sigma = PlugIn.LandFallSigma;
+
+                // Storm track
+                PlugIn.ModelCore.NormalDistribution.Mu = PlugIn.StormDirectionMu;
+                PlugIn.ModelCore.NormalDistribution.Sigma = PlugIn.StormDirectionSigma;
                 this.stormTrackHeading = PlugIn.ModelCore.NormalDistribution.NextDouble();
-                
-                //this.landfallLatitude = 7.75 * PlugIn.ModelCore.GenerateUniform() + 30.7;  // VERSION2
-                //this.stormTrackHeading = 80.0 * PlugIn.ModelCore.GenerateUniform() + 280.0; // VERSION2
             }
 
+            if (this.stormTrackHeading > 360)
+                this.stormTrackHeading -= 360;
+
             // Find the closest exposure map key VERSION2
+            int minimumDifference = 181;  // two degrees can't be absolutely more than 181 degree apart.
             foreach (int ExposureKey in PlugIn.WindExposures)
             {
-                int minimumDifference = 181;  // two degrees can't be absolutely more than 181 degree apart.
-                int tempDegree = Math.Abs(Math.Abs(ExposureKey - (int) this.stormTrackHeading) - 360);
-                if (tempDegree > 180)
-                    tempDegree = Math.Abs(360 - tempDegree);
-                if (tempDegree < minimumDifference)
-                        this.ClosestExposureKey = ExposureKey;
+                int degreeDifference = Math.Abs(Math.Abs(ExposureKey - (int) this.stormTrackHeading) - 360);
+                if (degreeDifference > 180)
+                    degreeDifference = Math.Abs(360 - degreeDifference);
+                if (degreeDifference < minimumDifference)
+                {
+                    this.ClosestExposureKey = ExposureKey;
+                    minimumDifference = degreeDifference;
+                }
             }
-            PlugIn.ModelCore.UI.WriteLine("StormHeading={0}, ClosestExposureKey={1}", this.stormTrackHeading, this.ClosestExposureKey);
+            PlugIn.ModelCore.UI.WriteLine("Storm #{0}, MaxWindSpeed={1:0.0}, StormHeading={2:0.0}, ClosestExposureKey={3}", this.hurricaneNumber, this.landfallMaxWindSpeed, this.stormTrackHeading, this.ClosestExposureKey);
 
             this.stormTrackSlope = 1 / Math.Tan(this.stormTrackHeading * Math.PI / 180.0);
             this.stormTrackPerpandicularSlope = -1.0 / this.stormTrackSlope;
 
             double studyAreaHeightMeters = PlugIn.ModelCore.Landscape.Dimensions.Rows * PlugIn.ModelCore.CellLength;
-            //double studyAreaHeightDegreesLatitude = studyAreaHeightMeters / metersPerDegreeLat;
-            //double metersPerDegreeLat = 111000.0; 
 
             double landfallY = PlugIn.CoastalCenterY + landfallDistanceFromCoastalCenterY;
-            this.LandfallPoint = PlugIn.CoastLine.GivenYGetPoint(landfallY / 1000.0);  //convert from kilometers to meters
+            this.LandfallPoint = PlugIn.CoastLine.GivenYGetPoint(landfallY);  
             this.StormTrackLine = new Line(this.LandfallPoint, this.stormTrackSlope);
 
             //double landfallY = this.ContinentalGrid.ConvertLatitudeToGridUnits(this.landfallLatitude);
             //var stormTrackInterceptPt = this.StormTrackLine.GivenXGetPoint(0.0);
             //this.stormTrackLengthTo_b = (this.LandfallPoint - stormTrackInterceptPt).Length;
+            //double studyAreaHeightDegreesLatitude = studyAreaHeightMeters / metersPerDegreeLat;
+            //double metersPerDegreeLat = 111000.0; 
         }
 
         public (double, double) GetDistanceAndOffset(Point pt)

@@ -26,7 +26,7 @@ StormOccurrenceProbabilities
 
 >> Max Wind Speed at Landfall is on a log normal distribution
 LowBoundLandfallWindSpeed	51 << kmh
-ModeLandfallWindSpeed	65 << kmh
+ModeLandfallWindSpeed	165 << kmh  (Trevor = 65)
 HighBoundLandfallWindSpeed  161 << kmh  Values greater are truncated.
 
 CoastalSlope -0.903 << relative to the larger landscape
@@ -39,7 +39,7 @@ LandfallSigma 1 << the variance of landfalls, assuming a mean location as indica
 StormDirectionMu 204.4397 << average direction
 StormDirectionSigma 71.06188 << variation
 
-MinimumWindSpeedforDamage	96 << units = kph
+MinimumWindSpeedforDamage	60 << units = kph; should match the third column in the WindSpeedVulnerabilities table
 
 ExposureMaps << table
 >> Column 1 = degree
@@ -67,6 +67,6 @@ MountainHemlock          800        60:0.05   75:0.18    110:0.75  140:1.0
    WesternWhitePine         400     60:0.05   75:0.18    110:0.75  140:1.0
    EngelmannSpruce          500     60:0.05   75:0.18    110:0.75  140:1.0
 
-MapNames  hurricane/max-windspeed-{timestep}-{stormNumber}.img
-LogFile   hurricane/hurricane-log.csv
+MapNames  hurricane/max-windspeed-{timestep}-{stormNumber}.bmp
+LogFile   hurricane-log.csv
 

@@ -39,7 +39,11 @@ namespace Landis.Extension.BaseHurricane
         public static double CoastalCenterY;  // VERSION2 
         public static double CoastalSlope;  //VERSION2
         public static Line CoastLine;
+        public static Point CoastalCenter;
         public static double LandFallSigma; //VERSION2
+
+        public static double StormDirectionMu;
+        public static double StormDirectionSigma;
 
 
         //private ContinentalGrid ContinentalGrid = null;
@@ -84,6 +88,12 @@ namespace Landis.Extension.BaseHurricane
         public override void Initialize()
         {
 
+            CoastalCenterX = parameters.CoastalCenterX * 1000;  // convert km to meters, VERSION2 
+            CoastalCenterY = parameters.CoastalCenterY * 1000;  // convert km to meters, VERSION2 
+            CoastalSlope = parameters.CoastalSlope;  //VERSION2
+            LandFallSigma = parameters.LandFallSigma; //VERSION2
+            StormDirectionMu = parameters.StormDirectionMu;
+            StormDirectionSigma = parameters.StormDirectionSigma;
             HurricaneEvent.WindMortalityTable = new HurricaneWindMortalityTable(parameters.WindSpeedMortalityProbabilities);
             if (parameters.InputUnitsEnglish)
             {
@@ -93,29 +103,24 @@ namespace Landis.Extension.BaseHurricane
 
             }
 
-            Point CoastalCenter = new Point(CoastalCenterX, CoastalCenterY);  // VERSION2
-            Line CoastLine = new Line(CoastalCenter, CoastalSlope);  //VERSION2
+            CoastalCenter = new Point(CoastalCenterX, CoastalCenterY);  // VERSION2
+            CoastLine = new Line(CoastalCenter, CoastalSlope);  //VERSION2
 
             HurricaneEvent.WindSpeedGenerator = new WindSpeedGenerator(this.parameters.LowBoundLandfallWindSpeed,
                 this.parameters.ModeLandfallWindSpeed, this.parameters.HighBoundLandfallWindspeed);
             //parameters.AdjustValuesFromEnglishToMetric();
 
-            List<string> colnames = new List<string>();
-            foreach(IEcoregion ecoregion in modelCore.Ecoregions)
-            {
-                colnames.Add(ecoregion.Name);
-            }
-            ExtensionMetadata.ColumnNames = colnames;
+            //List<string> colnames = new List<string>();
+            //foreach(IEcoregion ecoregion in modelCore.Ecoregions)
+            //{
+            //    colnames.Add(ecoregion.Name);
+            //}
+            //ExtensionMetadata.ColumnNames = colnames;
 
             MetadataHandler.InitializeMetadata(parameters.Timestep, parameters.MapNamesTemplate);
 
             Timestep = parameters.Timestep;
             mapNameTemplate = parameters.MapNamesTemplate;
-
-            CoastalCenterX = parameters.CoastalCenterX;  // VERSION2 
-            CoastalCenterY = parameters.CoastalCenterY;  // VERSION2 
-            CoastalSlope = parameters.CoastalSlope;  //VERSION2
-            LandFallSigma = parameters.LandFallSigma; //VERSION2
 
             SiteVars.Initialize();
 
@@ -171,9 +176,7 @@ namespace Landis.Extension.BaseHurricane
                 if(stormsThisYear == 1) message = "1 storm.";
                 foreach(var stormCount in Enumerable.Range(0, stormsThisYear))
                 {
-                    HurricaneEvent storm = new HurricaneEvent(); //.Initiate(); // this.ContinentalGrid);
-
-                    storm.hurricaneNumber = stormCount+1;
+                    HurricaneEvent storm = new HurricaneEvent(stormCount+1); //.Initiate(); // this.ContinentalGrid);
 
                     bool impactsStudyArea =
                         storm.GenerateWindFieldRaster(this.mapNameTemplate, PlugIn.modelCore); //, this.ContinentalGrid);
@@ -207,7 +210,8 @@ namespace Landis.Extension.BaseHurricane
             el.ImpactsStudyArea = hurricaneEvent.studyAreaImpacts;
             el.StudyAreaMaxWS = hurricaneEvent.StudyAreaMaxWindspeed;
             el.StudyAreaMinWS = hurricaneEvent.StudyAreaMinWindspeed;
-            el.LandfallLatitude = hurricaneEvent.landfallLatitude;
+            el.LandfallX = hurricaneEvent.LandfallPoint.X;
+            el.LandfallY = hurricaneEvent.LandfallPoint.Y;
             el.LandfallMaxWindSpeed = hurricaneEvent.landfallMaxWindSpeed;
             el.PathHeading = hurricaneEvent.stormTrackHeading;
             eventLog.AddObject(el);
