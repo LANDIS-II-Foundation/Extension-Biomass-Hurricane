@@ -10,7 +10,7 @@ namespace Landis.Extension.BaseHurricane
 {
     public class HurricaneEvent : ICohortDisturbance
     {
-        private ActiveSite currentSite;
+        private Site currentSite;
 
         internal static WindSpeedGenerator WindSpeedGenerator { get; set; } = null;
         public static HurricaneWindMortalityTable WindMortalityTable { get; set; } = null;
@@ -20,23 +20,24 @@ namespace Landis.Extension.BaseHurricane
         public static bool HurricaneRandomNumber { get; set; } = false;
 
         //public int hurricaneYear { get; set; }
-        public int hurricaneNumber { get; set; }
+        public int HurricaneNumber { get; set; }
         public double StudyAreaMaxWindspeed { get; set; }
         public double StudyAreaMinWindspeed { get; set; }
-        public bool studyAreaImpacts { get; set; }
-        public double landfallMaxWindSpeed { get; private set; }
-
-        //private double stormTrackEffectiveDistanceToCenterPoint { get; set; }
-        public double stormTrackHeading { get; private set; }
-        private double stormTrackSlope { get; set; }
-        private double stormTrackPerpandicularSlope { get; set; }
+        public bool StudyAreaMortality { get; set; }
+        public double LandfallMaxWindSpeed { get; private set; }
+        public int CohortsKilled { get; set; }
+        public double StormTrackHeading { get; private set; }
         public Point LandfallPoint { get; private set; }
         public Line StormTrackLine { get; private set; }
-        private double stormTrackLengthTo_b { get; set; }
-        //internal ContinentalGrid ContinentalGrid { get; private set; }
-        public int ClosestExposureKey;
+        public int ClosestExposureKey { get; }
+
+        private double stormTrackSlope; // { get; set; }
+        private double stormTrackPerpandicularSlope; // { get; set; }
 
         public double landfallDistanceFromCoastalCenterY = 0.0;
+        //internal ContinentalGrid ContinentalGrid { get; private set; }
+        //private double stormTrackEffectiveDistanceToCenterPoint { get; set; }
+        //private double stormTrackLengthTo_b { get; set; }
 
         //---------------------------------------------------------------------
 
@@ -57,7 +58,7 @@ namespace Landis.Extension.BaseHurricane
         {
             get
             {
-                return currentSite;
+                return (ActiveSite) currentSite;
             }
         }
 
@@ -72,8 +73,8 @@ namespace Landis.Extension.BaseHurricane
         public HurricaneEvent(int stormCnt)//ContinentalGrid continentalGrid)
         {
             //this.ContinentalGrid = continentalGrid;
-            this.hurricaneNumber = stormCnt;
-            this.landfallMaxWindSpeed = HurricaneEvent.WindSpeedGenerator.GetWindSpeed();
+            this.HurricaneNumber = stormCnt;
+            this.LandfallMaxWindSpeed = HurricaneEvent.WindSpeedGenerator.GetWindSpeed();
             if (HurricaneRandomNumber)
             {
                 // Landfall
@@ -84,7 +85,7 @@ namespace Landis.Extension.BaseHurricane
                 // Storm track
                 PlugIn.HurricaneGeneratorNormal.Mu = PlugIn.StormDirectionMu;
                 PlugIn.HurricaneGeneratorNormal.Sigma = PlugIn.StormDirectionSigma;
-                this.stormTrackHeading = PlugIn.HurricaneGeneratorNormal.NextDouble();
+                this.StormTrackHeading = PlugIn.HurricaneGeneratorNormal.NextDouble();
             }
             else
             {
@@ -96,17 +97,17 @@ namespace Landis.Extension.BaseHurricane
                 // Storm track
                 PlugIn.ModelCore.NormalDistribution.Mu = PlugIn.StormDirectionMu;
                 PlugIn.ModelCore.NormalDistribution.Sigma = PlugIn.StormDirectionSigma;
-                this.stormTrackHeading = PlugIn.ModelCore.NormalDistribution.NextDouble();
+                this.StormTrackHeading = PlugIn.ModelCore.NormalDistribution.NextDouble();
             }
 
-            if (this.stormTrackHeading > 360)
-                this.stormTrackHeading -= 360;
+            if (this.StormTrackHeading > 360)
+                this.StormTrackHeading -= 360;
 
             // Find the closest exposure map key VERSION2
             int minimumDifference = 181;  // two degrees can't be absolutely more than 181 degree apart.
             foreach (int ExposureKey in PlugIn.WindExposures)
             {
-                int degreeDifference = Math.Abs(Math.Abs(ExposureKey - (int) this.stormTrackHeading) - 360);
+                int degreeDifference = Math.Abs(Math.Abs(ExposureKey - (int) this.StormTrackHeading) - 360);
                 if (degreeDifference > 180)
                     degreeDifference = Math.Abs(360 - degreeDifference);
                 if (degreeDifference < minimumDifference)
@@ -115,9 +116,9 @@ namespace Landis.Extension.BaseHurricane
                     minimumDifference = degreeDifference;
                 }
             }
-            PlugIn.ModelCore.UI.WriteLine("Storm #{0}, MaxWindSpeed={1:0.0}, StormHeading={2:0.0}, ClosestExposureKey={3}", this.hurricaneNumber, this.landfallMaxWindSpeed, this.stormTrackHeading, this.ClosestExposureKey);
+            PlugIn.ModelCore.UI.WriteLine("Storm #{0}, MaxWindSpeed={1:0.0}, StormHeading={2:0.0}, ClosestExposureKey={3}", this.HurricaneNumber, this.LandfallMaxWindSpeed, this.StormTrackHeading, this.ClosestExposureKey);
 
-            this.stormTrackSlope = 1 / Math.Tan(this.stormTrackHeading * Math.PI / 180.0);
+            this.stormTrackSlope = 1 / Math.Tan(this.StormTrackHeading * Math.PI / 180.0);
             this.stormTrackPerpandicularSlope = -1.0 / this.stormTrackSlope;
 
             double studyAreaHeightMeters = PlugIn.ModelCore.Landscape.Dimensions.Rows * PlugIn.ModelCore.CellLength;
@@ -173,7 +174,7 @@ namespace Landis.Extension.BaseHurricane
         /// <returns>Maximum wind speed at the given point.</returns>
         public double ComputeMaxWindSpeed(double x, double offset, double a=360.0)
         {
-            double PeakSpeed = this.landfallMaxWindSpeed;
+            double PeakSpeed = this.LandfallMaxWindSpeed;
             double baseSpeed = HurricaneEvent.BaseWindSpeed;
             double Pb = PeakSpeed - baseSpeed;
             a *= 1000.0;
@@ -208,52 +209,61 @@ namespace Landis.Extension.BaseHurricane
             Dimensions dimensions = new Dimensions(modelCore.Landscape.Rows, modelCore.Landscape.Columns);
             int columns = modelCore.Landscape.Columns;
             int rows = modelCore.Landscape.Rows;
-            double lowerLeftWindspeed = this.GetWindSpeed(0, 0);
-            double lowerRightWindSpeed = this.GetWindSpeed(columns, 0);
-            double upperRightWindSpeed = this.GetWindSpeed(columns, rows);
-            double upperLeftWindSpeed = this.GetWindSpeed(0, rows);
+            double lowerLeftWindspeed = this.GetModifiedWindSpeed(0, 0);
+            double lowerRightWindSpeed = this.GetModifiedWindSpeed(columns, 0);
+            double upperRightWindSpeed = this.GetModifiedWindSpeed(columns, rows);
+            double upperLeftWindSpeed = this.GetModifiedWindSpeed(0, rows);
             double maxWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed, upperLeftWindSpeed }).Max();
             double minWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed, upperLeftWindSpeed }).Min();
-            this.studyAreaImpacts = true;
+            this.StudyAreaMortality = true;
             if (maxWS < HurricaneEvent.MinimumWSforDamage)
             {
                 //PlugIn.ModelCore.UI.WriteLine("   Hurricane Not Sufficient to Cause Damage:  MaxWS={0}, HurricaneMinWS={1}", maxWS, MinimumWSforDamage);
-                this.studyAreaImpacts = false;
+                this.StudyAreaMortality = false;
                 return false;
             }
 
 
-            SiteVars.WindSpeed.ActiveSiteValues = 0.0;
+            SiteVars.WindSpeed.SiteValues = 0.0;
 
-            foreach (ActiveSite site in PlugIn.ModelCore.Landscape.ActiveSites)
+            foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
             {
                 currentSite = site;
                 SiteVars.WindSpeed[currentSite] = this.GetModifiedWindSpeed(site.Location.Column, site.Location.Row);
-                KillSiteCohorts(currentSite);
+
+                if(site.IsActive)
+                    KillSiteCohorts((ActiveSite) currentSite);
             }
 
             double activeAreaMinWS = 999.0;
             double activeAreaMaxWS = 0.0;
 
-            string path = MapNames.ReplaceTemplateVars(mapNameTemplate, modelCore.CurrentTime, hurricaneNumber);
+            string path = MapNames.ReplaceTemplateVars(mapNameTemplate, modelCore.CurrentTime, HurricaneNumber);
             IOutputRaster<BytePixel> outputRaster = null;
             using (outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
             {
                 BytePixel pixel = outputRaster.BufferPixel;
                 foreach(Site site in PlugIn.ModelCore.Landscape.AllSites)
                 {
-                    if(site.IsActive)
+                    double windspeed = SiteVars.WindSpeed[site];
+                    pixel.MapCode.Value = (byte)windspeed;
+                    if (site.IsActive)
                     {
-                        double windspeed = SiteVars.WindSpeed[site];
-                        pixel.MapCode.Value = (byte)windspeed;
-                        if(windspeed < activeAreaMinWS) activeAreaMinWS = windspeed;
-                        if(windspeed > activeAreaMaxWS) activeAreaMaxWS = windspeed;
+                        if (windspeed < activeAreaMinWS) activeAreaMinWS = windspeed;
+                        if (windspeed > activeAreaMaxWS) activeAreaMaxWS = windspeed;
                     }
-                    else
-                    {
-                        //  Inactive site
-                        pixel.MapCode.Value = (byte)0;
-                    }
+                    //if(site.IsActive)
+                    //{
+                    //    double windspeed = SiteVars.WindSpeed[site];
+                    //    pixel.MapCode.Value = (byte)windspeed;
+                    //    if(windspeed < activeAreaMinWS) activeAreaMinWS = windspeed;
+                    //    if(windspeed > activeAreaMaxWS) activeAreaMaxWS = windspeed;
+                    //}
+                    //else
+                    //{
+                    //    //  Inactive site
+                    //    pixel.MapCode.Value = (byte)0;
+                    //}
                     outputRaster.WriteBufferPixel();
                 }
             }
@@ -278,7 +288,8 @@ namespace Landis.Extension.BaseHurricane
             Point pt = Point.siteIndexToCoordinates(column, row);
             double max_speed = this.GetMaxWindSpeedAtPoint(pt);
 
-            max_speed = max_speed * CalculateWindSpeedReduction(SiteVars.WindExposure[site][this.ClosestExposureKey]); //VERISION 2
+            if(site.IsActive)
+                max_speed = max_speed * CalculateWindSpeedReduction(SiteVars.WindExposure[site][this.ClosestExposureKey]); //VERISION 2
 
             return max_speed;
         }
@@ -295,6 +306,7 @@ namespace Landis.Extension.BaseHurricane
             var windSpeed = SiteVars.WindSpeed[this.currentSite];
             var name = cohort.Species.Name;
             var age = cohort.Age;
+            bool kill = false;
 
             var deathLiklihood = HurricaneEvent.WindMortalityTable.GetMortalityProbability(cohort.Species.Name, cohort.Age, SiteVars.WindSpeed[this.currentSite]);
 
@@ -302,7 +314,13 @@ namespace Landis.Extension.BaseHurricane
 
             var randomVar = PlugIn.ModelCore.GenerateUniform();
 
-            return (randomVar <= deathLiklihood);
+            if (randomVar <= deathLiklihood)
+            {
+                kill = true;
+                this.CohortsKilled++;
+            }
+
+            return kill; // (randomVar <= deathLiklihood);
         }
         private double CalculateWindSpeedReduction(int exposureIndex)
         {

@@ -36,6 +36,8 @@ namespace Landis.Extension.BaseHurricane
         [DataFieldAttribute(Desc = "Impacts the Study Area?")]
         public bool ImpactsStudyArea { get; set; }
 
+        [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Cohorts Killed")]
+        public int CohortKilled { get; set; }
 
     }
 }

@@ -25,7 +25,7 @@ namespace Landis.Extension.BaseHurricane
             timeOfLastEvent = PlugIn.ModelCore.Landscape.NewSiteVar<int>();
             //severity        = PlugIn.ModelCore.Landscape.NewSiteVar<byte>();
             disturbed = PlugIn.ModelCore.Landscape.NewSiteVar<bool>();
-            WindSpeed = PlugIn.ModelCore.Landscape.NewSiteVar<double>();
+            WindSpeed = PlugIn.ModelCore.Landscape.NewSiteVar<double>(InactiveSiteMode.DistinctValues);
             WindExposure = PlugIn.ModelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
 
             PlugIn.ModelCore.RegisterSiteVar(SiteVars.TimeOfLastEvent, "Hurricane.TimeOfLastEvent");
@@ -52,7 +52,8 @@ namespace Landis.Extension.BaseHurricane
 
         public static ISiteVar<HurricaneEvent> Event
         {
-            get {
+            get
+            {
                 return eventVar;
             }
         }

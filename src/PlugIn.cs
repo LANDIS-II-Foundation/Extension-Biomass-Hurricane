@@ -206,18 +206,19 @@ namespace Landis.Extension.BaseHurricane
             eventLog.Clear();
             EventsLog el = new EventsLog();
             el.Time = ModelCore.CurrentTime;
-            el.HurricaneNumber = hurricaneEvent.hurricaneNumber;
-            el.ImpactsStudyArea = hurricaneEvent.studyAreaImpacts;
+            el.HurricaneNumber = hurricaneEvent.HurricaneNumber;
+            el.ImpactsStudyArea = hurricaneEvent.StudyAreaMortality;
             el.StudyAreaMaxWS = hurricaneEvent.StudyAreaMaxWindspeed;
             el.StudyAreaMinWS = hurricaneEvent.StudyAreaMinWindspeed;
             el.LandfallX = hurricaneEvent.LandfallPoint.X;
             el.LandfallY = hurricaneEvent.LandfallPoint.Y;
-            el.LandfallMaxWindSpeed = hurricaneEvent.landfallMaxWindSpeed;
-            el.PathHeading = hurricaneEvent.stormTrackHeading;
+            el.LandfallMaxWindSpeed = hurricaneEvent.LandfallMaxWindSpeed;
+            el.PathHeading = hurricaneEvent.StormTrackHeading;
+            el.CohortKilled = hurricaneEvent.CohortsKilled;
             eventLog.AddObject(el);
             eventLog.WriteToFile();
 
-            if(hurricaneEvent.studyAreaImpacts)
+            if(hurricaneEvent.StudyAreaMortality)
                 summaryEventCount++;
         }
 
