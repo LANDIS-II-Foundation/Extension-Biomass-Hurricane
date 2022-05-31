@@ -288,7 +288,7 @@ namespace Landis.Extension.BaseHurricane
             Point pt = Point.siteIndexToCoordinates(column, row);
             double max_speed = this.GetMaxWindSpeedAtPoint(pt);
 
-            if(site.IsActive)
+            if (site.IsActive)
                 max_speed = max_speed * CalculateWindSpeedReduction(SiteVars.WindExposure[site][this.ClosestExposureKey]); //VERISION 2
 
             return max_speed;
