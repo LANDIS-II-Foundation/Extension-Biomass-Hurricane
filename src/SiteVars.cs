@@ -12,10 +12,10 @@ namespace Landis.Extension.BaseHurricane
     {
         private static ISiteVar<HurricaneEvent> eventVar;
         private static ISiteVar<int> timeOfLastEvent;
-        //private static ISiteVar<byte> severity;
         private static ISiteVar<bool> disturbed;
         private static ISiteVar<ISiteCohorts> cohorts;
         public static ISiteVar<Dictionary<int, int>> WindExposure;
+        public static ISiteVar<double> AgeRichness;
 
         //---------------------------------------------------------------------
 
@@ -23,7 +23,6 @@ namespace Landis.Extension.BaseHurricane
         {
             eventVar = PlugIn.ModelCore.Landscape.NewSiteVar<HurricaneEvent>(InactiveSiteMode.DistinctValues);
             timeOfLastEvent = PlugIn.ModelCore.Landscape.NewSiteVar<int>();
-            //severity        = PlugIn.ModelCore.Landscape.NewSiteVar<byte>();
             disturbed = PlugIn.ModelCore.Landscape.NewSiteVar<bool>();
             WindSpeed = PlugIn.ModelCore.Landscape.NewSiteVar<double>(InactiveSiteMode.DistinctValues);
             WindExposure = PlugIn.ModelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
@@ -32,6 +31,8 @@ namespace Landis.Extension.BaseHurricane
             //PlugIn.ModelCore.RegisterSiteVar(SiteVars.Severity, "Hurricane.Severity");
 
             cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.AgeCohorts");
+
+            AgeRichness = PlugIn.ModelCore.GetSiteVar<double>("Output.AgeRichness");
 
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
             {

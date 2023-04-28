@@ -12,7 +12,6 @@ namespace Landis.Extension.BaseHurricane
 		: IInputParameters
 	{
 		private int timestep;
-        //private IEventParameters[] eventParameters;
         private string mapNamesTemplate;
 		private string logFileName;
 
@@ -35,6 +34,7 @@ namespace Landis.Extension.BaseHurricane
 		}
 
         public List<double> StormOccurenceProbabilities { get; set; }
+        public List<IWindSpeedModificationTable> WindSpeedModificationTable { get; set; }
 
         public double LowBoundLandfallWindSpeed { get; set; }
         public double ModeLandfallWindSpeed { get; set; }
@@ -61,24 +61,7 @@ namespace Landis.Extension.BaseHurricane
 
         public int HurricaneRandomNumberSeed { get; set; } = -999;
 
-
-
         //---------------------------------------------------------------------
-
-        /// <summary>
-        /// Hurricane wind event parameters for each ecoregion.
-        /// </summary>
-        /// <remarks>
-        /// Use Ecoregion.Index property to index this array.
-        /// </remarks>
-  //      public IEventParameters[] EventParameters
-		//{
-		//	get {
-		//		return eventParameters;
-		//	}
-		//}
-
-		//---------------------------------------------------------------------
 
 		/// <summary>
 		/// Template for the filenames for output maps.

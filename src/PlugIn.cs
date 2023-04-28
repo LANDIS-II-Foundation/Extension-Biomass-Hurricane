@@ -27,8 +27,8 @@ namespace Landis.Extension.BaseHurricane
         public static Troschuetz.Random.Generators.MT19937Generator HurricaneGeneratorStandard = new Troschuetz.Random.Generators.MT19937Generator();
         public static NormalDistribution HurricaneGeneratorNormal = new NormalDistribution();
 
-        //public static Dictionary<int, string> ExposureMaps;
-        public static List<int> WindExposures; 
+        public static List<int> WindExposures;
+        public static List<IWindSpeedModificationTable> WindSpeedReductions;
 
         private string mapNameTemplate;
         private IInputParameters parameters;
@@ -110,13 +110,6 @@ namespace Landis.Extension.BaseHurricane
                 this.parameters.ModeLandfallWindSpeed, this.parameters.HighBoundLandfallWindspeed);
             //parameters.AdjustValuesFromEnglishToMetric();
 
-            //List<string> colnames = new List<string>();
-            //foreach(IEcoregion ecoregion in modelCore.Ecoregions)
-            //{
-            //    colnames.Add(ecoregion.Name);
-            //}
-            //ExtensionMetadata.ColumnNames = colnames;
-
             MetadataHandler.InitializeMetadata(parameters.Timestep, parameters.MapNamesTemplate);
 
             Timestep = parameters.Timestep;
@@ -141,6 +134,7 @@ namespace Landis.Extension.BaseHurricane
 
             LoadWindExposureData();  // VERSION2
 
+            WindSpeedReductions = parameters.WindSpeedModificationTable;
 
         }
 
@@ -176,10 +170,10 @@ namespace Landis.Extension.BaseHurricane
                 if(stormsThisYear == 1) message = "1 storm.";
                 foreach(var stormCount in Enumerable.Range(0, stormsThisYear))
                 {
-                    HurricaneEvent storm = new HurricaneEvent(stormCount+1); //.Initiate(); // this.ContinentalGrid);
+                    HurricaneEvent storm = new HurricaneEvent(stormCount+1); 
 
                     bool impactsStudyArea =
-                        storm.GenerateWindFieldRaster(this.mapNameTemplate, PlugIn.modelCore); //, this.ContinentalGrid);
+                        storm.GenerateWindFieldRaster(this.mapNameTemplate, PlugIn.modelCore); 
                     
                     LogEvent(storm);
                 }
@@ -193,15 +187,6 @@ namespace Landis.Extension.BaseHurricane
         enum unitType { Dist, Speed };
         private void LogEvent(HurricaneEvent hurricaneEvent = null)
         {
-            // commented out in case I want to use it later.
-            // commented out to eliminate a warning.
-            //string cvtKilometersToMiles(double kValue, unitType unitType)
-            //{
-            //    double milesValue = kValue * 0.621371;
-            //    string kUnits = unitType == unitType.Dist ? "kilometers" : "kph";
-            //    string mUnits = unitType == unitType.Dist ? " miles" : " mph";
-            //    return $"{kValue:F1} {kUnits} / {milesValue:F1} {mUnits}";
-            //}
 
             eventLog.Clear();
             EventsLog el = new EventsLog();

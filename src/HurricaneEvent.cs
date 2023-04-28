@@ -230,6 +230,7 @@ namespace Landis.Extension.BaseHurricane
             {
                 currentSite = site;
                 SiteVars.WindSpeed[currentSite] = this.GetModifiedWindSpeed(site.Location.Column, site.Location.Row);
+                SiteVars.WindSpeed[currentSite] *= CalculateWindReduction(site);
 
                 if(site.IsActive)
                     KillSiteCohorts((ActiveSite) currentSite);
@@ -252,18 +253,6 @@ namespace Landis.Extension.BaseHurricane
                         if (windspeed < activeAreaMinWS) activeAreaMinWS = windspeed;
                         if (windspeed > activeAreaMaxWS) activeAreaMaxWS = windspeed;
                     }
-                    //if(site.IsActive)
-                    //{
-                    //    double windspeed = SiteVars.WindSpeed[site];
-                    //    pixel.MapCode.Value = (byte)windspeed;
-                    //    if(windspeed < activeAreaMinWS) activeAreaMinWS = windspeed;
-                    //    if(windspeed > activeAreaMaxWS) activeAreaMaxWS = windspeed;
-                    //}
-                    //else
-                    //{
-                    //    //  Inactive site
-                    //    pixel.MapCode.Value = (byte)0;
-                    //}
                     outputRaster.WriteBufferPixel();
                 }
             }
@@ -274,14 +263,31 @@ namespace Landis.Extension.BaseHurricane
 
         }
 
-        public double GetWindSpeed(int column, int row)
+        public double CalculateWindReduction(Site site)
         {
-            Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));
-            Point pt = Point.siteIndexToCoordinates(column, row); //this.ContinentalGrid.siteIndexToCoordinates(column, row);
-            double max_speed = this.GetMaxWindSpeedAtPoint(pt);
+            if (PlugIn.WindSpeedReductions == null)
+                return 1.0;
+            double priorWindSpeed = SiteVars.WindSpeed[site];
+            double rangeMax = 0.0;
+            double reduction = 0.0;
 
-            return max_speed;
+            foreach (IWindSpeedModificationTable wsr in PlugIn.WindSpeedReductions)
+            {
+                if (wsr.RangeMaximum > rangeMax)
+                    reduction = wsr.FractionWindReduction;
+            }
+
+            return reduction;
         }
+
+        //public double GetWindSpeed(int column, int row)
+        //{
+        //    Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));
+        //    Point pt = Point.siteIndexToCoordinates(column, row); //this.ContinentalGrid.siteIndexToCoordinates(column, row);
+        //    double max_speed = this.GetMaxWindSpeedAtPoint(pt);
+
+        //    return max_speed;
+        //}
         public double GetModifiedWindSpeed(int column, int row)  // VERSION2
         {
             Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));

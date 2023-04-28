@@ -4,6 +4,7 @@ using Landis.Utilities;
 using Landis.Core;
 using System.Collections.Generic;
 using System.Text;
+using System.Data;
 using System;
 
 namespace Landis.Extension.BaseHurricane
@@ -222,68 +223,27 @@ namespace Landis.Extension.BaseHurricane
             ReadVar(logFile);
             parameters.LogFileName = logFile.Value;
 
-            CheckNoDataAfter(string.Format("the {0} parameter", logFile.Name));
+            const string wrt_csv = "WindReductionTableCSV";
+            InputVar<string> windReductionCSV = new InputVar<string>(wrt_csv);
+            if (ReadOptionalVar(windReductionCSV))
+            {
+                parameters.WindSpeedModificationTable = new List<IWindSpeedModificationTable>();
+                CSVParser windParser = new CSVParser();
+                DataTable windTable = windParser.ParseToDataTable(windReductionCSV.Value);
+                foreach (DataRow row in windTable.Rows)
+                {
+                    WindSpeedModificationTable temp = new WindSpeedModificationTable();
+                    temp.RangeMaximum = System.Convert.ToDouble(row["RangeMaximum"]);
+                    temp.FractionWindReduction = System.Convert.ToDouble(row["FractionWindReduction"]); ;
+                    parameters.WindSpeedModificationTable.Add(temp);
+                }
+            }
 
-            // testStuff(parameters);
+            CheckNoDataAfter(string.Format("the {0} parameter", windReductionCSV.Name));
 
             return parameters; 
         }
 
-        //private void testStuff(InputParameters parameters)
-        //{
-        //    var speciesName = "LobPine";
-        //    var age = 8.0;
-        //    var windSpeed = 115.2 * 1.60934;
-        //    var expectedProbability = 0.60;
-        //    double actualProbability = parameters.HurricaneMortalityTable
-        //        .GetMortalityProbability(speciesName, age, windSpeed);
-        //    var diff = expectedProbability - actualProbability;
-
-        //    age = 15.0;
-        //    actualProbability = parameters.HurricaneMortalityTable
-        //        .GetMortalityProbability(speciesName, age, windSpeed);
-        //    expectedProbability = 0.65;
-        //    diff = expectedProbability - actualProbability;
-        //}
-
-        //private HurricaneWindMortalityTable
-        //    populateWindSpeedVulnverabilities(
-        //    HashSet<string> sectionNames, HashSet<string> singleLineNames, 
-        //    Func<string, string[]> parseLine)
-        //{
-        //    string[] aRow;
-        //    var windSpeedVulnverabilities =
-        //        new Dictionary<string, Dictionary<double, Dictionary<double, double>>>();
-
-        //    while(!(sectionNames.Contains(this.CurrentName) ||
-        //        singleLineNames.Contains(this.CurrentName)))
-        //    {
-        //        aRow = parseLine(this.CurrentLine);
-        //        string speciesName = aRow[0];
-        //        if(!windSpeedVulnverabilities.ContainsKey(speciesName))
-        //            windSpeedVulnverabilities[speciesName] =
-        //                new Dictionary<double, Dictionary<double, double>>();
-
-        //        double age = Convert.ToDouble(aRow[1]);
-        //        var dataVals = aRow.SliceToEnd(2);
-        //        Dictionary<double, double> probabilities = new Dictionary<double, double>();
-        //        foreach(var entry in dataVals)
-        //        {
-        //            var split = entry.Split(':');
-        //            var speed = Convert.ToDouble(split[0]);
-        //            var probability = Convert.ToDouble(split[1]);
-        //            probabilities[speed] = probability;
-        //        }
-        //        var cohortAges = new Dictionary<double, Dictionary<double, double>>();
-        //        cohortAges[age] = probabilities;
-
-        //        windSpeedVulnverabilities[speciesName][age] = probabilities;
-
-        //        GetNextLine();
-        //    }
-        //    return new HurricaneWindMortalityTable(windSpeedVulnverabilities);
-        //}
-        //---------------------------------------------------------------------
 
         /// <summary>
         /// Reads a species name from the current line, and verifies the name.
@@ -298,16 +258,16 @@ namespace Landis.Extension.BaseHurricane
                                               speciesName.Value.String);
             return species;
         }
-        public static List<string> SliceToEnd(StringReader currentLine)
-        {
-            string[] strArray = new System.String[] { currentLine.ReadToEnd() };
-            int startIdx = 0; // currentLine.Index;
-            var len = strArray.Length;
-            List<string> retList = new List<string>(strArray);
-            retList = retList.GetRange(startIdx, len - startIdx);
-            return retList;
+        //public static List<string> SliceToEnd(StringReader currentLine)
+        //{
+        //    string[] strArray = new System.String[] { currentLine.ReadToEnd() };
+        //    int startIdx = 0; // currentLine.Index;
+        //    var len = strArray.Length;
+        //    List<string> retList = new List<string>(strArray);
+        //    retList = retList.GetRange(startIdx, len - startIdx);
+        //    return retList;
 
-        }
+        //}
     }
 
 }
