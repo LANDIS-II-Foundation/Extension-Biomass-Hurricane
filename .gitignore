@@ -264,3 +264,16 @@ testing/Core7-BaseHurrane2.0-AK/NECN/TotalC-10.img
 testing/Core7-BaseHurrane2.0-AK/NECN/TotalC-20.img
 testing/Core7-BaseHurrane2.0-AK/output/biomass/bio-DouglasFir-20.tif
 testing/Core7-BaseHurrane2.0-AK/output/biomass/bio-TotalBiomass-20.tif
+testing/Core7-BaseHurrane2.0-AK/outputs/age-all-spp/AGE-AVG-0.img
+testing/Core7-BaseHurrane2.0-AK/outputs/age-all-spp/AGE-COUNT-0.img
+testing/Core7-BaseHurrane2.0-AK/outputs/age-all-spp/AGE-EVEN-0.img
+testing/Core7-BaseHurrane2.0-AK/outputs/age-all-spp/AGE-MAX-0.img
+testing/Core7-BaseHurrane2.0-AK/outputs/age-all-spp/AGE-MED-0.img
+testing/Core7-BaseHurrane2.0-AK/outputs/age-all-spp/AGE-MIN-0.img
+testing/Core7-BaseHurrane2.0-AK/outputs/age-all-spp/AGE-RICH-0.img
+testing/Core7-BaseHurrane2.0-AK/outputs/age-per-spp/SitkaSpruce-AVG-0.img
+testing/Core7-BaseHurrane2.0-AK/outputs/age-per-spp/SitkaSpruce-MAX-0.img
+testing/Core7-BaseHurrane2.0-AK/outputs/age-per-spp/SitkaSpruce-MED-0.img
+testing/Core7-BaseHurrane2.0-AK/outputs/age-per-spp/SitkaSpruce-MIN-0.img
+testing/Core7-BaseHurrane2.0-AK/outputs/age-per-spp/SitkaSpruce-SD-0.img
+testing/Core7-BaseHurrane2.0-AK/outputs/spp-counts/SPP-RICH-0.img
