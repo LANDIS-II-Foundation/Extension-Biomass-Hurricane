@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <RootNamespace>Landis.Extension.BaseHurricane</RootNamespace>
-    <AssemblyName>Landis.Extension.BaseHurricane-v2</AssemblyName>
-    <AssemblyTitle>Landis.Extension.BaseHurricane-v2</AssemblyTitle>
+    <RootNamespace>Landis.Extension.BiomassHurricane</RootNamespace>
+    <AssemblyName>Landis.Extension.BiomassHurricane-v2</AssemblyName>
+    <AssemblyTitle>Landis.Extension.BiomassHurricane-v2</AssemblyTitle>
     <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
     <AssemblyVersion>2.0.0</AssemblyVersion>
     <Version>2.0.0</Version>
@@ -15,7 +15,7 @@
     <PackageProjectUrl>http://www.landis-ii.org</PackageProjectUrl>
     <Authors>Paul Schrum, Robert Scheller</Authors>
     <Copyright>Landis-II-Foundation</Copyright>
-    <PackageTags>LANDIS-II;Landis;Extension;Base hurricane</PackageTags>
+    <PackageTags>LANDIS-II;Landis;Extension;hurricanes</PackageTags>
     <Description>Hurricane Extension</Description>
   </PropertyGroup>
 
@@ -33,6 +33,12 @@
     <Reference Include="Landis.Landis.Library.Metadata-v2">
       <HintPath>lib\Landis.Library.Metadata-v2.dll</HintPath>
     </Reference>
-  </ItemGroup>
+		<Reference Include="Landis.Library.Biomass-v2">
+			<HintPath>lib\Landis.Library.Biomass-v2.dll</HintPath>
+		</Reference>
+		<Reference Include="Landis.Library.BiomassCohorts-v3">
+			<HintPath>lib\Landis.Library.BiomassCohorts-v3.dll</HintPath>
+		</Reference>
+	</ItemGroup>
   
 </Project>

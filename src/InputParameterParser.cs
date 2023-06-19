@@ -7,7 +7,7 @@ using System.Text;
 using System.Data;
 using System;
 
-namespace Landis.Extension.BaseHurricane
+namespace Landis.Extension.BiomassHurricane
 {
     /// <summary>
     /// A parser that reads the plug-in's parameters from text input.

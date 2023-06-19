@@ -1,4 +1,4 @@
-//  Authors:  Robert M. Scheller, James B. Domingo
+//  Authors:  Robert M. Scheller, Paul Schrum
 
 using Landis.SpatialModeling;
 using Landis.Core;
@@ -10,7 +10,7 @@ using System.IO;
 using System;
 using System.Linq;
 
-namespace Landis.Extension.BaseHurricane
+namespace Landis.Extension.BiomassHurricane
 {
     ///<summary>
     /// A disturbance plug-in that simulates hurricane wind disturbance.
@@ -52,7 +52,7 @@ namespace Landis.Extension.BaseHurricane
         //---------------------------------------------------------------------
 
         public PlugIn()
-            : base("Base Hurricane", ExtType)
+            : base("Biomass Hurricane", ExtType)
         {
         }
 
@@ -173,9 +173,30 @@ namespace Landis.Extension.BaseHurricane
                     HurricaneEvent storm = new HurricaneEvent(stormCount+1); 
 
                     bool impactsStudyArea =
-                        storm.GenerateWindFieldRaster(this.mapNameTemplate, PlugIn.modelCore); 
+                        storm.HurricaneDisturb(this.mapNameTemplate, PlugIn.modelCore); 
                     
                     LogEvent(storm);
+
+                    string path = MapNames.ReplaceTemplateVars(mapNameTemplate, modelCore.CurrentTime, stormCount);
+                    Dimensions dimensions = new Dimensions(modelCore.Landscape.Rows, modelCore.Landscape.Columns);
+                    IOutputRaster<IntPixel> outputRaster = null;
+                    using (outputRaster = modelCore.CreateRaster<IntPixel>(path, dimensions))
+                    {
+                        IntPixel pixel = outputRaster.BufferPixel;
+                        foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
+                        {
+                            pixel.MapCode.Value = SiteVars.BiomassMortality[site];
+                            //if (site.IsActive)
+                            //{
+                            //    if (windspeed < activeAreaMinWS) activeAreaMinWS = windspeed;
+                            //    if (windspeed > activeAreaMaxWS) activeAreaMaxWS = windspeed;
+                            //}
+                            outputRaster.WriteBufferPixel();
+                        }
+                    }
+
+
+
                 }
             }
 
@@ -200,6 +221,7 @@ namespace Landis.Extension.BaseHurricane
             el.LandfallMaxWindSpeed = hurricaneEvent.LandfallMaxWindSpeed;
             el.PathHeading = hurricaneEvent.StormTrackHeading;
             el.CohortKilled = hurricaneEvent.CohortsKilled;
+            el.BiomassMortality = hurricaneEvent.BiomassMortality;
             eventLog.AddObject(el);
             eventLog.WriteToFile();
 

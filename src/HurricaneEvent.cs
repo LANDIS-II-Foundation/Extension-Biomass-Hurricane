@@ -1,14 +1,15 @@
 ﻿using Landis.Core;
-using Landis.Library.AgeOnlyCohorts;
+using Landis.Library.BiomassCohorts;
+//using Landis.Library.AgeOnlyCohorts;
 using Landis.SpatialModeling;
 using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Landis.Extension.BaseHurricane
+namespace Landis.Extension.BiomassHurricane
 {
-    public class HurricaneEvent : ICohortDisturbance
+    public class HurricaneEvent : IDisturbance
     {
         private Site currentSite;
 
@@ -30,11 +31,14 @@ namespace Landis.Extension.BaseHurricane
         public Point LandfallPoint { get; private set; }
         public Line StormTrackLine { get; private set; }
         public int ClosestExposureKey { get; }
+        public int BiomassMortality { get; set; }
 
         private double stormTrackSlope; // { get; set; }
         private double stormTrackPerpandicularSlope; // { get; set; }
 
         public double landfallDistanceFromCoastalCenterY = 0.0;
+        public int AvailableCohorts;
+        
         //internal ContinentalGrid ContinentalGrid { get; private set; }
         //private double stormTrackEffectiveDistanceToCenterPoint { get; set; }
         //private double stormTrackLengthTo_b { get; set; }
@@ -63,16 +67,16 @@ namespace Landis.Extension.BaseHurricane
         }
 
 
-        public static HurricaneEvent Initiate()//ContinentalGrid continentalGrid)
-        {
+        //public static HurricaneEvent Initiate()
+        //{
 
-            HurricaneEvent hurrEvent = new HurricaneEvent(0); // continentalGrid);
-            return hurrEvent;
-        }
+        //    HurricaneEvent hurrEvent = new HurricaneEvent(0); 
+        //    return hurrEvent;
+        //}
 
-        public HurricaneEvent(int stormCnt)//ContinentalGrid continentalGrid)
+        public HurricaneEvent(int stormCnt)
         {
-            //this.ContinentalGrid = continentalGrid;
+            
             this.HurricaneNumber = stormCnt;
             this.LandfallMaxWindSpeed = HurricaneEvent.WindSpeedGenerator.GetWindSpeed();
             if (HurricaneRandomNumber)
@@ -126,6 +130,9 @@ namespace Landis.Extension.BaseHurricane
             double landfallY = PlugIn.CoastalCenterY + landfallDistanceFromCoastalCenterY;
             this.LandfallPoint = PlugIn.CoastLine.GivenYGetPoint(landfallY);  
             this.StormTrackLine = new Line(this.LandfallPoint, this.stormTrackSlope);
+
+
+
 
             //double landfallY = this.ContinentalGrid.ConvertLatitudeToGridUnits(this.landfallLatitude);
             //var stormTrackInterceptPt = this.StormTrackLine.GivenXGetPoint(0.0);
@@ -203,9 +210,11 @@ namespace Landis.Extension.BaseHurricane
             return speed;
         }
 
-        internal bool GenerateWindFieldRaster(string mapNameTemplate, ICore modelCore)//, ContinentalGrid continentalGrid)
+        internal bool HurricaneDisturb(string mapNameTemplate, ICore modelCore)//, ContinentalGrid continentalGrid)
         {
             //this.ContinentalGrid = continentalGrid;
+            SiteVars.BiomassMortality.ActiveSiteValues = 0;
+
             Dimensions dimensions = new Dimensions(modelCore.Landscape.Rows, modelCore.Landscape.Columns);
             int columns = modelCore.Landscape.Columns;
             int rows = modelCore.Landscape.Rows;
@@ -223,7 +232,7 @@ namespace Landis.Extension.BaseHurricane
                 return false;
             }
 
-
+            int siteCohortsKilled = 0;
             SiteVars.WindSpeed.SiteValues = 0.0;
 
             foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
@@ -233,7 +242,8 @@ namespace Landis.Extension.BaseHurricane
                 SiteVars.WindSpeed[currentSite] *= CalculateWindReduction(site);
 
                 if(site.IsActive)
-                    KillSiteCohorts((ActiveSite) currentSite);
+                    siteCohortsKilled = Damage((ActiveSite) site);
+                //KillSiteCohorts((ActiveSite) currentSite);
             }
 
             double activeAreaMinWS = 999.0;
@@ -301,18 +311,22 @@ namespace Landis.Extension.BaseHurricane
         }
         //---------------------------------------------------------------------
 
-        private void KillSiteCohorts(ActiveSite site)
-        {
-            SiteVars.Cohorts[site].RemoveMarkedCohorts(this);
-        }
+        //private void KillSiteCohorts(ActiveSite site)
+        //{
+        //    SiteVars.Cohorts[site].RemoveMarkedCohorts(this);
+        //}
         //---------------------------------------------------------------------
 
-        bool ICohortDisturbance.MarkCohortForDeath(ICohort cohort)
+        int IDisturbance.ReduceOrKillMarkedCohort(ICohort cohort)
+        //bool ICohortDisturbance.MarkCohortForDeath(ICohort cohort)
         {
+
+            this.AvailableCohorts++;
+
+            bool killCohort = false;
             var windSpeed = SiteVars.WindSpeed[this.currentSite];
             var name = cohort.Species.Name;
             var age = cohort.Age;
-            bool kill = false;
 
             var deathLiklihood = HurricaneEvent.WindMortalityTable.GetMortalityProbability(cohort.Species.Name, cohort.Age, SiteVars.WindSpeed[this.currentSite]);
 
@@ -320,14 +334,24 @@ namespace Landis.Extension.BaseHurricane
 
             var randomVar = PlugIn.ModelCore.GenerateUniform();
 
+
             if (randomVar <= deathLiklihood)
             {
-                kill = true;
+                killCohort = true;
                 this.CohortsKilled++;
+                this.BiomassMortality += cohort.Biomass;
             }
 
-            return kill; // (randomVar <= deathLiklihood);
+            if (killCohort)
+            {
+                SiteVars.BiomassMortality[this.currentSite] += cohort.Biomass;
+                return cohort.Biomass;
+            }
+
+            return 0;
+
         }
+
         private double CalculateWindSpeedReduction(int exposureIndex)
         {
             switch (exposureIndex)
@@ -356,6 +380,14 @@ namespace Landis.Extension.BaseHurricane
             }
             return 1.0;
         }
+
+        private int Damage(ActiveSite site)
+        {
+            int previousCohortsKilled = this.CohortsKilled;
+            SiteVars.Cohorts[site].ReduceOrKillBiomassCohorts(this);
+            return this.CohortsKilled - previousCohortsKilled;
+        }
+
     }
 
 
@@ -382,6 +414,7 @@ namespace Landis.Extension.BaseHurricane
         bins = null;
     } /* */
 
+    //---------------------------------------------------------------------
 
 
     /// <summary>
