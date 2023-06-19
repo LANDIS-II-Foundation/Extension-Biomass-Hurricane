@@ -1,0 +1,9 @@
+LandisData   Extension
+
+Name         "Biomass Hurricane"
+Version      "2.0"
+Type         disturbance:hurricane
+Assembly     Landis.Extension.BiomassHurricane-v2
+Class        Landis.Extension.BiomassHurricane.PlugIn
+Description  "Hurricane Disturbance"
+CoreVersion  7.0

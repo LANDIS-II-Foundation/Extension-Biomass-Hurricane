@@ -28,6 +28,7 @@ namespace Landis.Extension.BiomassHurricane
             disturbed = PlugIn.ModelCore.Landscape.NewSiteVar<bool>();
             WindSpeed = PlugIn.ModelCore.Landscape.NewSiteVar<double>(InactiveSiteMode.DistinctValues);
             WindExposure = PlugIn.ModelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
+            BiomassMortality = PlugIn.ModelCore.Landscape.NewSiteVar<int>();
 
             PlugIn.ModelCore.RegisterSiteVar(SiteVars.TimeOfLastEvent, "Hurricane.TimeOfLastEvent");
 

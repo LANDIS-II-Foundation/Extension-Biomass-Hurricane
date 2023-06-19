@@ -22,7 +22,7 @@ namespace Landis.Extension.BiomassHurricane
         public static readonly ExtensionType ExtType = new ExtensionType("disturbance:hurricane");
         public static MetadataTable<EventsLog> eventLog;
         public static MetadataTable<SummaryLog> summaryLog;
-        public static readonly string ExtensionName = "Base Hurricane";
+        public static readonly string ExtensionName = "Biomass Hurricane";
         public static LognormalDistribution HurricaneGeneratorLogNormal = new LognormalDistribution();
         public static Troschuetz.Random.Generators.MT19937Generator HurricaneGeneratorStandard = new Troschuetz.Random.Generators.MT19937Generator();
         public static NormalDistribution HurricaneGeneratorNormal = new NormalDistribution();
@@ -177,20 +177,21 @@ namespace Landis.Extension.BiomassHurricane
                     
                     LogEvent(storm);
 
-                    string path = MapNames.ReplaceTemplateVars(mapNameTemplate, modelCore.CurrentTime, stormCount);
-                    Dimensions dimensions = new Dimensions(modelCore.Landscape.Rows, modelCore.Landscape.Columns);
+                    string path = MapNames.ReplaceTemplateVars(@"Hurricane\biomass-mortality-{timestep}-{stormNumber}.img", modelCore.CurrentTime, stormCount);
                     IOutputRaster<IntPixel> outputRaster = null;
-                    using (outputRaster = modelCore.CreateRaster<IntPixel>(path, dimensions))
+                    using (outputRaster = modelCore.CreateRaster<IntPixel>(path, ModelCore.Landscape.Dimensions))
                     {
                         IntPixel pixel = outputRaster.BufferPixel;
                         foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
                         {
-                            pixel.MapCode.Value = SiteVars.BiomassMortality[site];
-                            //if (site.IsActive)
-                            //{
-                            //    if (windspeed < activeAreaMinWS) activeAreaMinWS = windspeed;
-                            //    if (windspeed > activeAreaMaxWS) activeAreaMaxWS = windspeed;
-                            //}
+                            if (site.IsActive)
+                            {
+                                pixel.MapCode.Value = SiteVars.BiomassMortality[site];
+                            }
+                            else
+                            {
+                                pixel.MapCode.Value = 0;
+                            }
                             outputRaster.WriteBufferPixel();
                         }
                     }

@@ -18,7 +18,7 @@ CellLength        90 << meters (0.09 ha)
 
 >>  Disturbance Extensions  	 Initialization File
 >> ----------------------   	-------------------
-  "Base Hurricane"		base-hurricane_v2.txt
+  "Biomass Hurricane"		biomass-hurricane_v2.txt
 
 >>  Other Extensions         	 Initialization File
 >> ----------------         	-------------------

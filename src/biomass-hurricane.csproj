@@ -9,9 +9,9 @@
     <FileVersion>2.0.0.0</FileVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-Base-Hurricane</RepositoryUrl>
+    <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-Biomass-Hurricane</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageLicenseUrl>https://github.com/LANDIS-II-Foundation/Extension-Base-Hurricane/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/LANDIS-II-Foundation/Extension-Biomass-Hurricane/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>http://www.landis-ii.org</PackageProjectUrl>
     <Authors>Paul Schrum, Robert Scheller</Authors>
     <Copyright>Landis-II-Foundation</Copyright>
