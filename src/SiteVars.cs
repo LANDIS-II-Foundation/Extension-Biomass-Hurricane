@@ -1,12 +1,13 @@
-//  Authors:  Robert M. Scheller, James B. Domingo
+//  Authors:  Robert M. Scheller
 
 using Landis.Core;
 using System.Collections.Generic;
 using Landis.SpatialModeling;
-using Landis.Library.AgeOnlyCohorts;
+using Landis.Library.BiomassCohorts;
+//using Landis.Library.Biomass;
 using System;
 
-namespace Landis.Extension.BaseHurricane
+namespace Landis.Extension.BiomassHurricane
 {
     public static class SiteVars
     {
@@ -16,6 +17,7 @@ namespace Landis.Extension.BaseHurricane
         private static ISiteVar<ISiteCohorts> cohorts;
         public static ISiteVar<Dictionary<int, int>> WindExposure;
         public static ISiteVar<double> AgeRichness;
+        public static ISiteVar<int> BiomassMortality;
 
         //---------------------------------------------------------------------
 
@@ -26,11 +28,12 @@ namespace Landis.Extension.BaseHurricane
             disturbed = PlugIn.ModelCore.Landscape.NewSiteVar<bool>();
             WindSpeed = PlugIn.ModelCore.Landscape.NewSiteVar<double>(InactiveSiteMode.DistinctValues);
             WindExposure = PlugIn.ModelCore.Landscape.NewSiteVar<Dictionary<int, int>>();
+            BiomassMortality = PlugIn.ModelCore.Landscape.NewSiteVar<int>();
 
             PlugIn.ModelCore.RegisterSiteVar(SiteVars.TimeOfLastEvent, "Hurricane.TimeOfLastEvent");
-            //PlugIn.ModelCore.RegisterSiteVar(SiteVars.Severity, "Hurricane.Severity");
 
-            cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.AgeCohorts");
+            //cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.AgeCohorts");
+            cohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.BiomassCohorts");
 
             AgeRichness = PlugIn.ModelCore.GetSiteVar<double>("Output.AgeRichness");
 
@@ -63,7 +66,8 @@ namespace Landis.Extension.BaseHurricane
 
         public static ISiteVar<int> TimeOfLastEvent
         {
-            get {
+            get
+            {
                 return timeOfLastEvent;
             }
         }
@@ -77,7 +81,7 @@ namespace Landis.Extension.BaseHurricane
         //    }
         //}
 
-       public static ISiteVar<double> WindSpeed
+        public static ISiteVar<double> WindSpeed
         {
             get; set;
         }
@@ -85,10 +89,10 @@ namespace Landis.Extension.BaseHurricane
 
         public static ISiteVar<bool> Disturbed
         {
-            get {
+            get
+            {
                 return disturbed;
             }
         }
-
+    }       
     }
-}

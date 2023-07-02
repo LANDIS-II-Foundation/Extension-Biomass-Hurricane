@@ -1,4 +1,4 @@
-//  Authors:  Robert M. Scheller, James B. Domingo
+//  Authors:  Robert M. Scheller, Paul Schrum
 
 using Landis.SpatialModeling;
 using Landis.Core;
@@ -10,7 +10,7 @@ using System.IO;
 using System;
 using System.Linq;
 
-namespace Landis.Extension.BaseHurricane
+namespace Landis.Extension.BiomassHurricane
 {
     ///<summary>
     /// A disturbance plug-in that simulates hurricane wind disturbance.
@@ -22,7 +22,7 @@ namespace Landis.Extension.BaseHurricane
         public static readonly ExtensionType ExtType = new ExtensionType("disturbance:hurricane");
         public static MetadataTable<EventsLog> eventLog;
         public static MetadataTable<SummaryLog> summaryLog;
-        public static readonly string ExtensionName = "Base Hurricane";
+        public static readonly string ExtensionName = "Biomass Hurricane";
         public static LognormalDistribution HurricaneGeneratorLogNormal = new LognormalDistribution();
         public static Troschuetz.Random.Generators.MT19937Generator HurricaneGeneratorStandard = new Troschuetz.Random.Generators.MT19937Generator();
         public static NormalDistribution HurricaneGeneratorNormal = new NormalDistribution();
@@ -52,7 +52,7 @@ namespace Landis.Extension.BaseHurricane
         //---------------------------------------------------------------------
 
         public PlugIn()
-            : base("Base Hurricane", ExtType)
+            : base("Biomass Hurricane", ExtType)
         {
         }
 
@@ -173,9 +173,31 @@ namespace Landis.Extension.BaseHurricane
                     HurricaneEvent storm = new HurricaneEvent(stormCount+1); 
 
                     bool impactsStudyArea =
-                        storm.GenerateWindFieldRaster(this.mapNameTemplate, PlugIn.modelCore); 
+                        storm.HurricaneDisturb(this.mapNameTemplate, PlugIn.modelCore); 
                     
                     LogEvent(storm);
+
+                    string path = MapNames.ReplaceTemplateVars(@"Hurricane\biomass-mortality-{timestep}-{stormNumber}.img", modelCore.CurrentTime, stormCount);
+                    IOutputRaster<IntPixel> outputRaster = null;
+                    using (outputRaster = modelCore.CreateRaster<IntPixel>(path, ModelCore.Landscape.Dimensions))
+                    {
+                        IntPixel pixel = outputRaster.BufferPixel;
+                        foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
+                        {
+                            if (site.IsActive)
+                            {
+                                pixel.MapCode.Value = SiteVars.BiomassMortality[site];
+                            }
+                            else
+                            {
+                                pixel.MapCode.Value = 0;
+                            }
+                            outputRaster.WriteBufferPixel();
+                        }
+                    }
+
+
+
                 }
             }
 
@@ -200,6 +222,7 @@ namespace Landis.Extension.BaseHurricane
             el.LandfallMaxWindSpeed = hurricaneEvent.LandfallMaxWindSpeed;
             el.PathHeading = hurricaneEvent.StormTrackHeading;
             el.CohortKilled = hurricaneEvent.CohortsKilled;
+            el.BiomassMortality = hurricaneEvent.BiomassMortality;
             eventLog.AddObject(el);
             eventLog.WriteToFile();
 

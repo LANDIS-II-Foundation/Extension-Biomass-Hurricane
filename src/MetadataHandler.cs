@@ -6,7 +6,7 @@ using Landis.Library.Metadata;
 using Landis.Utilities;
 using Landis.Core;
 
-namespace Landis.Extension.BaseHurricane
+namespace Landis.Extension.BiomassHurricane
 {
     public static class MetadataHandler
     {

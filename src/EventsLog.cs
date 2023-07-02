@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Landis.Library.Metadata;
 
-namespace Landis.Extension.BaseHurricane
+namespace Landis.Extension.BiomassHurricane
 {
     public class EventsLog
     {
@@ -38,6 +38,10 @@ namespace Landis.Extension.BaseHurricane
 
         [DataFieldAttribute(Unit = FieldUnits.Count, Desc = "Number of Cohorts Killed")]
         public int CohortKilled { get; set; }
+
+        [DataFieldAttribute(Unit = FieldUnits.g_B_m2, Desc = "Biomass Mortality")]
+        public int BiomassMortality { get; set; }
+
 
     }
 }

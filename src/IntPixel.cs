@@ -2,7 +2,7 @@
 
 using Landis.SpatialModeling;
 
-namespace Landis.Extension.BaseHurricane
+namespace Landis.Extension.BiomassHurricane
 {
     public class IntPixel : Pixel
     {

@@ -1,6 +1,6 @@
 ﻿using Landis.Library.Metadata;
 
-namespace Landis.Extension.BaseHurricane
+namespace Landis.Extension.BiomassHurricane
 {
     public class SummaryLog
     {
