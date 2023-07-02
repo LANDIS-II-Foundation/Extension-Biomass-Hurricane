@@ -32,6 +32,7 @@ namespace Landis.Extension.BiomassHurricane
         public Line StormTrackLine { get; private set; }
         public int ClosestExposureKey { get; }
         public int BiomassMortality { get; set; }
+        //public bool CausedMortality { get; set; }
 
         private double stormTrackSlope; // { get; set; }
         private double stormTrackPerpandicularSlope; // { get; set; }
@@ -210,14 +211,14 @@ namespace Landis.Extension.BiomassHurricane
             return speed;
         }
 
-        internal bool HurricaneDisturb(string mapNameTemplate, ICore modelCore)//, ContinentalGrid continentalGrid)
+        internal bool HurricaneDisturb()
         {
             //this.ContinentalGrid = continentalGrid;
             SiteVars.BiomassMortality.ActiveSiteValues = 0;
 
-            Dimensions dimensions = new Dimensions(modelCore.Landscape.Rows, modelCore.Landscape.Columns);
-            int columns = modelCore.Landscape.Columns;
-            int rows = modelCore.Landscape.Rows;
+            Dimensions dimensions = new Dimensions(PlugIn.ModelCore.Landscape.Rows, PlugIn.ModelCore.Landscape.Columns);
+            int columns = PlugIn.ModelCore.Landscape.Columns;
+            int rows = PlugIn.ModelCore.Landscape.Rows;
             double lowerLeftWindspeed = this.GetModifiedWindSpeed(0, 0);
             double lowerRightWindSpeed = this.GetModifiedWindSpeed(columns, 0);
             double upperRightWindSpeed = this.GetModifiedWindSpeed(columns, rows);
@@ -249,9 +250,9 @@ namespace Landis.Extension.BiomassHurricane
             double activeAreaMinWS = 999.0;
             double activeAreaMaxWS = 0.0;
 
-            string path = MapNames.ReplaceTemplateVars(mapNameTemplate, modelCore.CurrentTime, HurricaneNumber);
+            string path = MapNames.ReplaceTemplateVars(@"Hurricane\wind-speeds-{timestep}-{stormNumber}.img", PlugIn.ModelCore.CurrentTime, HurricaneNumber);
             IOutputRaster<BytePixel> outputRaster = null;
-            using (outputRaster = modelCore.CreateRaster<BytePixel>(path, dimensions))
+            using (outputRaster = PlugIn.ModelCore.CreateRaster<BytePixel>(path, dimensions))
             {
                 BytePixel pixel = outputRaster.BufferPixel;
                 foreach(Site site in PlugIn.ModelCore.Landscape.AllSites)
