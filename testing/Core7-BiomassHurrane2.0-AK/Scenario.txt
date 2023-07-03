@@ -22,8 +22,8 @@ CellLength        90 << meters (0.09 ha)
 
 >>  Other Extensions         	 Initialization File
 >> ----------------         	-------------------
->>  "Output Biomass"    	output-biomass.txt
+>>  "Output Biomass"    		output-biomass.txt
 >>  "Output Biomass Reclass"	output-biomass-reclass.txt
-"Output Cohort Statistics"	output_CohortStats.txt
+"Age Reclassification"		
 
 >> RandomNumberSeed 3333

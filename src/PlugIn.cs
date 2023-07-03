@@ -173,30 +173,33 @@ namespace Landis.Extension.BiomassHurricane
                     HurricaneEvent storm = new HurricaneEvent(stormCount+1); 
 
                     bool impactsStudyArea =
-                        storm.HurricaneDisturb(this.mapNameTemplate, PlugIn.modelCore); 
+                        storm.HurricaneDisturb(); 
                     
                     LogEvent(storm);
 
-                    string path = MapNames.ReplaceTemplateVars(@"Hurricane\biomass-mortality-{timestep}-{stormNumber}.tif", modelCore.CurrentTime, stormCount+1);
-                    IOutputRaster<IntPixel> outputRaster = null;
-                    using (outputRaster = modelCore.CreateRaster<IntPixel>(path, ModelCore.Landscape.Dimensions))
+                    if (impactsStudyArea)
                     {
-                        IntPixel pixel = outputRaster.BufferPixel;
-                        foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
+
+                        string path = MapNames.ReplaceTemplateVars(@"Hurricane\biomass-mortality-{timestep}-{stormNumber}.tif", modelCore.CurrentTime, stormCount);
+                        IOutputRaster<IntPixel> outputRaster = null;
+                        using (outputRaster = modelCore.CreateRaster<IntPixel>(path, ModelCore.Landscape.Dimensions))
                         {
-                            if (site.IsActive)
+                            IntPixel pixel = outputRaster.BufferPixel;
+                            foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
                             {
-                                pixel.MapCode.Value = SiteVars.BiomassMortality[site];
+                                if (site.IsActive)
+                                {
+                                    pixel.MapCode.Value = SiteVars.BiomassMortality[site];
+                                }
+                                else
+                                {
+                                    pixel.MapCode.Value = 0;
+                                }
+                                outputRaster.WriteBufferPixel();
                             }
-                            else
-                            {
-                                pixel.MapCode.Value = 0;
-                            }
-                            outputRaster.WriteBufferPixel();
                         }
+
                     }
-
-
 
                 }
             }
