@@ -13,22 +13,22 @@ Timestep   1
 SpeciesAgeStats
 MapNames   outputs/age-per-spp/{species}-{statistic}-{timestep}.img
 
-MIN 		SitkaSpruce		 << minimum age for each species
-MAX 		SitkaSpruce	<< maximum age for each species
-MED		SitkaSpruce			<< median age for each species
-SD		SitkaSpruce			<< standard deviation age for each species
-AVG		SitkaSpruce			<< average age for each species
+>>MIN 		SitkaSpruce		 << minimum age for each species
+>>MAX 		SitkaSpruce	<< maximum age for each species
+>>MED		SitkaSpruce			<< median age for each species
+>>SD		SitkaSpruce			<< standard deviation age for each species
+>>AVG		SitkaSpruce			<< average age for each species
 
 >> ---- STAT2 -----------------------------------------------------
 
 SiteAgeStats
 MapNames   outputs/age-all-spp/AGE-{statistic}-{timestep}.img
 
-MIN 			<< minimum age across all species on site
-MAX			<< maximum age across all species on site
-MED			<< median age across all species on site
-AVG			<< average age across all species on site
-RICH   			<< number of age classes across all species on site
+>>MIN 			<< minimum age across all species on site
+>>MAX			<< maximum age across all species on site
+>>MED			<< median age across all species on site
+>>AVG			<< average age across all species on site
+>>RICH   			<< number of age classes across all species on site
 EVEN   			<< evenness 
 COUNT   		<< count of cohorts
 
@@ -37,4 +37,4 @@ COUNT   		<< count of cohorts
 SiteSpeciesStats
 MapNames   outputs/spp-counts/SPP-{statistic}-{timestep}.img
 
-RICH   			<<count of species
+>>RICH   			<<count of species

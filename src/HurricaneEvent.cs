@@ -237,12 +237,16 @@ namespace Landis.Extension.BiomassHurricane
 
             foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
             {
-                currentSite = site;
-                SiteVars.WindSpeed[currentSite] = this.GetModifiedWindSpeed(site.Location.Column, site.Location.Row);
-                SiteVars.WindSpeed[currentSite] *= CalculateWindReduction(site);
+                this.currentSite = site;
+                double standConditionsWindReduction = CalculateWindReduction(site);
+                SiteVars.WindSpeed[site] = this.GetModifiedWindSpeed(site.Location.Column, site.Location.Row);
+                SiteVars.WindSpeed[site] *= standConditionsWindReduction;
 
-                if(site.IsActive)
-                    siteCohortsKilled = Damage((ActiveSite) site);
+                if (site.IsActive)
+                {
+                    siteCohortsKilled = Damage((ActiveSite)site);
+                    //PlugIn.ModelCore.UI.WriteLine("   Hurricane Caused Damage:  WindSpeed={0}, StandConditions={1}.", SiteVars.WindSpeed[site], standConditionsWindReduction);
+                }
                 //KillSiteCohorts((ActiveSite) currentSite);
             }
 
@@ -273,6 +277,8 @@ namespace Landis.Extension.BiomassHurricane
 
         }
 
+        // The purpose of this function is to allow other outputs to influence wind speed.
+        // For example, AgeEvenness (0-100) is paired with a maximum that determines how much wind speed should be reduced.
         public double CalculateWindReduction(Site site)
         {
             if (PlugIn.WindSpeedReductions == null)
@@ -323,7 +329,7 @@ namespace Landis.Extension.BiomassHurricane
 
             this.AvailableCohorts++;
 
-            bool killCohort = false;
+            //bool killCohort = false;
             var windSpeed = SiteVars.WindSpeed[this.currentSite];
             var name = cohort.Species.Name;
             var age = cohort.Age;
@@ -333,20 +339,19 @@ namespace Landis.Extension.BiomassHurricane
             //PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}, Pmort={3}", name, age, windSpeed, deathLiklihood);
 
             var randomVar = PlugIn.ModelCore.GenerateUniform();
-
-
+            
             if (randomVar <= deathLiklihood)
             {
-                killCohort = true;
+                //killCohort = true;
                 this.CohortsKilled++;
                 this.BiomassMortality += cohort.Biomass;
-            }
-
-            if (killCohort)
-            {
                 SiteVars.BiomassMortality[this.currentSite] += cohort.Biomass;
                 return cohort.Biomass;
             }
+
+            //if (killCohort)
+            //{
+            //}
 
             return 0;
 
