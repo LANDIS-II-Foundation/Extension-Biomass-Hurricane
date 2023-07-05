@@ -31,7 +31,7 @@ namespace Landis.Extension.BiomassHurricane
         public Point LandfallPoint { get; private set; }
         public Line StormTrackLine { get; private set; }
         public int ClosestExposureKey { get; }
-        public int BiomassMortality { get; set; }
+        public double BiomassMortality { get; set; }
         //public bool CausedMortality { get; set; }
 
         private double stormTrackSlope; // { get; set; }
@@ -344,9 +344,10 @@ namespace Landis.Extension.BiomassHurricane
             if (randomVar <= deathLiklihood)
             {
                 //killCohort = true;
+                double cohortBiomass = cohort.Biomass / Math.Pow((double) PlugIn.ModelCore.CellLength, 2.0) * 1000; // convert from g m-2 to Mg
                 this.CohortsKilled++;
-                this.BiomassMortality += cohort.Biomass;
-                SiteVars.BiomassMortality[this.currentSite] += cohort.Biomass;
+                this.BiomassMortality += cohortBiomass;  
+                SiteVars.BiomassMortality[this.currentSite] += (int) cohortBiomass; 
                 return cohort.Biomass;
             }
 
