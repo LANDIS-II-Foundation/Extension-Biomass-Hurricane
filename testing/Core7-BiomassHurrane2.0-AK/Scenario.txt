@@ -24,6 +24,6 @@ CellLength        90 << meters (0.09 ha)
 >> ----------------         	-------------------
 >>  "Output Biomass"    		output-biomass.txt
 >>  "Output Biomass Reclass"	output-biomass-reclass.txt
-"Age Reclassification"		
+>>"Age Reclassification"		
 
 >> RandomNumberSeed 3333

@@ -239,11 +239,13 @@ namespace Landis.Extension.BiomassHurricane
             foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
             {
                 currentSite = site;
-                SiteVars.WindSpeed[currentSite] = this.GetModifiedWindSpeed(site.Location.Column, site.Location.Row);
-                SiteVars.WindSpeed[currentSite] *= CalculateWindReduction(site);
+                if (site.IsActive)
+                {
+                    SiteVars.WindSpeed[currentSite] = this.GetModifiedWindSpeed(site.Location.Column, site.Location.Row);
+                    SiteVars.WindSpeed[currentSite] *= CalculateWindReduction(site);
+                    siteCohortsKilled = Damage((ActiveSite) currentSite);
+                }
 
-                if(site.IsActive)
-                    siteCohortsKilled = Damage((ActiveSite) site);
                 //KillSiteCohorts((ActiveSite) currentSite);
             }
 
@@ -324,27 +326,22 @@ namespace Landis.Extension.BiomassHurricane
 
             this.AvailableCohorts++;
 
-            bool killCohort = false;
+            //bool killCohort = false;
             var windSpeed = SiteVars.WindSpeed[this.currentSite];
             var name = cohort.Species.Name;
             var age = cohort.Age;
 
-            var deathLiklihood = HurricaneEvent.WindMortalityTable.GetMortalityProbability(cohort.Species.Name, cohort.Age, SiteVars.WindSpeed[this.currentSite]);
+            var deathLiklihood = HurricaneEvent.WindMortalityTable.GetMortalityProbability(cohort.Species.Name, cohort.Age, windSpeed);
 
-            //PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}, Pmort={3}", name, age, windSpeed, deathLiklihood);
+            PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}, Pmort={3}", name, age, windSpeed, deathLiklihood);
 
             var randomVar = PlugIn.ModelCore.GenerateUniform();
 
 
             if (randomVar <= deathLiklihood)
             {
-                killCohort = true;
                 this.CohortsKilled++;
                 this.BiomassMortality += cohort.Biomass;
-            }
-
-            if (killCohort)
-            {
                 SiteVars.BiomassMortality[this.currentSite] += cohort.Biomass;
                 return cohort.Biomass;
             }

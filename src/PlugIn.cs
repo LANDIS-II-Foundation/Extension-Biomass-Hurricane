@@ -180,7 +180,7 @@ namespace Landis.Extension.BiomassHurricane
                     if (impactsStudyArea)
                     {
 
-                        string path = MapNames.ReplaceTemplateVars(@"Hurricane\biomass-mortality-{timestep}-{stormNumber}.img", modelCore.CurrentTime, stormCount);
+                        string path = MapNames.ReplaceTemplateVars(@"Hurricane\biomass-mortality-{timestep}-{stormNumber}.img", modelCore.CurrentTime, stormCount+1);
                         IOutputRaster<IntPixel> outputRaster = null;
                         using (outputRaster = modelCore.CreateRaster<IntPixel>(path, ModelCore.Landscape.Dimensions))
                         {
