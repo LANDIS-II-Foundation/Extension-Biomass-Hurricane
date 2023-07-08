@@ -225,7 +225,7 @@ namespace Landis.Extension.BiomassHurricane
             el.LandfallMaxWindSpeed = hurricaneEvent.LandfallMaxWindSpeed;
             el.PathHeading = hurricaneEvent.StormTrackHeading;
             el.CohortKilled = hurricaneEvent.CohortsKilled;
-            el.BiomassMortality = hurricaneEvent.BiomassMortality;
+            el.BiomassMortality = (int) (hurricaneEvent.BiomassMortality / 1000000.0); // Convert Mg to Tg
             eventLog.AddObject(el);
             eventLog.WriteToFile();
 
