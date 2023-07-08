@@ -142,66 +142,6 @@ namespace Landis.Extension.BiomassHurricane
             //double metersPerDegreeLat = 111000.0; 
         }
 
-        public (double, double) GetDistanceAndOffset(Point pt)
-        {
-            double landfallPtDx = this.LandfallPoint.X;
-            double landfallPtDy = this.LandfallPoint.Y - this.StormTrackLine.yIntercept;
-            double landfallDistanceToIntercept =
-                Math.Sqrt(landfallPtDx * landfallPtDx + landfallPtDy * landfallPtDy);
-
-            (double nearPtDistYintercept, double offset) = this.StormTrackLine.GetDistanceAndOffset(pt);
-            double distNearPtToLandfall = landfallDistanceToIntercept - nearPtDistYintercept;
-
-            return (distNearPtToLandfall, offset);
-        }
-
-        /// <summary>
-        /// Equation for the second derivitive of the hyperbola.
-        /// </summary>
-        /// <returns></returns>
-        private double secondDerivHyperobla(double x, double a, double b)
-        {
-            double a2 = Math.Pow(a, 2);
-            double x2 = Math.Pow(x, 2);
-            double y = b / ( (a2 + x2) * Math.Sqrt(1.0 + (x2 / a2)) );
-            
-            return y;
-        }
-
-        /// <summary>
-        /// Field equation of maximum wind speed by returning a speed when given a distance
-        /// down the track (x) and the distance lateral to the track (offset).
-        /// The model is implemented as 
-        /// </summary>
-        /// <param name="x">Distance down the storm track from landfall (meters).</param>
-        /// <param name="offset">Signed perpandicular distance from the track to the point
-        /// of interest. (meters)</param>
-        /// <param name="PeakSpeed">Wind speed at landfall</param>
-        /// <param name="a">From hyperbola a; 2 * the inflection point distance. 
-        /// Unit is kilometers, then the value is adjusted to be in meters. </param>
-        /// <returns>Maximum wind speed at the given point.</returns>
-        public double ComputeMaxWindSpeed(double x, double offset, double a=360.0)
-        {
-            double PeakSpeed = this.LandfallMaxWindSpeed;
-            double baseSpeed = HurricaneEvent.BaseWindSpeed;
-            double Pb = PeakSpeed - baseSpeed;
-            a *= 1000.0;
-            double b = Pb * a * a;
-
-            double speedAtOffset0 = this.secondDerivHyperobla(x: x, a: a, b: b) + baseSpeed;
-
-            /* Bookmark: Adjust 'a' for side winds */
-            if(offset > 0.0)
-                a *= 0.667;
-            else
-                a *= 0.45;
-
-            Pb = speedAtOffset0 - baseSpeed;
-            b = Pb * a * a;
-
-            return this.secondDerivHyperobla(x: offset, a: a, b: b) + baseSpeed;
-        }
-
         public double GetMaxWindSpeedAtPoint(Point point)
         {
             (var distance, var offset) = this.GetDistanceAndOffset(point);
@@ -253,7 +193,7 @@ namespace Landis.Extension.BiomassHurricane
             double activeAreaMinWS = 999.0;
             double activeAreaMaxWS = 0.0;
 
-            string path = MapNames.ReplaceTemplateVars(@"Hurricane\wind-speeds-{timestep}-{stormNumber}.img", PlugIn.ModelCore.CurrentTime, HurricaneNumber);
+            string path = MapNames.ReplaceTemplateVars(@"Hurricane\wind-speeds-{timestep}-{stormNumber}.tif", PlugIn.ModelCore.CurrentTime, HurricaneNumber);
             IOutputRaster<BytePixel> outputRaster = null;
             using (outputRaster = PlugIn.ModelCore.CreateRaster<BytePixel>(path, dimensions))
             {
@@ -296,32 +236,6 @@ namespace Landis.Extension.BiomassHurricane
             return reduction;
         }
 
-        //public double GetWindSpeed(int column, int row)
-        //{
-        //    Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));
-        //    Point pt = Point.siteIndexToCoordinates(column, row); //this.ContinentalGrid.siteIndexToCoordinates(column, row);
-        //    double max_speed = this.GetMaxWindSpeedAtPoint(pt);
-
-        //    return max_speed;
-        //}
-        public double GetModifiedWindSpeed(int column, int row)  // VERSION2
-        {
-            Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));
-            Point pt = Point.siteIndexToCoordinates(column, row);
-            double max_speed = this.GetMaxWindSpeedAtPoint(pt);
-
-            if (site.IsActive)
-                max_speed = max_speed * CalculateWindSpeedReduction(SiteVars.WindExposure[site][this.ClosestExposureKey]); //VERISION 2
-
-            return max_speed;
-        }
-        //---------------------------------------------------------------------
-
-        //private void KillSiteCohorts(ActiveSite site)
-        //{
-        //    SiteVars.Cohorts[site].RemoveMarkedCohorts(this);
-        //}
-        //---------------------------------------------------------------------
 
         int IDisturbance.ReduceOrKillMarkedCohort(ICohort cohort)
         //bool ICohortDisturbance.MarkCohortForDeath(ICohort cohort)
@@ -336,8 +250,6 @@ namespace Landis.Extension.BiomassHurricane
 
             var deathLiklihood = HurricaneEvent.WindMortalityTable.GetMortalityProbability(cohort.Species.Name, cohort.Age, windSpeed);
 
-            PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}, Pmort={3}", name, age, windSpeed, deathLiklihood);
-
             var randomVar = PlugIn.ModelCore.GenerateUniform();
             
             if (randomVar <= deathLiklihood)
@@ -345,7 +257,8 @@ namespace Landis.Extension.BiomassHurricane
                 double cohortBiomass = cohort.Biomass / Math.Pow((double) PlugIn.ModelCore.CellLength, 2.0) * 1000; // convert from g m-2 to Mg
                 this.CohortsKilled++;
                 this.BiomassMortality += cohortBiomass;  
-                SiteVars.BiomassMortality[this.currentSite] += (int) cohortBiomass; 
+                SiteVars.BiomassMortality[this.currentSite] += (int) cohortBiomass;
+                //PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}, Pmort={3}, random={4}", name, age, windSpeed, deathLiklihood, randomVar);
                 return cohort.Biomass;
             }
 
@@ -355,6 +268,18 @@ namespace Landis.Extension.BiomassHurricane
 
             return 0;
 
+        }
+
+        public double GetModifiedWindSpeed(int column, int row)  // VERSION2
+        {
+            Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));
+            Point pt = Point.siteIndexToCoordinates(column, row);
+            double max_speed = this.GetMaxWindSpeedAtPoint(pt);
+
+            if (site.IsActive)
+                max_speed = max_speed * CalculateWindSpeedReduction(SiteVars.WindExposure[site][this.ClosestExposureKey]); //VERISION 2
+
+            return max_speed;
         }
 
         private double CalculateWindSpeedReduction(int exposureIndex)
@@ -393,35 +318,69 @@ namespace Landis.Extension.BiomassHurricane
             return this.CohortsKilled - previousCohortsKilled;
         }
 
+        public (double, double) GetDistanceAndOffset(Point pt)
+        {
+            double landfallPtDx = this.LandfallPoint.X;
+            double landfallPtDy = this.LandfallPoint.Y - this.StormTrackLine.yIntercept;
+            double landfallDistanceToIntercept =
+                Math.Sqrt(landfallPtDx * landfallPtDx + landfallPtDy * landfallPtDy);
+
+            (double nearPtDistYintercept, double offset) = this.StormTrackLine.GetDistanceAndOffset(pt);
+            double distNearPtToLandfall = landfallDistanceToIntercept - nearPtDistYintercept;
+
+            return (distNearPtToLandfall, offset);
+        }
+
+        /// <summary>
+        /// Equation for the second derivitive of the hyperbola.
+        /// </summary>
+        /// <returns></returns>
+        private double secondDerivHyperobla(double x, double a, double b)
+        {
+            double a2 = Math.Pow(a, 2);
+            double x2 = Math.Pow(x, 2);
+            double y = b / ((a2 + x2) * Math.Sqrt(1.0 + (x2 / a2)));
+
+            return y;
+        }
+
+        /// <summary>
+        /// Field equation of maximum wind speed by returning a speed when given a distance
+        /// down the track (x) and the distance lateral to the track (offset).
+        /// The model is implemented as 
+        /// </summary>
+        /// <param name="x">Distance down the storm track from landfall (meters).</param>
+        /// <param name="offset">Signed perpandicular distance from the track to the point
+        /// of interest. (meters)</param>
+        /// <param name="PeakSpeed">Wind speed at landfall</param>
+        /// <param name="a">From hyperbola a; 2 * the inflection point distance. 
+        /// Unit is kilometers, then the value is adjusted to be in meters. </param>
+        /// <returns>Maximum wind speed at the given point.</returns>
+        public double ComputeMaxWindSpeed(double x, double offset, double a = 360.0)
+        {
+            double PeakSpeed = this.LandfallMaxWindSpeed;
+            double baseSpeed = HurricaneEvent.BaseWindSpeed;
+            double Pb = PeakSpeed - baseSpeed;
+            a *= 1000.0;
+            double b = Pb * a * a;
+
+            double speedAtOffset0 = this.secondDerivHyperobla(x: x, a: a, b: b) + baseSpeed;
+
+            /* Bookmark: Adjust 'a' for side winds */
+            if (offset > 0.0)
+                a *= 0.667;
+            else
+                a *= 0.45;
+
+            Pb = speedAtOffset0 - baseSpeed;
+            b = Pb * a * a;
+
+            return this.secondDerivHyperobla(x: offset, a: a, b: b) + baseSpeed;
+        }
+
     }
 
-
-    /*      *   /
-    private void testWindGenerationDistribution()
-    {
-        var testThing = new List<double>();
-        foreach(var i in Enumerable.Range(0, 10000))
-            testThing.Add(this.windSpeedGenerator.getWindSpeed());
-        double av = testThing.Average();
-        Dictionary<double, int> bins = new Dictionary<double, int>();
-        foreach(var val in testThing)
-        {
-            if(bins.ContainsKey(val))
-                bins[val]++;
-            else
-                bins[val] = 1;
-        }
-        var keys = bins.Keys.ToList();
-        keys.Sort();
-        var sortedBins = new Dictionary<double, int>();
-        foreach(var val in keys)
-            sortedBins[val] = bins[val];
-        bins = null;
-    } /* */
-
     //---------------------------------------------------------------------
-
-
     /// <summary>
     /// Generate random wind speeds on a log-normal distribution, mu=0, sigma=0.4.
     /// The consuming code instantiates with minimum value, which is projected to 0,
@@ -463,11 +422,7 @@ namespace Landis.Extension.BiomassHurricane
             PlugIn.HurricaneGeneratorLogNormal.Mu = this.mu;
             PlugIn.HurricaneGeneratorLogNormal.Sigma = this.sigma;
             bool keepComputing = true;
-            //for (int i = 0; i<10; i++)
-            //{
-            //    double testValue = PlugIn.HurricaneGeneratorLogNormal.NextDouble();
-            //        PlugIn.ModelCore.UI.WriteLine("   LogNormal generator:  {0}", testValue);
-            //}
+
             while(keepComputing)
             {
                 double trialValue = PlugIn.ModelCore.LognormalDistribution.NextDouble();
@@ -483,4 +438,41 @@ namespace Landis.Extension.BiomassHurricane
             return -1.0;
         }
     }
+    //public double GetWindSpeed(int column, int row)
+    //{
+    //    Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));
+    //    Point pt = Point.siteIndexToCoordinates(column, row); //this.ContinentalGrid.siteIndexToCoordinates(column, row);
+    //    double max_speed = this.GetMaxWindSpeedAtPoint(pt);
+
+    //    return max_speed;
+    //}
+    //---------------------------------------------------------------------
+
+    //private void KillSiteCohorts(ActiveSite site)
+    //{
+    //    SiteVars.Cohorts[site].RemoveMarkedCohorts(this);
+    //}
+    //---------------------------------------------------------------------
+    /*      *   /
+    private void testWindGenerationDistribution()
+    {
+        var testThing = new List<double>();
+        foreach(var i in Enumerable.Range(0, 10000))
+            testThing.Add(this.windSpeedGenerator.getWindSpeed());
+        double av = testThing.Average();
+        Dictionary<double, int> bins = new Dictionary<double, int>();
+        foreach(var val in testThing)
+        {
+            if(bins.ContainsKey(val))
+                bins[val]++;
+            else
+                bins[val] = 1;
+        }
+        var keys = bins.Keys.ToList();
+        keys.Sort();
+        var sortedBins = new Dictionary<double, int>();
+        foreach(var val in keys)
+            sortedBins[val] = bins[val];
+        bins = null;
+    } /* */
 }
