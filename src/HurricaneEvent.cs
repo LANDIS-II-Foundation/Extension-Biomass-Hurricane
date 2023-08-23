@@ -179,9 +179,13 @@ namespace Landis.Extension.BiomassHurricane
                 if (site.IsActive)
                 {
                     //double standConditionsWindReduction = CalculateWindReduction(site);
-                    SiteVars.WindSpeed[currentSite] = this.GetModifiedWindSpeed(site.Location.Column, site.Location.Row);
-                    SiteVars.WindSpeed[currentSite] *= CalculateWindReduction(site);
-                    siteCohortsKilled = Damage((ActiveSite) currentSite);
+                    SiteVars.WindSpeed[currentSite] = this.GetModifiedWindSpeed(site);
+
+                    double windSpeedReduction = CalculateWindReduction(site);
+                    //PlugIn.ModelCore.UI.WriteLine("   ModifiedMaxSpeed={0}, StandWindReduction = {1}", SiteVars.WindSpeed[currentSite], windSpeedReduction);
+
+                    SiteVars.WindSpeed[currentSite] *= windSpeedReduction;
+
                     if (SiteVars.WindSpeed[currentSite] > maximumWindSpeed)
                         maximumWindSpeed = SiteVars.WindSpeed[currentSite];
                 }
@@ -273,7 +277,7 @@ namespace Landis.Extension.BiomassHurricane
                 this.CohortsKilled++;
                 this.BiomassMortality += cohortBiomass;  
                 SiteVars.BiomassMortality[this.currentSite] += (int) cohortBiomass;
-                PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}, Pmort={3}, random={4}, spp={5}", name, age, windSpeed, deathLiklihood, randomVar, cohort.Species.Name);
+                //PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}, Pmort={3}, random={4}, spp={5}", name, age, windSpeed, deathLiklihood, randomVar, cohort.Species.Name);
                 return cohort.Biomass;
             }
 
@@ -285,16 +289,21 @@ namespace Landis.Extension.BiomassHurricane
 
         }
 
-        public double GetModifiedWindSpeed(int column, int row)  // VERSION2
+        public double GetModifiedWindSpeed(Site site)  // VERSION2
         {
-            Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));
-            Point pt = Point.siteIndexToCoordinates(column, row);
-            double max_speed = this.GetMaxWindSpeedAtPoint(pt);
+            //Site site = PlugIn.ModelCore.Landscape.GetSite(new Location(row, column));
+            Point pt = Point.siteIndexToCoordinates(site.Location.Column, site.Location.Row);
+            double initial_max_speed = this.GetMaxWindSpeedAtPoint(pt);
+            double modified_max_speed = 0.0;
+            //double final_max_speed = 0.0;
 
             if (site.IsActive)
-                max_speed = max_speed * CalculateWindSpeedReduction(SiteVars.WindExposure[site][this.ClosestExposureKey]); //VERISION 2
+            {
+                modified_max_speed = initial_max_speed * CalculateWindSpeedReduction(SiteVars.WindExposure[site][this.ClosestExposureKey]); //VERISION 2
 
-            return max_speed;
+                //PlugIn.ModelCore.UI.WriteLine("   PointMaxSpeed={0}, ModifiedMaxSpeed={1}", initial_max_speed, modified_max_speed);
+            }
+            return modified_max_speed;
         }
 
         private double CalculateWindSpeedReduction(int exposureIndex)
@@ -380,6 +389,7 @@ namespace Landis.Extension.BiomassHurricane
             double b = Pb * a * a;
 
             double speedAtOffset0 = this.secondDerivHyperobla(x: x, a: a, b: b) + baseSpeed;
+            //PlugIn.ModelCore.UI.WriteLine("   Speed at Offset 0 (along central path) = {0}", speedAtOffset0);
 
             /* Bookmark: Adjust 'a' for side winds */
             if (offset > 0.0)
@@ -390,7 +400,10 @@ namespace Landis.Extension.BiomassHurricane
             Pb = speedAtOffset0 - baseSpeed;
             b = Pb * a * a;
 
-            return this.secondDerivHyperobla(x: offset, a: a, b: b) + baseSpeed;
+            double speedAtOffset_final = this.secondDerivHyperobla(x: offset, a: a, b: b) + baseSpeed;
+
+            //PlugIn.ModelCore.UI.WriteLine("   Speed at Final Offset (perpendicular to central path) = {0}", speedAtOffset_final);
+            return speedAtOffset_final;
         }
 
     }
