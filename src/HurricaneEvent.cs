@@ -15,7 +15,7 @@ namespace Landis.Extension.BiomassHurricane
 
         internal static WindSpeedGenerator WindSpeedGenerator { get; set; } = null;
         public static HurricaneWindMortalityTable WindMortalityTable { get; set; } = null;
-        private static double BaseWindSpeed = 48.0; // Asymptotic minimum max wind speed of a storm. // FIXME VERSION 2
+        private static double BaseWindSpeed = 0.0; // Asymptotic minimum max wind speed of a storm. // FIXME VERSION 2
         public static double MinimumWSforDamage { get; set; }
 
         public static bool HurricaneRandomNumber { get; set; } = false;
@@ -121,7 +121,7 @@ namespace Landis.Extension.BiomassHurricane
                     minimumDifference = degreeDifference;
                 }
             }
-            PlugIn.ModelCore.UI.WriteLine("Storm #{0}, MaxWindSpeed={1:0.0}, StormHeading={2:0.0}, ClosestExposureKey={3}", this.HurricaneNumber, this.LandfallMaxWindSpeed, this.StormTrackHeading, this.ClosestExposureKey);
+            PlugIn.ModelCore.UI.WriteLine("Storm #{0}, LandFallSpeed={1:0.0}, StormHeading={2:0.0}, ClosestExposureKey={3}", this.HurricaneNumber, this.LandfallMaxWindSpeed, this.StormTrackHeading, this.ClosestExposureKey);
 
             this.stormTrackSlope = 1 / Math.Tan(this.StormTrackHeading * Math.PI / 180.0);
             this.stormTrackPerpandicularSlope = -1.0 / this.stormTrackSlope;
@@ -157,38 +157,53 @@ namespace Landis.Extension.BiomassHurricane
             SiteVars.BiomassMortality.ActiveSiteValues = 0;
 
             Dimensions dimensions = new Dimensions(PlugIn.ModelCore.Landscape.Rows, PlugIn.ModelCore.Landscape.Columns);
-            int columns = PlugIn.ModelCore.Landscape.Columns;
-            int rows = PlugIn.ModelCore.Landscape.Rows;
-            double lowerLeftWindspeed = this.GetModifiedWindSpeed(0, 0);
-            double lowerRightWindSpeed = this.GetModifiedWindSpeed(columns, 0);
-            double upperRightWindSpeed = this.GetModifiedWindSpeed(columns, rows);
-            double upperLeftWindSpeed = this.GetModifiedWindSpeed(0, rows);
-            double maxWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed, upperLeftWindSpeed }).Max();
-            double minWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed, upperLeftWindSpeed }).Min();
+            //int columns = PlugIn.ModelCore.Landscape.Columns;
+            //int rows = PlugIn.ModelCore.Landscape.Rows;
+            //double lowerLeftWindspeed = this.GetModifiedWindSpeed(0, 0);
+            //double lowerRightWindSpeed = this.GetModifiedWindSpeed(columns, 0);
+            //double upperRightWindSpeed = this.GetModifiedWindSpeed(columns, rows);
+            //double upperLeftWindSpeed = this.GetModifiedWindSpeed(0, rows);
+            //double maxWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed, upperLeftWindSpeed }).Max();
+            //double minWS = (new[] { lowerLeftWindspeed, lowerRightWindSpeed, upperRightWindSpeed, upperLeftWindSpeed }).Min();
+            //PlugIn.ModelCore.UI.WriteLine("   Hurricane Not Sufficient to Cause Damage:  MaxWS={0}, HurricaneMinWS={1}", maxWS, HurricaneEvent.MinimumWSforDamage);
+
+            int siteCohortsKilled = 0;
+            SiteVars.WindSpeed.SiteValues = 0.0;
             this.StudyAreaMortality = true;
-            if (maxWS < HurricaneEvent.MinimumWSforDamage)
+            double maximumWindSpeed = 0.0;
+
+            foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
             {
-                //PlugIn.ModelCore.UI.WriteLine("   Hurricane Not Sufficient to Cause Damage:  MaxWS={0}, HurricaneMinWS={1}", maxWS, MinimumWSforDamage);
+
+                currentSite = site;
+                if (site.IsActive)
+                {
+                    //double standConditionsWindReduction = CalculateWindReduction(site);
+                    SiteVars.WindSpeed[currentSite] = this.GetModifiedWindSpeed(site.Location.Column, site.Location.Row);
+                    SiteVars.WindSpeed[currentSite] *= CalculateWindReduction(site);
+                    siteCohortsKilled = Damage((ActiveSite) currentSite);
+                    if (SiteVars.WindSpeed[currentSite] > maximumWindSpeed)
+                        maximumWindSpeed = SiteVars.WindSpeed[currentSite];
+                }
+            }
+
+            if (maximumWindSpeed < HurricaneEvent.MinimumWSforDamage)
+            {
+                PlugIn.ModelCore.UI.WriteLine("   Hurricane Not Sufficient to Cause Damage:  MaxWS={0}, HurricaneMinWS={1}", maximumWindSpeed, HurricaneEvent.MinimumWSforDamage);
                 this.StudyAreaMortality = false;
                 return false;
             }
 
-            int siteCohortsKilled = 0;
-            SiteVars.WindSpeed.SiteValues = 0.0;
 
             foreach (Site site in PlugIn.ModelCore.Landscape.AllSites)
             {
                 currentSite = site;
                 if (site.IsActive)
                 {
-                    double standConditionsWindReduction = CalculateWindReduction(site);
-                    SiteVars.WindSpeed[currentSite] = this.GetModifiedWindSpeed(site.Location.Column, site.Location.Row);
-                    SiteVars.WindSpeed[currentSite] *= CalculateWindReduction(site);
-                    siteCohortsKilled = Damage((ActiveSite) currentSite);
+                    siteCohortsKilled = Damage((ActiveSite)currentSite);
                 }
-
-                //KillSiteCohorts((ActiveSite) currentSite);
             }
+
 
             double activeAreaMinWS = 999.0;
             double activeAreaMaxWS = 0.0;
@@ -258,7 +273,7 @@ namespace Landis.Extension.BiomassHurricane
                 this.CohortsKilled++;
                 this.BiomassMortality += cohortBiomass;  
                 SiteVars.BiomassMortality[this.currentSite] += (int) cohortBiomass;
-                //PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}, Pmort={3}, random={4}", name, age, windSpeed, deathLiklihood, randomVar);
+                PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}, Pmort={3}, random={4}, spp={5}", name, age, windSpeed, deathLiklihood, randomVar, cohort.Species.Name);
                 return cohort.Biomass;
             }
 
@@ -361,7 +376,7 @@ namespace Landis.Extension.BiomassHurricane
             double PeakSpeed = this.LandfallMaxWindSpeed;
             double baseSpeed = HurricaneEvent.BaseWindSpeed;
             double Pb = PeakSpeed - baseSpeed;
-            a *= 1000.0;
+            a *= 1000.0;  // convert to meters
             double b = Pb * a * a;
 
             double speedAtOffset0 = this.secondDerivHyperobla(x: x, a: a, b: b) + baseSpeed;

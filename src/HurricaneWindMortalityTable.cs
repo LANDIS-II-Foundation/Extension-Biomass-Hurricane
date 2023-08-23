@@ -16,7 +16,7 @@ namespace Landis.Extension.BiomassHurricane
             this.theTable = windSpeedVulnverabilities;
         }
 
-        public double GetMortalityProbability(string species, double age, double windspeed)
+        public double GetMortalityProbability(string species, double cohort_age, double windspeed)
         {
             //PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}", species, age, windspeed);
 
@@ -26,31 +26,37 @@ namespace Landis.Extension.BiomassHurricane
             // To optimize it (later) will require creating a new class so the keys
             // may be stored in sorted order.    All this is necessary because the order
             // of keys is not guaranteed in Dictionaries.
-            var ages = new List<double>(speciesTable.Keys);
-            ages.Sort();
-            ages.Reverse();
+            List<double> species_age_categories = new List<double>(speciesTable.Keys);
+            species_age_categories.Sort();
+            double final_probability = 0.0;
+            //species_age_categories.Reverse();
 
-            var ageToPick = 0.0;
-            foreach(var tblAge in ages)
+            double matching_max_age = 10000;
+            foreach(var tblAge in species_age_categories)
             {
-                ageToPick = tblAge;
-                if(age > tblAge)
-                    break;
+                if (cohort_age < tblAge)
+                {
+                    matching_max_age = tblAge;
+                    //break;
+                }
             }
 
-            var speed_probabilityTable = speciesTable[ageToPick];
+            var speed_probabilityTable = speciesTable[matching_max_age];
             var speeds = new List<double>(speed_probabilityTable.Keys);
             speeds.Sort();
-            speeds.Reverse();
-            var speedToUse = 0.0;
+            //speeds.Reverse();
+            double matching_speed = 0.0;
             foreach(var tblSpeed in speeds)
             {
-                speedToUse = tblSpeed;
                 if(windspeed > tblSpeed)
-                    break;
+                {
+                    matching_speed = tblSpeed;
+                    final_probability = speed_probabilityTable[matching_speed];
+                }
+                //break;
             }
 
-            return speed_probabilityTable[speedToUse];
+            return final_probability;
         }
 
         //internal void ChangeSpeedsFromEnglishToMetric()
@@ -71,25 +77,25 @@ namespace Landis.Extension.BiomassHurricane
         //    }
         //}
 
-        internal double MinimumWindSpeed
-        {
-            get
-            {
-                double returnValue = 100000.0;
-                foreach(var species in this.theTable.Values)
-                {
-                    foreach(var age in species.Values)
-                    {
-                        var thisMin = age.Keys.Min();
-                        returnValue = Math.Min(thisMin, returnValue);
-                    }
-                }
+        //internal double MinimumWindSpeed
+        //{
+        //    get
+        //    {
+        //        double returnValue = 100000.0;
+        //        foreach(var species in this.theTable.Values)
+        //        {
+        //            foreach(var age in species.Values)
+        //            {
+        //                var thisMin = age.Keys.Min();
+        //                returnValue = Math.Min(thisMin, returnValue);
+        //            }
+        //        }
 
-                if(returnValue >= 999.0)
-                    returnValue = 0.0;
+        //        if(returnValue >= 999.0)
+        //            returnValue = 0.0;
 
-                return returnValue;
-            }
-        }
+        //        return returnValue;
+        //    }
+        //}
     }
 }
