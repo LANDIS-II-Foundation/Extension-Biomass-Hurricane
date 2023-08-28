@@ -281,10 +281,6 @@ namespace Landis.Extension.BiomassHurricane
                 return cohort.Biomass;
             }
 
-            //if (killCohort)
-            //{
-            //}
-
             return 0;
 
         }
