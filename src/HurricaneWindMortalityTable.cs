@@ -29,32 +29,39 @@ namespace Landis.Extension.BiomassHurricane
             List<double> species_age_categories = new List<double>(speciesTable.Keys);
             species_age_categories.Sort();
             double final_probability = 0.0;
-            //species_age_categories.Reverse();
+            species_age_categories.Reverse();
 
-            double matching_max_age = 10000;
+            double matching_age = 0;
             foreach(var tblAge in species_age_categories)
             {
-                if (cohort_age < tblAge)
+                if (cohort_age > tblAge)
                 {
-                    matching_max_age = tblAge;
-                    //break;
+                    matching_age = tblAge;
+                    break;
                 }
             }
 
-            var speed_probabilityTable = speciesTable[matching_max_age];
+            if (matching_age == 0)  // in this case, there are no table entries for such young cohorts, assume no mortality.
+                return 0.0;
+
+            var speed_probabilityTable = speciesTable[matching_age];
             var speeds = new List<double>(speed_probabilityTable.Keys);
             speeds.Sort();
-            //speeds.Reverse();
+            speeds.Reverse();
             double matching_speed = 0.0;
             foreach(var tblSpeed in speeds)
             {
                 if(windspeed > tblSpeed)
                 {
                     matching_speed = tblSpeed;
-                    final_probability = speed_probabilityTable[matching_speed];
+                    break;
                 }
-                //break;
             }
+
+            if (matching_speed <= 0.0) // in this case, there are no table entries for such low wind speeds, assume no mortality.
+                return 0.0;
+
+            final_probability = speed_probabilityTable[matching_speed];
 
             return final_probability;
         }
