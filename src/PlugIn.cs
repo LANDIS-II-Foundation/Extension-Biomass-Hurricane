@@ -7,10 +7,9 @@ using Landis.Utilities;
 using Troschuetz.Random.Distributions.Continuous;
 using System.Collections.Generic;
 using System.IO;
-using System;
 using System.Linq;
 
-namespace Landis.Extension.BiomassHurricane
+namespace Landis.Extension.Hurricane
 {
     ///<summary>
     /// A disturbance plug-in that simulates hurricane wind disturbance.
@@ -22,7 +21,7 @@ namespace Landis.Extension.BiomassHurricane
         public static readonly ExtensionType ExtType = new ExtensionType("disturbance:hurricane");
         public static MetadataTable<EventsLog> eventLog;
         public static MetadataTable<SummaryLog> summaryLog;
-        public static readonly string ExtensionName = "Biomass Hurricane";
+        public static readonly string ExtensionName = "Hurricane";
         public static LognormalDistribution HurricaneGeneratorLogNormal = new LognormalDistribution();
         public static Troschuetz.Random.Generators.MT19937Generator HurricaneGeneratorStandard = new Troschuetz.Random.Generators.MT19937Generator();
         public static NormalDistribution HurricaneGeneratorNormal = new NormalDistribution();
@@ -65,6 +64,11 @@ namespace Landis.Extension.BiomassHurricane
                 return modelCore;
             }
         }
+        public override void AddCohortData()
+        {
+            return;
+        }
+
         //---------------------------------------------------------------------
 
         public override void LoadParameters(string dataFile, ICore mCore)
@@ -108,7 +112,6 @@ namespace Landis.Extension.BiomassHurricane
 
             HurricaneEvent.WindSpeedGenerator = new WindSpeedGenerator(this.parameters.LowBoundLandfallWindSpeed,
                 this.parameters.ModeLandfallWindSpeed, this.parameters.HighBoundLandfallWindspeed);
-            //parameters.AdjustValuesFromEnglishToMetric();
 
             MetadataHandler.InitializeMetadata(parameters.Timestep, parameters.MapNamesTemplate);
 

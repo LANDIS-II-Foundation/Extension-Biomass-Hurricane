@@ -1,0 +1,11 @@
+LandisData	"Output Biomass"
+
+
+Timestep	20
+MakeTable	yes
+
+Species		DouglasFir
+MapNames	output/biomass/bio-{species}-{timestep}.tif
+
+DeadPools	woody
+MapNames	output/biomass/{pool}-{timestep}.tif

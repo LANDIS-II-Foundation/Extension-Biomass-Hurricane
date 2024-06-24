@@ -1,13 +1,9 @@
 ﻿using Landis.Core;
-using Landis.Library.BiomassCohorts;
-//using Landis.Library.AgeOnlyCohorts;
+using Landis.Library.UniversalCohorts;
 using Landis.SpatialModeling;
 using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Landis.Extension.BiomassHurricane
+namespace Landis.Extension.Hurricane
 {
     public class HurricaneEvent : IDisturbance
     {
@@ -19,8 +15,6 @@ namespace Landis.Extension.BiomassHurricane
         public static double MinimumWSforDamage { get; set; }
 
         public static bool HurricaneRandomNumber { get; set; } = false;
-
-        //public int hurricaneYear { get; set; }
         public int HurricaneNumber { get; set; }
         public double StudyAreaMaxWindspeed { get; set; }
         public double StudyAreaMinWindspeed { get; set; }
@@ -32,10 +26,9 @@ namespace Landis.Extension.BiomassHurricane
         public Line StormTrackLine { get; private set; }
         public int ClosestExposureKey { get; }
         public double BiomassMortality { get; set; }
-        //public bool CausedMortality { get; set; }
 
-        private double stormTrackSlope; // { get; set; }
-        private double stormTrackPerpandicularSlope; // { get; set; }
+        private double stormTrackSlope; 
+        private double stormTrackPerpandicularSlope; 
 
         public double landfallDistanceFromCoastalCenterY = 0.0;
         public int AvailableCohorts;
@@ -66,14 +59,6 @@ namespace Landis.Extension.BiomassHurricane
                 return (ActiveSite) currentSite;
             }
         }
-
-
-        //public static HurricaneEvent Initiate()
-        //{
-
-        //    HurricaneEvent hurrEvent = new HurricaneEvent(0); 
-        //    return hurrEvent;
-        //}
 
         public HurricaneEvent(int stormCnt)
         {
@@ -265,20 +250,20 @@ namespace Landis.Extension.BiomassHurricane
             //bool killCohort = false;
             var windSpeed = SiteVars.WindSpeed[this.currentSite];
             var name = cohort.Species.Name;
-            var age = cohort.Age;
+            var age = cohort.Data.Age;
 
-            var deathLiklihood = HurricaneEvent.WindMortalityTable.GetMortalityProbability(cohort.Species.Name, cohort.Age, windSpeed);
+            var deathLiklihood = HurricaneEvent.WindMortalityTable.GetMortalityProbability(cohort.Species.Name, cohort.Data.Age, windSpeed);
 
             var randomVar = PlugIn.ModelCore.GenerateUniform();
             
             if (randomVar <= deathLiklihood)
             {
-                double cohortBiomass = cohort.Biomass / Math.Pow((double) PlugIn.ModelCore.CellLength, 2.0) * 1000; // convert from g m-2 to Mg
+                double cohortBiomass = cohort.Data.Biomass / Math.Pow((double) PlugIn.ModelCore.CellLength, 2.0) * 1000; // convert from g m-2 to Mg
                 this.CohortsKilled++;
                 this.BiomassMortality += cohortBiomass;  
                 SiteVars.BiomassMortality[this.currentSite] += (int) cohortBiomass;
                 //PlugIn.ModelCore.UI.WriteLine("   Hurricane Mortality:  {0}:{1}, Wind={2}, Pmort={3}, random={4}, spp={5}", name, age, windSpeed, deathLiklihood, randomVar, cohort.Species.Name);
-                return cohort.Biomass;
+                return cohort.Data.Biomass;
             }
 
             return 0;
@@ -334,7 +319,7 @@ namespace Landis.Extension.BiomassHurricane
         private int Damage(ActiveSite site)
         {
             int previousCohortsKilled = this.CohortsKilled;
-            SiteVars.Cohorts[site].ReduceOrKillBiomassCohorts(this);
+            SiteVars.Cohorts[site].ReduceOrKillCohorts(this);
             return this.CohortsKilled - previousCohortsKilled;
         }
 
@@ -470,13 +455,6 @@ namespace Landis.Extension.BiomassHurricane
 
     //    return max_speed;
     //}
-    //---------------------------------------------------------------------
-
-    //private void KillSiteCohorts(ActiveSite site)
-    //{
-    //    SiteVars.Cohorts[site].RemoveMarkedCohorts(this);
-    //}
-    //---------------------------------------------------------------------
     /*      *   /
     private void testWindGenerationDistribution()
     {

@@ -1,0 +1,74 @@
+LandisData  "Biomass Hurricane"
+
+Timestep  1
+
+InputUnitsEnglish N
+
+HurricaneRandomNumberSeed 1974
+
+
+>> Likelihood a given year will have this number of storms
+StormOccurrenceProbabilities
+ >> Storms
+ >>  Per
+ >>  Year       Probability  << Sum must = 1.0
+0	0.05
+1	0.15
+2	0.22
+3	0.22
+4	0.17
+5	0.1
+6	0.05
+7	0.03
+8	0.01
+
+
+
+>> Max Wind Speed at Landfall is on a log normal distribution
+LowBoundLandfallWindSpeed	51 << kmh
+ModeLandfallWindSpeed	165 << kmh  (Trevor = 65)
+HighBoundLandfallWindSpeed  161 << kmh  Values greater are truncated.
+
+CoastalSlope -0.903 << relative to the larger landscape
+
+MeanStormIntersectionX 417.618
+MeanStormIntersectionY 105.420
+
+LandfallSigma 1 << the variance of landfalls, assuming a mean location as indicated above
+
+StormDirectionMu 204.4397 << average direction
+StormDirectionSigma 71.06188 << variation
+
+MinimumWindSpeedforDamage	60 << units = kph; should match the third column in the WindSpeedVulnerabilities table
+
+ExposureMaps << table
+>> Column 1 = degree
+>> Column 2 = map name
+135	test_135_wind_fix.tif
+180	test_180_wind_fix.tif
+225	test_225_wind_fix.tif
+
+WindSpeedVulnerabilities
+>> Species		MaxAge			Mortality Probabilities
+MountainHemlock          800        60:0.05   75:0.18    110:0.75  140:1.0
+   SitkaSpruce              700     60:0.05   75:0.18    110:0.75  140:1.0
+   WesternHemlock           450     60:0.05   75:0.18    110:0.75  140:1.0
+   AlaskaYellowCedar 	    700     60:0.05   75:0.18    110:0.75  140:1.0
+   LodgepolePine            250     60:0.05   75:0.18    110:0.75  140:1.0
+   WesternRedcedar          800     60:0.05   75:0.18    110:0.75  140:1.0
+   RedAlder                 100     60:0.05   75:0.18    110:0.75  140:1.0
+   BalsamPoplar             200     60:0.05   75:0.18    110:0.75  140:1.0
+   SubalpineFir             250     60:0.05   75:0.18    110:0.75  140:1.0
+   PaperBirch               140     60:0.05   75:0.18    110:0.75  140:1.0
+   PacificSilverFir         500     60:0.05   75:0.18    110:0.75  140:1.0
+   DouglasFir               800     60:0.05   75:0.18    110:0.75  140:1.0
+   WhiteSpruce              250     60:0.05   75:0.18    110:0.75  140:1.0
+   QuakingAspen              60     60:0.05   75:0.18    110:0.75  140:1.0
+   WesternWhitePine         400     60:0.05   75:0.18    110:0.75  140:1.0
+   EngelmannSpruce          500     60:0.05   75:0.18    110:0.75  140:1.0
+
+MapNames  hurricane/max-windspeed-{timestep}-{stormNumber}.tif
+LogFile   hurricane-log.csv
+
+WindReductionTableCSV	EvennessWindReductions.csv
+

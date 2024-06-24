@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Landis.Extension.BiomassHurricane
+namespace Landis.Extension.Hurricane
 {
     /// <summary>
     /// Parameters for the plug-in.
