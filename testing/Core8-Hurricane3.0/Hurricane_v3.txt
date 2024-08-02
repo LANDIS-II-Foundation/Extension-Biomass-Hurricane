@@ -1,4 +1,4 @@
-LandisData  "Biomass Hurricane"
+LandisData  "Hurricane"
 
 Timestep  1
 

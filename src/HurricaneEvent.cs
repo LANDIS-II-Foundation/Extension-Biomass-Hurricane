@@ -8,7 +8,7 @@ namespace Landis.Extension.Hurricane
     public class HurricaneEvent : IDisturbance
     {
         private Site currentSite;
-
+        private static HurricaneEvent singleton;
         internal static WindSpeedGenerator WindSpeedGenerator { get; set; } = null;
         public static HurricaneWindMortalityTable WindMortalityTable { get; set; } = null;
         private static double BaseWindSpeed = 0.0; // Asymptotic minimum max wind speed of a storm. // FIXME VERSION 2
@@ -41,6 +41,7 @@ namespace Landis.Extension.Hurricane
 
         static HurricaneEvent()
         {
+            //singleton = new HurricaneEvent();
         }
         //---------------------------------------------------------------------
         ExtensionType IDisturbance.Type
