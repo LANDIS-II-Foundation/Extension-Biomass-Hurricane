@@ -120,14 +120,6 @@ namespace Landis.Extension.Hurricane
 
             SiteVars.Initialize();
 
-            //this.ContinentalGrid = new ContinentalGrid(
-            //    //this.parameters.CenterPointLatitude, 
-            //    PlugIn.ModelCore.CellLength,
-            //    PlugIn.ModelCore.Landscape.Columns,
-            //    PlugIn.ModelCore.Landscape.Rows
-            //    //this.parameters.CenterPointDistanceInland
-            //    );
-
             if (parameters.HurricaneRandomNumberSeed > 0)
             {
                 HurricaneEvent.HurricaneRandomNumber = true;
@@ -135,7 +127,7 @@ namespace Landis.Extension.Hurricane
                 HurricaneGeneratorLogNormal = new Troschuetz.Random.Distributions.Continuous.LognormalDistribution((uint)parameters.HurricaneRandomNumberSeed);
             }
 
-            LoadWindExposureData();  // VERSION2
+            LoadWindExposureData();  
 
             WindSpeedReductions = parameters.WindSpeedModificationTable;
 
@@ -173,7 +165,7 @@ namespace Landis.Extension.Hurricane
                 if(stormsThisYear == 1) message = "1 storm.";
                 foreach(var stormCount in Enumerable.Range(0, stormsThisYear))
                 {
-                    HurricaneEvent storm = new HurricaneEvent(stormCount+1); 
+                    HurricaneEvent storm = HurricaneEvent.Initiate(stormCount+1); 
 
                     bool impactsStudyArea =
                         storm.HurricaneDisturb(); 

@@ -24,7 +24,7 @@ namespace Landis.Extension.Hurricane
 
             PlugIn.ModelCore.RegisterSiteVar(SiteVars.TimeOfLastEvent, "Hurricane.TimeOfLastEvent");
 
-            Cohorts = PlugIn.ModelCore.GetSiteVar<SiteCohorts> ("Succession.UniversalCohorts");
+            Cohorts = PlugIn.ModelCore.GetSiteVar<SiteCohorts>("Succession.UniversalCohorts");
 
             AgeRichness = PlugIn.ModelCore.GetSiteVar<double>("Output.AgeRichness");
 
