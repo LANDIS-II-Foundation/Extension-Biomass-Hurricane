@@ -4,7 +4,7 @@ Timestep  10
 
 SeedingAlgorithm        WardSeedDispersal 
 
-InitialCommunitiesCSV      initial_communities.txt
+InitialCommunitiesCSV      AK_BC_IC_codes_03052024.csv
 InitialCommunitiesMap   test_IC.tif
 ClimateConfigFile 	climate_config.txt	
 
@@ -44,29 +44,7 @@ DecayRateSOM1			0.9
 DecayRateSOM2			0.02
 DecayRateSOM3			0.0002
 
-MaximumLAI
->> ShadeClass	Max LAI
->> ----------	-------- 	
-	1	1 
-	2	2.25 
-	3	3.5 
-	4	4.75
-	5	6	
-
-LightEstablishmentTable
->>	Spp Shade	Probability					
->>	Class		by Actual Shade					
->>	 ----------	----------------------------	 				
->>	0	1	2	3	4	5
-1	1.0	1.0	0.5	0.02	0.0	0.0	
-2	0.6	0.6	1.0	0.5	0.02	0.0	
-3	0.01	0.01	0.6	1.0	0.5	0.02	
-4	0.0	0.0	0.01	0.6	1.0	0.5	
-5	0.0	0.0	0.0	0.01	0.6	1.0	
-
 SpeciesParameters		NECN_sp.csv
-
-FunctionalGroupParameters	NECN_functional_group_params.csv
 
 FireReductionParameters
 >>   Severity   	WoodLitter			

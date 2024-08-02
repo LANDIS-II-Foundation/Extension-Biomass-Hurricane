@@ -566,3 +566,12 @@ testing/Core7-BiomassHurrane2.0-AK/NECN/LAI-20.img
 testing/Core7-BiomassHurrane2.0-AK/NECN/SoilN-20.img
 testing/Core7-BiomassHurrane2.0-AK/NECN/SOMTC-20.img
 testing/Core7-BiomassHurrane2.0-AK/NECN/TotalC-20.img
+testing/Core8-Hurricane3.0/Climate-annual-log.csv
+testing/Core8-Hurricane3.0/Climate-future-input-log.csv
+testing/Core8-Hurricane3.0/Climate-spinup-input-log.csv
+testing/Core8-Hurricane3.0/NECN-calibrate-log.csv
+testing/Core8-Hurricane3.0/NECN-prob-establish-log.csv
+testing/Core8-Hurricane3.0/NECN-reproduction-log.csv
+testing/Core8-Hurricane3.0/NECN-succession-log-short.csv
+testing/Core8-Hurricane3.0/NECN-succession-log.csv
+testing/Core8-Hurricane3.0/NECN-succession-monthly-log.csv

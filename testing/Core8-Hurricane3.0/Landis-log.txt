@@ -1,21 +1,56 @@
-2024-07-03 10:31:24,607 - LANDIS-II 8.0 (8)
-2024-07-03 10:31:24,610 - 
-2024-07-03 10:31:24,654 - Loading scenario from file "scenario.txt" ...
-2024-07-03 10:31:24,683 - Initialized random number generator with seed = 4,137,750,846
-2024-07-03 10:31:24,683 - Loading species data from file "species.txt" ...
-2024-07-03 10:31:24,687 - Loading ecoregions from file "Ecoregions.txt" ...
-2024-07-03 10:31:24,696 - Core metadata:
-2024-07-03 10:31:24,697 - LANDIS-II v8.0, Seed: , test_ecoregions.tif, Ecoregions.txt, species.txt
+2024-08-02 09:24:06,260 - LANDIS-II 8.0 (8)
+2024-08-02 09:24:06,263 - 
+2024-08-02 09:24:06,502 - Loading scenario from file "scenario.txt" ...
+2024-08-02 09:24:06,541 - Initialized random number generator with seed = 406,915,883
+2024-08-02 09:24:06,541 - Loading species data from file "species.txt" ...
+2024-08-02 09:24:06,546 - Loading ecoregions from file "Ecoregions.txt" ...
+2024-08-02 09:24:06,608 - Core metadata:
+2024-08-02 09:24:06,608 - LANDIS-II v8.0, Seed: , test_ecoregions.tif, Ecoregions.txt, species.txt
 Succession:
 NECN Succession Version: 8.0, Input: NECN_succession.txt
 Disturbance Extensions:
 Hurricane Version: 3.0, Input: hurricane_v3.txt
 Other Extensions:
 
-2024-07-03 10:31:24,697 - Initializing landscape from ecoregions map "test_ecoregions.tif" ...
-2024-07-03 10:31:24,712 - Cell length = 90 m, cell area = 0.81 ha
-2024-07-03 10:31:24,715 - Map dimensions: 5,532 rows by 7,790 columns = 43,094,280 cells
-2024-07-03 10:31:26,326 - Sites: 59,738 active (0.1%), 43,034,542 inactive (99.9%)
-2024-07-03 10:31:27,363 - Loading NECN Succession extension ...
-2024-07-03 10:31:27,611 - Error at line 7 of file "NECN_succession.txt":
-  Found the name "InitialCommunities" but expected "InitialCommunitiesCSV"
+2024-08-02 09:24:06,609 - Initializing landscape from ecoregions map "test_ecoregions.tif" ...
+2024-08-02 09:24:06,648 - Cell length = 90 m, cell area = 0.81 ha
+2024-08-02 09:24:06,649 - Map dimensions: 5,532 rows by 7,790 columns = 43,094,280 cells
+2024-08-02 09:24:08,228 - Sites: 59,738 active (0.1%), 43,034,542 inactive (99.9%)
+2024-08-02 09:24:09,256 - Loading NECN Succession extension ...
+2024-08-02 09:24:09,648 -    Begin parsing NECN SPECIES table.
+2024-08-02 09:24:09,681 -    Begin parsing Drought table.
+2024-08-02 09:24:09,682 -    Begin reading FIRE REDUCTION parameters.
+2024-08-02 09:24:09,683 -    Begin reading HARVEST REDUCTION parameters.
+2024-08-02 09:24:09,822 - Initializing NECN Succession ...
+2024-08-02 09:24:09,844 -    Registering Data:  Succession.UniversalCohorts.
+2024-08-02 09:24:09,845 -    Registering Data:  Succession.FineFuels.
+2024-08-02 09:24:09,845 -    Registering Data:  Succession.SmolderConsumption.
+2024-08-02 09:24:09,846 -    Registering Data:  Succession.FlamingConsumption.
+2024-08-02 09:24:09,846 -    Registering Data:  Succession.CWD.
+2024-08-02 09:24:09,847 -    Registering Data:  Succession.PET.
+2024-08-02 09:24:10,653 -   Read in data from soildepth.tif
+2024-08-02 09:24:12,642 -   Read in data from drainage.tif
+2024-08-02 09:24:14,449 -   Read in data from baseflow.tif
+2024-08-02 09:24:16,281 -   Read in data from baseflow.tif
+2024-08-02 09:24:17,569 -   Read in data from fc.tif
+2024-08-02 09:24:19,367 -   Read in data from wp.tif
+2024-08-02 09:24:21,114 -   Read in data from sand.tif
+2024-08-02 09:24:22,904 -   Read in data from clay.tif
+2024-08-02 09:24:24,649 -   Read in data from soc.tif
+2024-08-02 09:24:26,381 -   Read in data from son.tif
+2024-08-02 09:24:28,080 -   Read in data from soc.tif
+2024-08-02 09:24:29,346 -   Read in data from son.tif
+2024-08-02 09:24:30,588 -   Read in data from soc.tif
+2024-08-02 09:24:31,791 -   Read in data from son.tif
+2024-08-02 09:24:33,024 -   Read in data from soc.tif
+2024-08-02 09:24:34,219 -   Read in data from son.tif
+2024-08-02 09:24:35,511 -   Read in data from deadwood.tif
+2024-08-02 09:24:37,211 -   Read in data from deadwood.tif
+2024-08-02 09:24:38,422 -    Loading weather data ...
+2024-08-02 09:24:40,050 -    Registering Data:  TimeOfLastSuccession.
+2024-08-02 09:24:40,051 -    Registering Data:  Shade.
+2024-08-02 09:24:40,052 -    Creating Dispersal Neighborhood List.
+2024-08-02 09:24:40,052 -    Dispersal:  NeighborRadius=2045, CellLength=90, numCellRadius=22
+2024-08-02 09:24:40,445 -    Loading initial communities from file "AK_BC_IC_codes_03052024.csv" ...
+2024-08-02 09:24:51,838 -    Reading initial communities map "test_IC.tif" ...
+2024-08-02 09:24:52,845 - Unknown map code for initial community: 1312
