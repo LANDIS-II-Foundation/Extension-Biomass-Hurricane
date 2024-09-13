@@ -27,8 +27,6 @@ You need:
 
 # Example Files
 
-LANDIS-II requires a global parameter file for your scenario, and separate parameter files for each extension.
-
 Example files can be [downloaded from GitHub](https://downgit.github.io/#/home?url=https://github.com/LANDIS-II-Foundation/Extension-Biomass-Hurricane/tree/master/testing/Core8-Hurricane3.0).
 
 # Support
@@ -41,5 +39,3 @@ If you come across any issue or suspected bug, please post about it in the [issu
 # Author
 
 [The LANDIS-II Foundation](http://www.landis-ii.org)
-
-Mail : rschell@ncsu.edu
