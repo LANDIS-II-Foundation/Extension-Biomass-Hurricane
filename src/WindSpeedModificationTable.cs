@@ -2,7 +2,7 @@
 
 using Landis.Utilities;
 
-namespace Landis.Extension.BiomassHurricane
+namespace Landis.Extension.Hurricane
 {
 
     public interface IWindSpeedModificationTable

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Landis.Extension.BiomassHurricane
+namespace Landis.Extension.Hurricane
 {
     /// <summary>
     /// Represents a line of the form: y = mx + b
