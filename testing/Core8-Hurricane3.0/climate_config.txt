@@ -1,18 +1,17 @@
 LandisData                	"Climate Config"				
 		
-ClimateTimeSeries		Daily_SequencedYears
+ClimateTimeSeries		Daily_RandomYears
 ClimateFile			4-GCM8.5MIROC-ESM-CHEM_2010-2011.csv
-ClimateFileFormat		Daily_Temp-K_Precip-mmDay
 
-SpinUpClimateTimeSeries		Daily_SequencedYears
+SpinUpClimateTimeSeries		Daily_RandomYears
 SpinUpClimateFile		4-GCM8.5MIROC-ESM-CHEM_2010-2011.csv
-SpinUpClimateFileFormat		Daily_Temp-K_Precip-mmDay
 
-UsingFireClimate		yes
-FineFuelMoistureCode		85
-DuffMoistureCode		8
-DroughtCode			15
-FirstDayFire			0
-LastDayFire			360
+GenerateClimateOutputFiles		no
+UsingFireClimate			yes
+FineFuelMoistureCode			100
+DuffMoistureCode			10
+DroughtCode				15
+FirstDayFire				30
+LastDayFire				320
 
 

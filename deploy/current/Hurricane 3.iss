@@ -50,8 +50,8 @@ Source: {#BuildDir}\Landis.Extension.Hurricane-v3.pdb; DestDir: {#ExtDir}; Flags
 
 ; Requisite auxiliary libraries
 ; NB. These libraries are used by other extensions and thus are never uninstalled.
-Source: {#BuildDir}\Landis.Library.Metadata-v2.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall 
-Source: {#BuildDir}\Landis.Library.UniversalCohorts-v1.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall 
+; Source: {#BuildDir}\Landis.Library.Metadata-v2.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall 
+; Source: {#BuildDir}\Landis.Library.UniversalCohorts-v1.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall 
 
 
 ; LANDIS-II identifies the extension with the info in this .txt file
