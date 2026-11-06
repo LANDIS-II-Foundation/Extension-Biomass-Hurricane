@@ -40,13 +40,8 @@ namespace Landis.Extension.Hurricane
         public static Line CoastLine;
         public static Point CoastalCenter;
         public static double LandFallSigma; //VERSION2
-
         public static double StormDirectionMu;
         public static double StormDirectionSigma;
-
-
-        //private ContinentalGrid ContinentalGrid = null;
-
 
         //---------------------------------------------------------------------
 
@@ -125,6 +120,7 @@ namespace Landis.Extension.Hurricane
                 HurricaneEvent.HurricaneRandomNumber = true;
                 HurricaneGeneratorStandard = new Troschuetz.Random.Generators.MT19937Generator((uint)parameters.HurricaneRandomNumberSeed);
                 HurricaneGeneratorLogNormal = new Troschuetz.Random.Distributions.Continuous.LognormalDistribution((uint)parameters.HurricaneRandomNumberSeed);
+                HurricaneGeneratorNormal = new NormalDistribution((uint)parameters.HurricaneRandomNumberSeed);
             }
 
             LoadWindExposureData();  

@@ -29,13 +29,8 @@ namespace Landis.Extension.Hurricane
 
         private double stormTrackSlope; 
         private double stormTrackPerpandicularSlope; 
-
         public double landfallDistanceFromCoastalCenterY = 0.0;
         public int AvailableCohorts;
-        
-        //internal ContinentalGrid ContinentalGrid { get; private set; }
-        //private double stormTrackEffectiveDistanceToCenterPoint { get; set; }
-        //private double stormTrackLengthTo_b { get; set; }
 
         //---------------------------------------------------------------------
 
