@@ -120,7 +120,12 @@ namespace Landis.Extension.Hurricane
                 HurricaneEvent.HurricaneRandomNumber = true;
                 HurricaneGeneratorStandard = new Troschuetz.Random.Generators.MT19937Generator((uint)parameters.HurricaneRandomNumberSeed);
                 HurricaneGeneratorLogNormal = new Troschuetz.Random.Distributions.Continuous.LognormalDistribution((uint)parameters.HurricaneRandomNumberSeed);
-                HurricaneGeneratorNormal = new NormalDistribution((uint)parameters.HurricaneRandomNumberSeed);
+                // Not NormalDistribution(seed): that wraps XorShift128Generator(seed), the same
+                // generator as the lognormal above, so the two would draw identical numbers.
+                // Seeding MT19937 from a key array gives a stream unrelated to both others,
+                // and to the storm-count stream of any other seed.
+                HurricaneGeneratorNormal = new NormalDistribution(new Troschuetz.Random.Generators.MT19937Generator(
+                    new uint[] { (uint)parameters.HurricaneRandomNumberSeed, 1 }));
             }
 
             LoadWindExposureData();  
