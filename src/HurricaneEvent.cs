@@ -28,7 +28,7 @@ namespace Landis.Extension.Hurricane
         public double BiomassMortality { get; set; }
 
         private double stormTrackSlope; 
-        private double stormTrackPerpandicularSlope; 
+        private readonly double stormTrackPerpandicularSlope; 
         public double landfallDistanceFromCoastalCenterY = 0.0;
         public int AvailableCohorts;
 

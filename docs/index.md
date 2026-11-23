@@ -8,7 +8,7 @@ Schrum, P., R.M. Scheller, M.J. Duveneck, and M.S. Lucash. 2020. Base-Hurricane:
 
 # Release Notes
 
-- Latest release: Version 3.0 — September 2024
+- Latest release: Version 3.1.1 — November 2026
 - Full release details found in the User Guide and on GitHub.
 - [View User Guide](https://github.com/LANDIS-II-Foundation/Extension-Biomass-Hurricane/blob/master/docs/LANDIS-II%20Base%20Hurricane%20v3%20User%20Guide.pdf)
 - Copyright: The LANDIS-II Foundation
@@ -23,7 +23,7 @@ You need:
 
 # Download and Install the Extension
 
-- The latest version can be [downloaded from GitHub](https://github.com/LANDIS-II-Foundation/Extension-Biomass-Hurricane/blob/master/deploy/current/LANDIS-II-V8%20Hurricane%203.0-setup.exe). (Look for the download icon in the upper right corner.)  Launch the installer.
+- The latest version can be [downloaded from GitHub](https://github.com/LANDIS-II-Foundation/Extension-Biomass-Hurricane/blob/master/deploy/current/LANDIS-II-V8%20Hurricane%203.1.1-setup.exe). (Look for the download icon in the upper right corner.)  Launch the installer.
 
 # Example Files
 
