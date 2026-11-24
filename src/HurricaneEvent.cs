@@ -233,8 +233,10 @@ namespace Landis.Extension.Hurricane
 
             var deathLiklihood = HurricaneEvent.WindMortalityTable.GetMortalityProbability(cohort.Species.Name, cohort.Data.Age, windSpeed);
 
-            var randomVar = PlugIn.ModelCore.GenerateUniform();
-            
+            var randomVar = HurricaneRandomNumber
+                ? PlugIn.HurricaneGeneratorMortality.NextDouble()
+                : PlugIn.ModelCore.GenerateUniform();
+
             if (randomVar <= deathLiklihood)
             {
                 double cohortBiomass = cohort.Data.Biomass / Math.Pow((double) PlugIn.ModelCore.CellLength, 2.0) * 1000; // convert from g m-2 to Mg
@@ -406,19 +408,18 @@ namespace Landis.Extension.Hurricane
             if(PlugIn.ModelCore == null)
                 return this.modeSpeed;
 
-            PlugIn.ModelCore.LognormalDistribution.Mu = this.mu;
-            PlugIn.ModelCore.LognormalDistribution.Sigma = this.sigma;
-            PlugIn.HurricaneGeneratorLogNormal.Mu = this.mu;
-            PlugIn.HurricaneGeneratorLogNormal.Sigma = this.sigma;
+            // With a hurricane seed, draw only from the hurricane's own generator, so the
+            // core's random sequence (and every other extension's draws) is left unchanged.
+            var distribution = HurricaneEvent.HurricaneRandomNumber
+                ? PlugIn.HurricaneGeneratorLogNormal
+                : PlugIn.ModelCore.LognormalDistribution;
+            distribution.Mu = this.mu;
+            distribution.Sigma = this.sigma;
             bool keepComputing = true;
 
             while(keepComputing)
             {
-                double trialValue = PlugIn.ModelCore.LognormalDistribution.NextDouble();
-                if (HurricaneEvent.HurricaneRandomNumber)
-                {
-                    trialValue = PlugIn.HurricaneGeneratorLogNormal.NextDouble();
-                }
+                double trialValue = distribution.NextDouble();
 
                 trialValue = Math.Round((this.adjustFactor * trialValue)) + this.minSpeed;
                 if(trialValue <= this.maxSpeed)

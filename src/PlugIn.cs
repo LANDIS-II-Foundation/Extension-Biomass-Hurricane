@@ -25,6 +25,7 @@ namespace Landis.Extension.Hurricane
         public static LognormalDistribution HurricaneGeneratorLogNormal = new LognormalDistribution();
         public static Troschuetz.Random.Generators.MT19937Generator HurricaneGeneratorStandard = new Troschuetz.Random.Generators.MT19937Generator();
         public static NormalDistribution HurricaneGeneratorNormal = new NormalDistribution();
+        public static Troschuetz.Random.Generators.MT19937Generator HurricaneGeneratorMortality = new Troschuetz.Random.Generators.MT19937Generator();
 
         public static List<int> WindExposures;
         public static List<IWindSpeedModificationTable> WindSpeedReductions;
@@ -118,6 +119,11 @@ namespace Landis.Extension.Hurricane
             if (parameters.HurricaneRandomNumberSeed > 0)
             {
                 HurricaneEvent.HurricaneRandomNumber = true;
+                // Cohort mortality gets its own stream: the number of mortality draws depends on
+                // the forest, so sharing a stream would make later storms depend on it too.
+                HurricaneGeneratorMortality = new Troschuetz.Random.Generators.MT19937Generator(
+                    new uint[] { (uint)parameters.HurricaneRandomNumberSeed, 2 });
+
                 HurricaneGeneratorStandard = new Troschuetz.Random.Generators.MT19937Generator((uint)parameters.HurricaneRandomNumberSeed);
                 HurricaneGeneratorLogNormal = new Troschuetz.Random.Distributions.Continuous.LognormalDistribution((uint)parameters.HurricaneRandomNumberSeed);
                 // Not NormalDistribution(seed): that wraps XorShift128Generator(seed), the same
@@ -148,9 +154,11 @@ namespace Landis.Extension.Hurricane
             foreach(var year in Enumerable.Range(0, this.parameters.Timestep))
             {
                 int stormsThisYear = -1;
-                var randomNum = PlugIn.ModelCore.GenerateUniform();
-                if (HurricaneEvent.HurricaneRandomNumber)
-                    randomNum = PlugIn.HurricaneGeneratorStandard.NextDouble();
+                // With a hurricane seed, draw only from the hurricane's own generators, so the
+                // core's random sequence (and every other extension's draws) is left unchanged.
+                var randomNum = HurricaneEvent.HurricaneRandomNumber
+                    ? PlugIn.HurricaneGeneratorStandard.NextDouble()
+                    : PlugIn.ModelCore.GenerateUniform();
 
                 var cummProb = 0.0;
                 foreach(var probability in this.parameters.StormOccurenceProbabilities)
